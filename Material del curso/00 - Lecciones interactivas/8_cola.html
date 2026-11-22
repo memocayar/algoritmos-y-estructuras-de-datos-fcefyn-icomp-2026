@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; COLA.exe — LAC</title>
+<style>
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:19px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(30px,5vw,50px); line-height:1.1; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .primitivas-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin-top:14px;}
+  .prim{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:9px 13px; font-family:var(--font-mono); font-size:12px; color:var(--cyan);}
+  .prim span{display:block; font-family:var(--font-body); font-size:11.5px; color:var(--text-faint); margin-top:2px;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .tp{color:var(--cyan);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+
+  /* ---------- queue (horizontal, FIFO) ---------- */
+  .queue-vis{display:flex; align-items:center; gap:10px; margin-top:14px; min-height:60px; flex-wrap:wrap;}
+  .queue-item{
+    border-radius:7px; padding:11px 16px; border:1px solid var(--border-soft); background:var(--bg-raised);
+    font-family:var(--font-mono); font-size:14px; color:var(--text);
+    opacity:0; transform:translateX(-6px); animation:riseRight .3s ease forwards;
+  }
+  @keyframes riseRight{to{opacity:1; transform:translateX(0);}}
+  .queue-item.front{border-color:var(--cyan); box-shadow:0 0 12px rgba(0,212,255,0.25); color:var(--cyan);}
+  .queue-labels{display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); max-width:400px; margin-top:4px;}
+  .queue-labels .front-l{color:var(--cyan);}
+  .stack-empty{color:var(--text-faint); font-family:var(--font-mono); font-size:12px;}
+
+  /* ---------- circular buffer ---------- */
+  .circ-wrap{margin-top:24px;}
+  .circ-row{display:flex; gap:6px;}
+  .circ-cell{
+    width:72px; border-radius:7px; border:1px solid var(--border-soft); background:var(--bg-raised);
+    text-align:center; padding:14px 4px 8px; font-family:var(--font-mono); position:relative;
+    transition:border-color .25s, box-shadow .25s;
+  }
+  .circ-cell .v{font-size:15px; color:var(--text);}
+  .circ-cell .v.empty{color:var(--text-faint); font-size:12px;}
+  .circ-cell .idx{font-size:10px; color:var(--text-faint); margin-top:6px;}
+  .circ-cell.inicio{border-color:var(--violet); box-shadow:0 0 10px rgba(124,58,237,0.3);}
+  .circ-cell.fin{border-color:var(--cyan); box-shadow:0 0 10px rgba(0,212,255,0.3);}
+  .circ-cell.inicio.fin{border-image:none; box-shadow:0 0 10px rgba(124,58,237,0.3), 0 0 10px rgba(0,212,255,0.3);}
+  .circ-marker{position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-size:10px; white-space:nowrap;}
+  .circ-marker.m-inicio{color:var(--violet);}
+  .circ-marker.m-fin{color:var(--cyan);}
+
+  .lab-readout{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px;}
+  .ro{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 12px;}
+  .ro .k{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.06em;}
+  .ro .v{font-family:var(--font-mono); font-size:14px; color:var(--cyan); margin-top:3px;}
+
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:560px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // TDA · COLA</div>
+  <div class="nav-title">COLA.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a></li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a></li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a></li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a></li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a></li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a></li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a></li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>continúa la serie TAD → estructuras</div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">Cola: lo primero que entra<br>es lo <span class="accent">primero que sale</span>.</h1>
+    <p class="cover-sub">El mismo molde que la Pila — la lista enlazada con la interfaz recortada — pero con el orden de salida invertido, y un matiz propio en cómo se implementa bien.</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> Listas enlazadas, TAD, Pila</span>
+      <span><b>cubre:</b> FIFO · encolar/desencolar · buffer circular</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>DiagramaCba necesita procesar en el orden en que llegan</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat notas_reunion.txt</p>
+        <p><span class="accent">maga_t:</span> Cuando alguien carga un diagrama enorme, queremos procesar los Nodos en el mismo orden en que se agregaron — sin saltarnos ninguno, y sin priorizar al último por sobre el primero.</p>
+        <p><span class="ok">ema_v:</span> Entonces el primero que entra tiene que ser el primero en procesarse. Justo al revés de la Pila.</p>
+        <p><span class="accent">maga_t:</span> Exacto — eso es una <strong>cola</strong>: First In, First Out. La fila del banco: el primero que llega es el primero que atienden.</p>
+        <p><span class="ok">ema_v:</span> ¿Es la lista con la interfaz recortada, como la pila?</p>
+        <p><span class="accent">maga_t:</span> Mismo molde. Pero hay un detalle que con la pila no importaba y acá sí — vas a verlo enseguida.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Explicar qué significa FIFO y cuándo corresponde usar una cola.</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Usar las primitivas de Cola: encolar, desencolar, ver el primero, saber si está vacía.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Entender por qué una cola sobre lista necesita, casi siempre, un puntero al último nodo.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Implementar una cola sobre un arreglo con buffer circular para lograr O(1) real.</p></div>
+      <div class="obj-card"><div class="k">05</div><p>Distinguir cuándo un problema pide cola y cuándo pide pila.</p></div>
+      <div class="obj-card"><div class="k">06</div><p>Reconocer los errores más comunes al usar o implementar una cola.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3>¿Qué es una cola?</h3>
+    <p>Es la fila del banco: el primero que llega es el primero que atienden — <strong>First In, First Out (FIFO)</strong>. Insertar pasa siempre por el final; sacar, siempre por el frente.</p>
+
+    <h3>La interfaz: apenas cinco primitivas</h3>
+    <div class="primitivas-grid">
+      <div class="prim">cola_crear()<span>crea una cola vacía</span></div>
+      <div class="prim">cola_encolar(c, dato)<span>agrega al final</span></div>
+      <div class="prim">cola_desencolar(c)<span>saca y devuelve el primero</span></div>
+      <div class="prim">cola_ver_primero(c)<span>mira el primero sin sacarlo</span></div>
+      <div class="prim">cola_esta_vacia(c)<span>true si no tiene elementos</span></div>
+    </div>
+
+    <h3>Cola como la lista, con un matiz que la Pila no tenía</h3>
+    <p>Igual que la Pila, la Cola se puede construir sobre el TAD Lista sin inventar nada nuevo: <code>cola_encolar</code> es <code>lista_insertar_final</code>, y <code>cola_desencolar</code> es <code>lista_extraer_primero</code>. La diferencia clave: la Pila solo necesita trabajar sobre la cabeza (siempre O(1) con solo un puntero a <code>head</code>), pero <code>lista_insertar_final</code> sin un puntero al último nodo es O(n) — hay que recorrer toda la lista para encontrarlo. Por eso una cola casi siempre guarda también un puntero a <code>tail</code>.</p>
+
+    <h3>Implementación con arreglo: el buffer circular</h3>
+    <p>Si implementás la cola sobre un arreglo de tamaño fijo, desencolar "corriendo" todos los elementos un lugar es O(n) por operación — carísimo. La solución clásica es un <strong>buffer circular</strong>: dos índices, <code>inicio</code> y <code>fin</code>, que avanzan con aritmética modular (<code>indice = (indice + 1) % capacidad</code>), reutilizando los huecos que deja cada desencolado sin mover un solo elemento de lugar. Con esto, encolar y desencolar quedan en O(1) — incluso con arreglo de tamaño fijo. Vas a construirlo en vivo en la próxima sección.</p>
+
+    <h3>Dónde se usan colas en sistemas reales</h3>
+    <p>Colas de impresión, colas de mensajería entre servicios, tareas pendientes de un worker — cualquier situación donde el orden de llegada tiene que respetarse. Más adelante, cuando lleguemos a Grafos, vas a ver que recorrer un grafo "por niveles" (BFS, <em>breadth-first search</em>) es, en el fondo, usar una cola para no perder el orden de descubrimiento de los nodos.</p>
+
+    <h3>Cola vs. Pila: mismo molde, distinto orden</h3>
+    <div class="callout"><span class="k">LA PREGUNTA QUE DECIDE CUÁL USAR</span><p>¿Necesitás revertir lo último que pasó? Pila. ¿Necesitás respetar el orden en que las cosas llegaron? Cola. La estructura interna puede ser literalmente la misma lista enlazada — lo que cambia es cuál extremo usás para sacar.</p></div>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+
+    <h3>Encolar y desencolar</h3>
+    <div class="panel">
+      <div class="btn-row">
+        <button id="qEnq" class="primary">encolar</button>
+        <button id="qDeq">desencolar</button>
+        <button id="qReset">↺ vaciar</button>
+      </div>
+      <div class="queue-vis" id="queueVis"><div class="stack-empty">— cola vacía —</div></div>
+      <div class="queue-labels" id="qLabels"></div>
+      <p class="step-caption" id="qCaption">Encolá un par de elementos y mirá cuál sale primero al desencolar.</p>
+    </div>
+
+    <h3>Buffer circular: cómo encolar sigue siendo O(1) con arreglo fijo</h3>
+    <p>Capacidad 5. Mirá qué pasa con los índices <code>inicio</code> y <code>fin</code> — en especial en el último paso.</p>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="cbStepNum">0</span> / <span id="cbStepTotal">6</span></span>
+        <div class="btn-row">
+          <button id="cbPrev">◀ anterior</button>
+          <button id="cbNext" class="primary">siguiente operación ▶</button>
+          <button id="cbReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="circ-wrap">
+        <div class="circ-row" id="circRow"></div>
+      </div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">inicio</div><div class="v" id="cbInicio">0</div></div>
+        <div class="ro"><div class="k">fin</div><div class="v" id="cbFin">0</div></div>
+        <div class="ro"><div class="k">cantidad</div><div class="v" id="cbCount">0</div></div>
+      </div>
+      <p class="step-caption" id="cbCaption">Tocá <span class="mono">siguiente operación</span> para empezar a encolar.</p>
+    </div>
+
+    <h3>Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Los errores que más aparecen con colas</h2>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> La cola de renderizado va a ser una Cola de Nodos pendientes — el primero que se cargó es el primero que se dibuja.</p>
+        <p><span class="accent">maga_t:</span> Y con buffer circular, ni siquiera vas a pagar el costo de mover elementos de lugar. Con esto ya tenés Pila y Cola — las dos formas más chicas y más usadas de recortar una lista.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">EN EL PROYECTO INTEGRADOR</span><p>Antes de implementar una cola con arreglo, definí siempre un campo <code>cantidad</code> explícito — con <code>inicio == fin</code> a secas no podés distinguir una cola vacía de una llena, y ese es uno de los bugs más comunes con buffers circulares.</p></div>
+  </section>
+
+  <footer><p>COLA.exe · material de apoyo cátedra de Algoritmos y Estructuras de Datos, FCEFyN · Ing. Valenzuela Gabriel.</p></footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement;
+    var scrolled = doc.scrollTop;
+    var max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){
+      var rect = sections[i].getBoundingClientRect();
+      if (rect.top <= 120) activeId = sections[i].id;
+    }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  var navToggle = document.getElementById('navtoggle');
+  var sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  navLinks.forEach(function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  /* ================= queue demo ================= */
+  var queueData = [];
+  var queueCounter = 0;
+  var queueVis = document.getElementById('queueVis');
+  var qLabels = document.getElementById('qLabels');
+  var qCaption = document.getElementById('qCaption');
+  function renderQueue(){
+    if (queueData.length === 0){
+      queueVis.innerHTML = '<div class="stack-empty">— cola vacía —</div>';
+      qLabels.innerHTML = '';
+      document.getElementById('qDeq').disabled = true;
+      return;
+    }
+    document.getElementById('qDeq').disabled = false;
+    queueVis.innerHTML = queueData.map(function(v, i){
+      var isFront = (i === 0);
+      return '<div class="queue-item' + (isFront ? ' front' : '') + '">' + v + '</div>';
+    }).join('');
+    qLabels.innerHTML = '<span class="front-l">▲ frente</span><span>atrás ▲</span>';
+  }
+  document.getElementById('qEnq').addEventListener('click', function(){
+    queueCounter++;
+    queueData.push('E' + queueCounter);
+    qCaption.innerHTML = '<span class="mono">encolar(E' + queueCounter + ')</span> — se agrega al final.';
+    renderQueue();
+  });
+  document.getElementById('qDeq').addEventListener('click', function(){
+    var v = queueData.shift();
+    qCaption.innerHTML = '<span class="mono">desencolar()</span> devolvió <span class="mono">' + v + '</span> — era el que llevaba más tiempo esperando.';
+    renderQueue();
+  });
+  document.getElementById('qReset').addEventListener('click', function(){
+    queueData = []; queueCounter = 0;
+    qCaption.textContent = 'Encolá un par de elementos y mirá cuál sale primero al desencolar.';
+    renderQueue();
+  });
+  renderQueue();
+
+  /* ================= circular buffer stepper ================= */
+  var CAP = 5;
+  var cbStepNumEl = document.getElementById('cbStepNum');
+  var cbCaption = document.getElementById('cbCaption');
+  var circRow = document.getElementById('circRow');
+  var CB_TOTAL = 6;
+  var cbStep = 0;
+
+  // scripted operations: enq A, enq B, enq C, deq, enq D, enq E(wraps)
+  var cbOps = [
+    { type:'enq', val:'A' },
+    { type:'enq', val:'B' },
+    { type:'enq', val:'C' },
+    { type:'deq' },
+    { type:'enq', val:'D' },
+    { type:'enq', val:'E' }
+  ];
+  var cbCaptions = [
+    'Buffer de capacidad 5, vacío. <span class="mono">inicio</span> y <span class="mono">fin</span> arrancan los dos en 0.',
+    '<span class="mono">encolar(A)</span> — se escribe en el índice fin (0), y fin avanza a 1.',
+    '<span class="mono">encolar(B)</span> — se escribe en el índice 1, fin avanza a 2.',
+    '<span class="mono">encolar(C)</span> — se escribe en el índice 2, fin avanza a 3.',
+    '<span class="mono">desencolar()</span> devuelve A (índice inicio). inicio avanza a 1 — el índice 0 queda libre, pero nadie corrió ningún elemento de lugar.',
+    '<span class="mono">encolar(D)</span> — se escribe en el índice 3 (fin), fin avanza a 4.',
+    '<span class="mono">encolar(E)</span> — se escribe en el índice 4, y fin = (4+1) % 5 = <strong>0</strong>. El buffer "da la vuelta", reutilizando el índice que había quedado libre — sin mover un solo elemento. Por eso encolar y desencolar siguen siendo O(1).'
+  ];
+
+  function computeCbState(step){
+    var buffer = new Array(CAP).fill(null);
+    var inicio = 0, fin = 0, count = 0;
+    for (var i = 0; i < step; i++){
+      var op = cbOps[i];
+      if (op.type === 'enq'){
+        buffer[fin] = op.val;
+        fin = (fin + 1) % CAP;
+        count++;
+      } else {
+        buffer[inicio] = null;
+        inicio = (inicio + 1) % CAP;
+        count--;
+      }
+    }
+    return { buffer: buffer, inicio: inicio, fin: fin, count: count };
+  }
+  function renderCb(){
+    cbStepNumEl.textContent = cbStep;
+    var s = computeCbState(cbStep);
+    cbCaption.innerHTML = cbCaptions[cbStep];
+    document.getElementById('cbInicio').textContent = s.inicio;
+    document.getElementById('cbFin').textContent = s.fin;
+    document.getElementById('cbCount').textContent = s.count;
+    circRow.innerHTML = s.buffer.map(function(v, idx){
+      var cls = 'circ-cell';
+      var markers = '';
+      if (idx === s.inicio && s.count > 0){ cls += ' inicio'; markers += '<div class="circ-marker m-inicio">inicio</div>'; }
+      if (idx === s.fin){ cls += ' fin'; markers += '<div class="circ-marker m-fin" style="' + (idx === s.inicio && s.count > 0 ? 'margin-top:10px;' : '') + '">fin</div>'; }
+      var valid = v !== null;
+      return '<div class="' + cls + '">' + markers +
+        '<div class="v' + (valid ? '' : ' empty') + '">' + (valid ? v : '·') + '</div>' +
+        '<div class="idx">' + idx + '</div></div>';
+    }).join('');
+    document.getElementById('cbPrev').disabled = (cbStep === 0);
+    document.getElementById('cbNext').disabled = (cbStep === CB_TOTAL);
+  }
+  document.getElementById('cbNext').addEventListener('click', function(){ if (cbStep < CB_TOTAL){ cbStep++; renderCb(); } });
+  document.getElementById('cbPrev').addEventListener('click', function(){ if (cbStep > 0){ cbStep--; renderCb(); } });
+  document.getElementById('cbReset').addEventListener('click', function(){ cbStep = 0; renderCb(); });
+  renderCb();
+
+  /* ================= error gallery ================= */
+  var errors = [
+    { tag:'underflow', title:'Desencolar sin chequear si está vacía',
+      bad:'int valor = cola_desencolar(c);\n// ¿y si la cola ya estaba vacía?',
+      cons:'Sin chequear cola_esta_vacia() antes, desencolar de una cola vacía es comportamiento indefinido.',
+      fix:'if (!cola_esta_vacia(c)) {\n  int valor = cola_desencolar(c);\n} else {\n  // manejar el caso vacío\n}' },
+    { tag:'O(n) escondido', title:'Cola sobre arreglo sin buffer circular',
+      bad:'void desencolar(ColaArreglo* c) {\n  for (int i = 0; i &lt; c-&gt;cant - 1; i++)\n    c-&gt;datos[i] = c-&gt;datos[i+1];\n  c-&gt;cant--;\n}',
+      cons:'Correr todos los elementos un lugar convierte cada desencolar en O(n). Con una cola que crece, la operación "barata" termina siendo la más cara del programa.',
+      fix:'// buffer circular: dos índices que\n// avanzan con aritmética modular\nc-&gt;inicio = (c-&gt;inicio + 1) % c-&gt;capacidad;\nc-&gt;cant--; // O(1), sin mover nada' },
+    { tag:'orden equivocado', title:'Usar pila cuando hace falta cola (o al revés)',
+      bad:'// implementando "procesar en orden de llegada"\npila_apilar(pendientes, nodo);\n...\nNodo* n = pila_desapilar(pendientes);\n// devuelve el ÚLTIMO agregado, no el primero',
+      cons:'Procesar "en el orden en que llegaron" es FIFO — una cola. Usar una pila devuelve siempre el más reciente, exactamente al revés de lo que se necesitaba.',
+      fix:'cola_encolar(pendientes, nodo);\n...\nNodo* n = cola_desencolar(pendientes);\n// devuelve el primero que llegó, correcto' },
+    { tag:'ambigüedad', title:'Buffer circular sin campo de cantidad explícito',
+      bad:'bool cola_esta_vacia(ColaCircular* c) {\n  return c-&gt;inicio == c-&gt;fin;\n  // ¿y si está llena, no vacía?',
+      cons:'Cuando el buffer está completamente lleno, inicio y fin también pueden coincidir (fin le "dio la vuelta" hasta alcanzar a inicio). Sin un contador explícito, es imposible distinguir "vacía" de "llena" mirando solo los índices.',
+      fix:'bool cola_esta_vacia(ColaCircular* c) {\n  return c-&gt;cantidad == 0;\n}\nbool cola_esta_llena(ColaCircular* c) {\n  return c-&gt;cantidad == c-&gt;capacidad;\n}' },
+    { tag:'documentación falsa', title:'Prometer O(1) sin puntero a tail',
+      bad:'// documentación de la interfaz:\n// "cola_encolar: O(1)"\n\n// implementación real (sobre lista,\n// solo con puntero a head):\nvoid cola_encolar(Cola* c, void* dato) {\n  lista_insertar_final(c-&gt;lista, dato);\n  // ¡recorre toda la lista!\n}',
+      cons:'lista_insertar_final sin un puntero al último nodo es O(n) — recorre toda la lista para encontrar dónde insertar. El contrato documentado (O(1)) queda roto por una implementación que no lo respeta.',
+      fix:'// la Cola guarda su propio\n// puntero a tail, actualizado\n// en cada encolar/desencolar,\n// para que insertar al final\n// sea realmente O(1)' }
+  ];
+  var errGrid = document.getElementById('errGrid');
+  errors.forEach(function(e, i){
+    var card = document.createElement('div');
+    card.className = 'err-card';
+    card.innerHTML =
+      '<div class="tag">' + e.tag + '</div>' +
+      '<h4>' + e.title + '</h4>' +
+      '<div class="code">' + e.bad + '</div>' +
+      '<div class="err-sec c2">CONSECUENCIA</div>' +
+      '<p class="why">' + e.cons + '</p>' +
+      '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+      '<div class="fix-box" id="fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code">' + e.fix + '</div></div>';
+    errGrid.appendChild(card);
+  });
+  errGrid.addEventListener('click', function(ev){
+    if (!ev.target.classList.contains('err-toggle')) return;
+    var i = ev.target.getAttribute('data-i');
+    var box = document.getElementById('fix-' + i);
+    var showing = box.classList.toggle('show');
+    ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+  });
+
+  /* ================= quizzes ================= */
+  var quizzes = [
+    { code:'cola_encolar(c, 1);\ncola_encolar(c, 2);\ncola_encolar(c, 3);\nint a = cola_desencolar(c);\nint b = cola_desencolar(c);',
+      q:'¿Qué valores toman a y b?', opts:['a=3, b=2', 'a=1, b=2', 'a=1, b=3', 'a=3, b=1'], correct:1,
+      fb:'FIFO: el primero en entrar (1) es el primero en salir. a=1, después b=2 — el orden de entrada se respeta.' },
+    { code:'// cola implementada sobre lista,\n// SOLO con puntero a head (sin tail)\ncola_encolar(c, dato);',
+      q:'¿Qué complejidad tiene esta llamada?', opts:['O(1)', 'O(log n)', 'O(n)', 'O(n²)'], correct:2,
+      fb:'Sin puntero a tail, insertar al final de la lista requiere recorrerla entera para encontrar el último nodo: O(n).' },
+    { code:'// buffer circular, capacidad 5\n// inicio=2, fin=2, cantidad=5 (lleno)\ncola_esta_vacia(c); // usando inicio==fin',
+      q:'Si cola_esta_vacia() solo compara inicio == fin, ¿qué va a devolver en este caso?', opts:['false, correctamente', 'true, incorrectamente — el buffer está lleno, no vacío', 'Error de compilación', 'Depende del compilador'], correct:1,
+      fb:'Con el buffer lleno, fin le dio toda la vuelta hasta alcanzar a inicio otra vez. inicio==fin es cierto tanto vacía como llena — sin un contador explícito, esta implementación se equivoca.' },
+    { code:'// necesitás deshacer la ÚLTIMA acción\n// del usuario, siempre',
+      q:'¿Qué estructura corresponde usar?', opts:['Cola', 'Pila', 'Cualquiera de las dos funciona igual', 'Ninguna, hace falta un arreglo ordenado'], correct:1,
+      fb:'Deshacer necesita revertir lo último que pasó primero — eso es LIFO, una pila. Una cola devolvería la acción más antigua, exactamente al revés.' }
+  ];
+  var quizList = document.getElementById('quizList');
+  quizzes.forEach(function(qz, qi){
+    var wrap = document.createElement('div');
+    wrap.className = 'quiz';
+    var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+    wrap.innerHTML =
+      '<div class="badge violet">CHECKPOINT ' + (qi+1) + '</div>' +
+      '<div class="code" style="margin-top:8px;">' + qz.code + '</div>' +
+      '<p style="color:var(--text); margin:6px 0 10px;">' + qz.q + '</p>' +
+      '<div class="opt-row">' + optsHTML + '</div>' +
+      '<div class="quiz-fb" id="fb-' + qi + '"></div>' +
+      '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button>' +
+        '<button class="conf-btn" data-c="dude">dudé</button>' +
+        '<button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+    quizList.appendChild(wrap);
+  });
+  quizList.addEventListener('click', function(ev){
+    var t = ev.target;
+    if (t.classList.contains('opt')){
+      var qi = t.getAttribute('data-qi');
+      var oi = parseInt(t.getAttribute('data-oi'),10);
+      var qz = quizzes[qi];
+      var row = t.parentElement;
+      Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+      if (oi === qz.correct){ t.classList.add('correct'); }
+      else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+      var fb = document.getElementById('fb-' + qi);
+      fb.textContent = qz.fb;
+      fb.classList.add('show');
+    }
+    if (t.classList.contains('conf-btn')){
+      var siblings = t.parentElement.querySelectorAll('.conf-btn');
+      Array.prototype.forEach.call(siblings, function(b){ b.classList.remove('picked'); });
+      t.classList.add('picked');
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,703 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Entrenador Parcial II</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: una sola columna de trabajo; arriba modo + tema, abajo la tarjeta de práctica. El color codifica el rol de cada línea (VIBR). */
+:root{
+  --bg:#eef1f7; --surface:#ffffff; --sunk:#e4e8f1; --ink:#161a2b; --muted:#565e76; --line:#cdd3e1;
+  --accent:#3438c9; --on-accent:#ffffff;
+  --V:#a35f00; --Vb:#fff0d2; --I:#1560b8; --Ib:#e0edfc; --B:#6a36c4; --Bb:#eee6fc;
+  --K:#b8155a; --Kb:#fde2ee; --R:#127346; --Rb:#dcf3e6;
+  --f-display:"Space Grotesk","Inter",system-ui,sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f111a; --surface:#181b29; --sunk:#222638; --ink:#e9ebf5; --muted:#9aa2bc; --line:#33384f;
+  --accent:#8f93ff; --on-accent:#0f111a;
+  --V:#f2b450; --Vb:#3a2c10; --I:#6fb0f5; --Ib:#12283f; --B:#b596f5; --Bb:#2a2044;
+  --K:#ff7fb0; --Kb:#43152a; --R:#5fd39a; --Rb:#11321f; color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#0f111a; --surface:#181b29; --sunk:#222638; --ink:#e9ebf5; --muted:#9aa2bc; --line:#33384f;
+  --accent:#8f93ff; --on-accent:#0f111a;
+  --V:#f2b450; --Vb:#3a2c10; --I:#6fb0f5; --Ib:#12283f; --B:#b596f5; --Bb:#2a2044;
+  --K:#ff7fb0; --Kb:#43152a; --R:#5fd39a; --Rb:#11321f; color-scheme:dark; }
+*{box-sizing:border-box;}
+body{background:var(--bg); color:var(--ink); font:16px/1.55 var(--f-body);}
+.wrap{max-width:860px; margin:0 auto; padding-block:28px 64px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex; flex-direction:column; gap:18px;}
+h1{font:700 30px/1.1 var(--f-display); margin:0; letter-spacing:-.5px; text-wrap:balance;}
+h2{font:700 20px/1.2 var(--f-display); margin:0; text-wrap:balance;}
+.lede{color:var(--muted); margin:6px 0 0; max-width:65ch;}
+button{font:inherit; color:inherit; cursor:pointer;}
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.modes{display:flex; flex-wrap:wrap; gap:6px; background:var(--sunk); padding:5px; border-radius:12px;}
+.modes button{flex:1 1 150px; border:0; background:transparent; padding:10px 12px; border-radius:8px; font-weight:600; color:var(--muted);}
+.modes button[aria-selected="true"]{background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.12);}
+.row{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+.chip{border:1px solid var(--line); background:transparent; border-radius:999px; padding:5px 13px; font-size:14px; font-weight:500; color:var(--muted);}
+.chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+.label{font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+.legend{display:flex; flex-wrap:wrap; gap:6px; font-size:13px;}
+.tag{font-weight:600; padding:2px 9px; border-radius:5px; white-space:nowrap;}
+.tV{background:var(--Vb); color:var(--V);} .tI{background:var(--Ib); color:var(--I);} .tB{background:var(--Bb); color:var(--B);}
+.tK{background:var(--Kb); color:var(--K);} .tR{background:var(--Rb); color:var(--R);}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:22px; display:flex; flex-direction:column; gap:16px; min-width:0;}
+.meta{display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; font-size:14px; color:var(--muted); font-variant-numeric:tabular-nums;}
+.btn{border:1px solid var(--line); background:var(--surface); border-radius:9px; padding:9px 16px; font-weight:600;}
+.btn.primary{background:var(--accent); color:var(--on-accent); border-color:var(--accent);}
+.btn.yes{background:var(--Rb); color:var(--R); border-color:transparent;}
+.btn.no{background:var(--Kb); color:var(--K); border-color:transparent;}
+.btn:disabled{opacity:.45; cursor:default;}
+/* flashcards */
+.card{border:2px solid var(--line); border-radius:14px; min-height:230px; padding:26px 22px; display:flex; flex-direction:column; gap:12px; justify-content:center; text-align:left; background:var(--bg); width:100%;}
+.card .side{font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+.card .q{font:500 21px/1.35 var(--f-display); text-wrap:balance;}
+.card .a{font-size:17px; white-space:pre-wrap;}
+.card.flipped{border-color:var(--accent); background:var(--surface);}
+.card code, .why code, .opt code, .q code{font-family:var(--f-mono); font-size:.88em; background:var(--sunk); padding:1px 5px; border-radius:4px;}
+/* opción múltiple */
+.opts{display:flex; flex-direction:column; gap:8px;}
+.opt{text-align:left; border:1.5px solid var(--line); background:var(--bg); border-radius:10px; padding:12px 14px; display:flex; gap:10px; align-items:baseline;}
+.opt b{font-family:var(--f-mono); color:var(--muted);}
+.opt.right{border-color:var(--R); background:var(--Rb);}
+.opt.wrong{border-color:var(--K); background:var(--Kb);}
+.why{border-left:3px solid var(--accent); padding:4px 0 4px 12px; color:var(--ink);}
+/* completar */
+select{font:inherit; color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:9px; padding:9px 10px; max-width:100%; min-width:0; flex:1 1 240px;}
+.brief{font-size:15px; display:flex; flex-direction:column; gap:6px;}
+.brief .src{font-size:13px; font-weight:600; color:var(--accent);}
+.codebox{border:1px solid var(--line); border-radius:10px; overflow-x:auto; background:var(--bg);}
+.codebox pre{margin:0; padding:10px 0; font:13.5px/1.75 var(--f-mono); min-width:max-content;}
+.ln{display:block; padding:0 14px 0 11px; border-left:4px solid transparent; white-space:pre;}
+.rV{border-left-color:var(--V); background:var(--Vb);} .rI{border-left-color:var(--I); background:var(--Ib);}
+.rB{border-left-color:var(--B);} .rK{border-left-color:var(--K); background:var(--Kb);} .rR{border-left-color:var(--R); background:var(--Rb);}
+.gap{font:inherit; color:var(--ink); background:var(--surface); border:1.5px solid var(--muted); border-radius:5px; padding:0 4px; height:1.55em;}
+.gap.ok{border-color:var(--R); background:var(--Rb); color:var(--R); font-weight:600;}
+.gap.ko{border-color:var(--K); background:var(--Kb);}
+.shown{font-weight:600; text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px;}
+textarea{width:100%; min-height:260px; font:13.5px/1.6 var(--f-mono); color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:12px; resize:vertical;}
+.result{font-weight:600;}
+.hint{font-size:14px; color:var(--muted);}
+@media (max-width:480px){ .panel{padding:16px;} h1{font-size:25px;} .card .q{font-size:18px;} }
+@media (prefers-reduced-motion:no-preference){ .card{transition:border-color .15s, background .15s;} }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Entrenador Parcial II</h1>
+    <p class="lede">Práctica armada sobre el Modelo de parcial II y la Práctica segundo parcial: tres ejercicios de código sobre clases dadas y dos de opción múltiple.</p>
+  </header>
+
+  <div class="modes" role="tablist" aria-label="Modo de práctica">
+    <button role="tab" id="tab-completar" data-mode="completar">Completar código</button>
+    <button role="tab" id="tab-opciones" data-mode="opciones">Opción múltiple</button>
+    <button role="tab" id="tab-tarjetas" data-mode="tarjetas">Flashcards</button>
+  </div>
+
+  <div class="row" id="temas" aria-label="Tema">
+    <span class="label">Tema</span>
+    <button class="chip" data-tema="todos">Todos</button>
+    <button class="chip" data-tema="grafos">Grafos</button>
+    <button class="chip" data-tema="arboles">Árboles</button>
+    <button class="chip" data-tema="otras">Otras estructuras</button>
+    <button class="chip" data-tema="ordenamiento">Ordenamiento</button>
+  </div>
+
+  <!-- COMPLETAR -->
+  <section class="panel" id="p-completar">
+    <div class="row">
+      <select id="algoSel" aria-label="Ejercicio"></select>
+      <div class="row" id="niveles">
+        <button class="chip" data-nivel="1">Lo clave</button>
+        <button class="chip" data-nivel="2">Casi todo</button>
+        <button class="chip" data-nivel="3">De memoria</button>
+      </div>
+    </div>
+    <div class="brief" id="brief"></div>
+    <div class="legend" aria-label="Qué significa cada color">
+      <span class="tag tV">Validar</span><span class="tag tI">Inicializar</span><span class="tag tB">Bucle</span><span class="tag tK">Línea clave</span><span class="tag tR">Retornar</span>
+    </div>
+    <div id="gapMode">
+      <div class="codebox"><pre id="code"></pre></div>
+    </div>
+    <div id="memMode" hidden>
+      <textarea id="memText" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Tu solución"></textarea>
+      <div class="codebox" id="memSol" hidden><pre id="memCode"></pre></div>
+    </div>
+    <div class="row">
+      <button class="btn primary" id="checkBtn">Comprobar</button>
+      <button class="btn" id="solBtn">Ver solución</button>
+      <button class="btn" id="resetBtn">Reiniciar</button>
+      <span class="result" id="gapResult" role="status"></span>
+    </div>
+    <p class="hint" id="gapHint">Los espacios no cuentan. Escribí los nombres tal cual aparecen en el código base.</p>
+  </section>
+
+  <!-- OPCIONES -->
+  <section class="panel" id="p-opciones" hidden>
+    <div class="meta"><span id="mcCount"></span><span id="mcScore"></span></div>
+    <h2 class="q" id="mcQ"></h2>
+    <div class="opts" id="mcOpts"></div>
+    <div class="why" id="mcWhy" hidden></div>
+    <div class="row"><button class="btn primary" id="mcNext" disabled>Siguiente</button><button class="btn" id="mcRestart">Empezar de nuevo</button></div>
+  </section>
+
+  <!-- TARJETAS -->
+  <section class="panel" id="p-tarjetas" hidden>
+    <div class="meta"><span id="fcCount"></span><span id="fcKnown"></span></div>
+    <button class="card" id="fcCard" aria-live="polite"></button>
+    <div class="row">
+      <button class="btn" id="fcFlip">Dar vuelta</button>
+      <button class="btn no" id="fcNo">No la sabía</button>
+      <button class="btn yes" id="fcYes">La sabía</button>
+      <button class="btn" id="fcReset">Reiniciar mazo</button>
+    </div>
+    <p class="hint">Las que marcás "No la sabía" vuelven al final del mazo hasta que las sepas.</p>
+  </section>
+</div>
+
+<script>
+// Formato de cada línea:  ROL|código
+// Roles: V validar · I inicializar · B bucle/recorrido · K línea clave · R retornar · - neutro
+// Huecos: ⟦nivel:respuesta⟧  (nivel 1 = lo distintivo, nivel 2 = casi todo)
+var ALGOS = [
+{
+  id:'bfs', tema:'grafos', titulo:'BFS con Queue<int>',
+  origen:'Práctica segundo parcial · Pregunta 1',
+  enunciado:'Devolver si existe una ruta entre dos estaciones pasando solo por estaciones habilitadas. Grafo no ponderado en matriz hayTunel[][].',
+  restricciones:'BFS con Queue<int> de la cátedra (enqueue, dequeue, front, isEmpty). Sin std::queue, sin vector, sin recursión.',
+  lineas:`
+-|bool RedSegura::existeRutaSegura(int origenId, int destinoId) {
+V|    if (origenId < 0 || origenId >= ⟦2:cantidadEstaciones⟧) return ⟦2:false⟧;
+V|    if (destinoId < 0 || destinoId >= cantidadEstaciones) return false;
+V|    if (!estaciones[origenId].⟦2:habilitada⟧) return false;
+V|    if (!estaciones[destinoId].habilitada) return false;
+V|    if (origenId == destinoId) return ⟦2:true⟧;
+-|
+I|    bool visitada[⟦2:MAX_ESTACIONES⟧];
+I|    for (int i = 0; i < cantidadEstaciones; i++) visitada[i] = ⟦2:false⟧;
+I|    Queue<int> pendientes;
+K|    pendientes.⟦1:enqueue⟧(origenId);
+K|    ⟦1:visitada[origenId] = true⟧;
+-|
+B|    while (⟦1:!pendientes.isEmpty()⟧) {
+K|        int actual = pendientes.⟦1:front⟧();
+K|        pendientes.⟦1:dequeue⟧();
+R|        if (actual == destinoId) return ⟦2:true⟧;
+B|        for (int v = 0; v < cantidadEstaciones; v++) {
+K|            if (⟦1:hayTunel[actual][v]⟧ && ⟦1:!visitada[v]⟧
+K|                && estaciones[v].habilitada) {
+K|                visitada[v] = ⟦2:true⟧;
+K|                pendientes.⟦1:enqueue(v)⟧;
+B|            }
+B|        }
+B|    }
+R|    return ⟦1:false⟧;
+-|}`
+},
+{
+  id:'dfs', tema:'grafos', titulo:'DFS recursivo (tamaño de componente)',
+  origen:'Práctica segundo parcial · Pregunta 2',
+  enunciado:'Contar cuántas estaciones operativas se alcanzan desde el origen. Devuelve 0 si el id es inválido o el origen no está operativo.',
+  restricciones:'DFS recursivo. Sin queue, stack, vector ni arreglos dinámicos. Usar el arreglo visitada.',
+  lineas:`
+-|int RedComponentes::dfsComponente(int estacionId, bool visitada[]) {
+K|    ⟦1:visitada[estacionId] = true⟧;
+I|    int total = ⟦1:1⟧;
+B|    for (int v = 0; v < cantidadEstaciones; v++) {
+K|        if (⟦1:hayTunel[estacionId][v]⟧ && ⟦1:!visitada[v]⟧
+K|            && estaciones[v].⟦2:operativo⟧) {
+K|            total += ⟦1:dfsComponente(v, visitada)⟧;
+B|        }
+B|    }
+R|    return ⟦2:total⟧;
+-|}
+-|
+-|int RedComponentes::tamanoComponenteOperativa(int origenId) {
+V|    if (origenId < 0 || origenId >= cantidadEstaciones) return ⟦2:0⟧;
+V|    if (⟦2:!estaciones[origenId].operativo⟧) return 0;
+I|    bool visitada[MAX_ESTACIONES];
+I|    for (int i = 0; i < MAX_ESTACIONES; i++) visitada[i] = ⟦2:false⟧;
+R|    return ⟦1:dfsComponente(origenId, visitada)⟧;
+-|}`
+},
+{
+  id:'bfspasos', tema:'grafos', titulo:'Variante · BFS que cuenta transbordos',
+  origen:'Variante probable de BFS (no salió en los modelos)',
+  enunciado:'Devolver la mínima cantidad de túneles para ir del origen al destino. −1 si un id es inválido o no hay ruta, 0 si origen y destino coinciden.',
+  restricciones:'BFS con Queue<int>. Truco: el arreglo pasos[] empieza en −1 y hace también de "visitado": pasos[v] == −1 significa que nunca lo vi.',
+  lineas:`
+-|int RedTransbordos::minimoTransbordos(int origenId, int destinoId) {
+V|    if (origenId < 0 || origenId >= cantidadEstaciones) return ⟦2:-1⟧;
+V|    if (destinoId < 0 || destinoId >= cantidadEstaciones) return -1;
+V|    if (origenId == destinoId) return ⟦2:0⟧;
+-|
+I|    int pasos[MAX_ESTACIONES];
+I|    for (int i = 0; i < cantidadEstaciones; i++) pasos[i] = ⟦1:-1⟧;
+I|    Queue<int> pendientes;
+K|    ⟦1:pasos[origenId] = 0⟧;
+K|    pendientes.enqueue(origenId);
+-|
+B|    while (!pendientes.isEmpty()) {
+B|        int actual = pendientes.⟦2:front⟧();
+B|        pendientes.⟦2:dequeue⟧();
+B|        for (int v = 0; v < cantidadEstaciones; v++) {
+K|            if (hayTunel[actual][v] && ⟦1:pasos[v] == -1⟧) {
+K|                pasos[v] = ⟦1:pasos[actual] + 1⟧;
+R|                if (v == destinoId) return ⟦1:pasos[v]⟧;
+B|                pendientes.enqueue(v);
+B|            }
+B|        }
+B|    }
+R|    return ⟦1:-1⟧;
+-|}`
+},
+{
+  id:'dfsbool', tema:'grafos', titulo:'Variante · DFS que responde sí o no',
+  origen:'Variante probable de DFS (no salió en los modelos)',
+  enunciado:'Devolver si el destino se puede alcanzar desde el origen. false si algún id es inválido.',
+  restricciones:'DFS recursivo con arreglo visitada. Ojo: dentro del for NO se hace "return alcanzableRec(...)" directo, porque cortaría en el primer vecino aunque diera false.',
+  lineas:`
+-|bool RedAlcance::alcanzableRec(int actual, int destinoId, bool visitada[]) {
+R|    if (⟦1:actual == destinoId⟧) return ⟦1:true⟧;
+K|    visitada[actual] = true;
+B|    for (int v = 0; v < cantidadEstaciones; v++) {
+B|        if (hayTunel[actual][v] && ⟦2:!visitada[v]⟧) {
+K|            if (⟦1:alcanzableRec(v, destinoId, visitada)⟧) return ⟦1:true⟧;
+B|        }
+B|    }
+R|    return ⟦1:false⟧;
+-|}
+-|
+-|bool RedAlcance::esAlcanzable(int origenId, int destinoId) {
+V|    if (origenId < 0 || origenId >= cantidadEstaciones) return ⟦2:false⟧;
+V|    if (destinoId < 0 || destinoId >= cantidadEstaciones) return false;
+I|    bool visitada[MAX_ESTACIONES];
+I|    for (int i = 0; i < cantidadEstaciones; i++) visitada[i] = ⟦2:false⟧;
+R|    return alcanzableRec(⟦2:origenId⟧, destinoId, visitada);
+-|}`
+},
+{
+  id:'componentes', tema:'grafos', titulo:'Variante · contar componentes',
+  origen:'Variante probable de DFS (no salió en los modelos)',
+  enunciado:'Contar cuántas zonas aisladas tiene la red: grupos de estaciones conectadas entre sí pero no con el resto.',
+  restricciones:'DFS recursivo. Un for recorre todas las estaciones: cada vez que encuentra una sin visitar, es una zona nueva y la marca entera con el DFS.',
+  lineas:`
+-|void RedZonas::marcarZona(int estacionId, bool visitada[]) {
+K|    ⟦1:visitada[estacionId] = true⟧;
+B|    for (int v = 0; v < cantidadEstaciones; v++) {
+K|        if (hayTunel[estacionId][v] && ⟦1:!visitada[v]⟧) {
+K|            ⟦1:marcarZona(v, visitada)⟧;
+B|        }
+B|    }
+-|}
+-|
+-|int RedZonas::cantidadZonas() {
+I|    bool visitada[MAX_ESTACIONES];
+I|    for (int i = 0; i < cantidadEstaciones; i++) visitada[i] = ⟦2:false⟧;
+I|    int zonas = ⟦2:0⟧;
+B|    for (int i = 0; i < cantidadEstaciones; i++) {
+K|        if (⟦1:!visitada[i]⟧) {
+K|            ⟦1:zonas++⟧;
+K|            marcarZona(⟦1:i⟧, visitada);
+B|        }
+B|    }
+R|    return ⟦2:zonas⟧;
+-|}`
+},
+{
+  id:'dijkstra', tema:'grafos', titulo:'Dijkstra con arreglos',
+  origen:'Modelo de parcial II · Pregunta 1 (y Práctica · Pregunta 3)',
+  enunciado:'Costo mínimo entre dos estaciones en un grafo ponderado con pesos positivos. −1 si un id es inválido o no hay ruta, 0 si origen y destino coinciden.',
+  restricciones:'Sin priority_queue, sin vector. Arreglos locales. Usar COSTO_INFINITO de la clase, no INT_MAX.',
+  lineas:`
+-|int MetroNocturno::costoMinimoEnergia(int origenId, int destinoId) {
+V|    if (origenId < 0 || origenId >= cantidadEstaciones) return ⟦2:-1⟧;
+V|    if (destinoId < 0 || destinoId >= cantidadEstaciones) return -1;
+V|    if (origenId == destinoId) return ⟦2:0⟧;
+-|
+I|    int dist[MAX_ESTACIONES];
+I|    bool visitado[MAX_ESTACIONES];
+I|    for (int i = 0; i < cantidadEstaciones; i++) {
+I|        dist[i] = ⟦1:COSTO_INFINITO⟧;
+I|        visitado[i] = false;
+I|    }
+K|    ⟦1:dist[origenId] = 0⟧;
+-|
+B|    for (int paso = 0; paso < cantidadEstaciones; paso++) {
+I|        int u = ⟦2:-1⟧;
+B|        for (int i = 0; i < cantidadEstaciones; i++) {
+K|            if (⟦1:!visitado[i]⟧ && (u == -1 || ⟦1:dist[i] < dist[u]⟧)) u = i;
+B|        }
+V|        if (u == -1 || dist[u] == COSTO_INFINITO) ⟦2:break⟧;
+K|        ⟦1:visitado[u] = true⟧;
+B|        for (int v = 0; v < cantidadEstaciones; v++) {
+B|            if (conexiones[u][v].⟦2:existe⟧ && !visitado[v]) {
+K|                int nuevo = ⟦1:dist[u] + conexiones[u][v].costoEnergia⟧;
+K|                if (⟦1:nuevo < dist[v]⟧) dist[v] = nuevo;
+B|            }
+B|        }
+B|    }
+R|    if (dist[destinoId] == COSTO_INFINITO) return ⟦1:-1⟧;
+R|    return ⟦2:dist[destinoId]⟧;
+-|}`
+},
+{
+  id:'avl', tema:'arboles', titulo:'Altura y factor de balance (AVL)',
+  origen:'Modelo de parcial II · Pregunta 2',
+  enunciado:'alturaDe: árbol vacío = 0, hoja = 1. factorBalanceDe: altura(izq) − altura(der) de la estación con ese id; 999 si no existe.',
+  restricciones:'Recursión para la altura. Buscar por id usando la propiedad de búsqueda. Sin estructuras auxiliares.',
+  lineas:`
+-|int MonitorAVL::alturaDe(NodoAVL* nodo) {
+V|    if (nodo == nullptr) return ⟦1:0⟧;
+B|    int izq = alturaDe(nodo->⟦2:izquierdo⟧);
+B|    int der = alturaDe(nodo->derecho);
+K|    return ⟦1:1 +⟧ (izq > der ? ⟦1:izq : der⟧);
+-|}
+-|
+-|int MonitorAVL::factorBalanceDe(int estacionId) {
+I|    NodoAVL* actual = ⟦2:raiz⟧;
+B|    while (actual != nullptr && actual->dato.id != estacionId) {
+K|        if (⟦1:estacionId < actual->dato.id⟧) actual = actual->⟦1:izquierdo⟧;
+K|        else actual = actual->⟦1:derecho⟧;
+B|    }
+V|    if (actual == nullptr) return ⟦1:999⟧;
+K|    return alturaDe(⟦1:actual->izquierdo⟧) - alturaDe(⟦1:actual->derecho⟧);
+-|}`
+},
+{
+  id:'ventana', tema:'arboles', titulo:'Contar en un rango con poda (BST)',
+  origen:'Modelo de parcial II · Pregunta 3',
+  enunciado:'Contar los servicios con minutoDesde <= minutoSalida <= minutoHasta (inclusivo). Si minutoDesde > minutoHasta, devolver 0.',
+  restricciones:'Recursividad. Podar las ramas que no pueden aportar. Sin vector ni estructuras auxiliares.',
+  lineas:`
+-|int AgendaServicios::contarEnVentanaRec(NodoServicio* actual,
+-|                                        int minutoDesde,
+-|                                        int minutoHasta) {
+V|    if (actual == nullptr) return ⟦1:0⟧;
+I|    int m = actual->dato.⟦2:minutoSalida⟧;
+K|    if (⟦1:m < minutoDesde⟧)
+K|        return contarEnVentanaRec(actual->⟦1:derecho⟧, minutoDesde, minutoHasta);
+K|    if (⟦1:m > minutoHasta⟧)
+K|        return contarEnVentanaRec(actual->⟦1:izquierdo⟧, minutoDesde, minutoHasta);
+R|    return ⟦1:1⟧ + contarEnVentanaRec(actual->izquierdo, minutoDesde, minutoHasta)
+R|             + contarEnVentanaRec(actual->⟦2:derecho⟧, minutoDesde, minutoHasta);
+-|}
+-|
+-|int AgendaServicios::cantidadServiciosEnVentana(int minutoDesde,
+-|                                                int minutoHasta) {
+V|    if (⟦1:minutoDesde > minutoHasta⟧) return 0;
+R|    return contarEnVentanaRec(⟦1:raiz⟧, minutoDesde, minutoHasta);
+-|}`
+},
+{
+  id:'insertar', tema:'arboles', titulo:'Insertar en un ABB (recursivo)',
+  origen:'Ejercitación ABB (aula virtual)',
+  enunciado:'Insertar un valor respetando la propiedad del ABB: menores a la izquierda, mayores a la derecha. Devuelve la raíz del subárbol.',
+  restricciones:'Recursivo. El nodo nuevo siempre termina siendo una hoja.',
+  lineas:`
+-|Nodo* insertarRec(Nodo* nodo, int valor) {
+K|    if (nodo == nullptr) return ⟦1:new Nodo(valor)⟧;
+K|    if (⟦1:valor < nodo->dato⟧)
+K|        nodo->izquierdo = ⟦1:insertarRec(nodo->izquierdo, valor)⟧;
+B|    else if (valor > nodo->dato)
+B|        nodo->⟦2:derecho⟧ = insertarRec(nodo->derecho, valor);
+R|    return ⟦1:nodo⟧;
+-|}`
+},
+{
+  id:'seleccion', tema:'ordenamiento', titulo:'Selección directa',
+  origen:'Unidad Ordenamiento',
+  enunciado:'En cada pasada busca el mínimo de la parte sin ordenar y lo intercambia con la primera posición sin ordenar.',
+  restricciones:'Lo ordenado crece desde la izquierda. Un solo intercambio por pasada.',
+  lineas:`
+-|void seleccion(int a[], int n) {
+B|    for (int i = 0; i < ⟦2:n - 1⟧; i++) {
+K|        int min = ⟦1:i⟧;
+B|        for (int j = ⟦1:i + 1⟧; j < n; j++) {
+K|            if (⟦1:a[j] < a[min]⟧) ⟦1:min = j⟧;
+B|        }
+K|        int aux = a[i]; a[i] = a[⟦1:min⟧]; a[min] = aux;
+B|    }
+-|}`
+},
+{
+  id:'burbuja', tema:'ordenamiento', titulo:'Burbuja',
+  origen:'Unidad Ordenamiento',
+  enunciado:'Compara vecinos y los intercambia si están al revés. En cada pasada el mayor "flota" hasta el final.',
+  restricciones:'Lo ordenado crece desde la derecha. Muchos intercambios por pasada.',
+  lineas:`
+-|void burbuja(int a[], int n) {
+B|    for (int i = 0; i < n - 1; i++) {
+B|        for (int j = 0; j < ⟦1:n - 1 - i⟧; j++) {
+K|            if (⟦1:a[j] > a[j + 1]⟧) {
+K|                int aux = a[j]; a[j] = ⟦1:a[j + 1]⟧; a[j + 1] = aux;
+B|            }
+B|        }
+B|    }
+-|}`
+},
+{
+  id:'insercion', tema:'ordenamiento', titulo:'Inserción directa',
+  origen:'Unidad Ordenamiento',
+  enunciado:'Toma el siguiente elemento y lo mete en su lugar dentro de la parte ya ordenada, corriendo los mayores un lugar a la derecha.',
+  restricciones:'No intercambia: desplaza. Ideal para arreglos casi ordenados.',
+  lineas:`
+-|void insercion(int a[], int n) {
+B|    for (int i = ⟦1:1⟧; i < n; i++) {
+K|        int clave = ⟦1:a[i]⟧;
+I|        int j = ⟦1:i - 1⟧;
+K|        while (⟦1:j >= 0⟧ && ⟦1:a[j] > clave⟧) {
+K|            a[j + 1] = ⟦1:a[j]⟧;
+B|            ⟦2:j--⟧;
+B|        }
+K|        a[⟦1:j + 1⟧] = clave;
+B|    }
+-|}`
+}
+];
+
+
+var MC = [
+// La primera opción es siempre la correcta; se mezclan al mostrarlas.
+{t:'grafos', q:'¿En cuál de estos escenarios Dijkstra es una elección correcta?', o:['Cuando todos los pesos de las aristas son no negativos.','Cuando existen ciclos negativos alcanzables.','Cuando se necesita ordenar un BST.','Cuando las aristas no tienen peso y se quiere contar componentes.'], w:'Pregunta real de la práctica. Dijkstra fija un nodo como definitivo al elegirlo; con un peso negativo esa decisión podría estar mal.'},
+{t:'grafos', q:'Solo hay que saber si existe una ruta entre dos estaciones en un grafo sin pesos, y el enunciado prohíbe la recursión. ¿Qué usás?', o:['BFS con una cola.','DFS recursivo.','Dijkstra con arreglos.','Floyd-Warshall.'], w:'Sin pesos y sin recursión: BFS con Queue<int>. Es el ejercicio existeRutaSegura.'},
+{t:'grafos', q:'En BFS, ¿en qué momento conviene marcar un nodo como visitado?', o:['Al encolarlo.','Al terminar el while.','Solo si es el destino.','Nunca, la cola evita repetidos.'], w:'Si lo marcás recién al sacarlo, el mismo nodo puede entrar varias veces a la cola.'},
+{t:'grafos', q:'En Dijkstra con arreglos, ¿qué nodo se elige en cada pasada?', o:['El no visitado con menor dist.','El primero no visitado por índice.','El vecino del último elegido.','El de mayor dist.'], w:'Esa es la línea clave: !visitado[i] && (u == -1 || dist[i] < dist[u]).'},
+{t:'grafos', q:'Terminó Dijkstra y dist[destinoId] sigue valiendo COSTO_INFINITO. ¿Qué devuelve costoMinimoEnergia?', o:['-1','999999','0','dist[destinoId]'], w:'El enunciado pide -1 si no existe ruta. Devolver 999999 es el error más común.'},
+{t:'grafos', q:'costoMinimoEnergia(2, 2) con ids válidos devuelve…', o:['0','-1','El costo del túnel más barato de la estación 2','COSTO_INFINITO'], w:'"0 si origen y destino coinciden". Va como validación antes de inicializar nada.'},
+{t:'grafos', q:'dfsComponente(estacionId, visitada) cuenta el tamaño de la componente. ¿Con qué valor arranca total?', o:['1, porque cuenta a la estación actual.','0, porque todavía no visitó vecinos.','cantidadEstaciones.','-1.'], w:'Cada llamada se cuenta a sí misma (1) y le suma lo que devuelven sus vecinos no visitados.'},
+{t:'grafos', q:'¿Para qué sirve el arreglo visitada en BFS y DFS?', o:['Para no procesar dos veces un nodo y evitar ciclos infinitos.','Para guardar el costo acumulado.','Para ordenar los nodos.','Para saber cuántas aristas hay.'], w:'En un grafo con ciclos, sin visitada el recorrido no termina nunca.'},
+{t:'grafos', q:'Dijkstra con matriz de adyacencia y arreglos (sin priority_queue) cuesta…', o:['O(V²)','O(V)','O(log V)','O(V³)'], w:'V pasadas, y en cada una se recorren los V nodos para elegir y los V para relajar.'},
+{t:'grafos', q:'¿Qué calcula Floyd-Warshall?', o:['El camino mínimo entre todos los pares de nodos.','El árbol de expansión mínima.','El camino mínimo desde un único origen.','Las componentes conexas.'], w:'Tres for anidados (k, i, j): ¿mejora ir de i a j pasando por k? Cuesta O(V³).'},
+{t:'grafos', q:'¿Qué obtiene el algoritmo de Prim?', o:['Un árbol de expansión mínima.','El camino más corto entre dos nodos.','Un orden topológico.','El nodo de mayor grado.'], w:'Conecta todos los nodos con el menor costo total, sin formar ciclos.'},
+{t:'grafos', q:'Con la Queue de la cátedra, ¿cómo se saca y obtiene el elemento del frente?', o:['x = cola.front(); y después cola.dequeue();','x = cola.dequeue();','x = cola.pop();','cola.front(); solamente'], w:'dequeue() no devuelve nada y front() no saca. Siempre van las dos líneas juntas.'},
+{t:'grafos', q:'Te piden la mínima cantidad de transbordos entre dos estaciones (sin pesos). ¿Qué usás?', o:['BFS, guardando pasos[v] = pasos[actual] + 1.','DFS recursivo, sumando 1 en cada llamada.','Dijkstra con todos los pesos en 0.','Floyd-Warshall.'], w:'BFS recorre por niveles: la primera vez que llega a un nodo, lo hace con la menor cantidad de pasos. DFS no garantiza eso.'},
+{t:'grafos', q:'Para contar cuántas componentes (zonas aisladas) tiene un grafo, ¿qué hacés?', o:['Recorro todos los nodos; cada vez que encuentro uno sin visitar, sumo 1 y lanzo un DFS desde él.','Lanzo un solo DFS desde el nodo 0 y cuento los visitados.','Cuento las aristas y divido por 2.','Uso Dijkstra y cuento los que quedan en infinito.'], w:'Un solo DFS marca una sola componente. El for de afuera es el que encuentra las demás.'},
+{t:'grafos', q:'En un DFS recursivo que devuelve bool, ¿qué está mal en: for (...) if (hay arista y no visitado) return dfs(v, ...);', o:['Corta en el primer vecino aunque por ahí no se llegue; hay que hacer if (dfs(v, ...)) return true;','Nada, es correcto.','Falta marcar visitado al final.','Debería usar una cola.'], w:'Si el primer vecino devuelve false, el return lo propaga y nunca prueba los demás vecinos.'},
+{t:'grafos', q:'En BFS con un arreglo pasos[] inicializado en −1, ¿qué significa pasos[v] == −1?', o:['Que v todavía no fue visitado.','Que v no tiene vecinos.','Que v es el origen.','Que no hay ruta al destino.'], w:'El mismo arreglo sirve para las dos cosas: −1 = no visto, cualquier otro valor = distancia desde el origen.'},
+{t:'arboles', q:'El factor de balance de un nodo AVL se define como…', o:['altura(izquierdo) − altura(derecho)','altura(derecho) + altura(izquierdo)','cantidad de nodos izquierdos − derechos','altura del nodo − 1'], w:'Así lo define el Modelo de parcial II. Balanceado si da −1, 0 o +1.'},
+{t:'arboles', q:'Se insertan 50, 30, 70, 20. Con altura de vacío = 0 y de hoja = 1, ¿cuánto vale factorBalanceDe(50)?', o:['1','0','2','-1'], w:'Izquierda: 30 con hijo 20 → altura 2. Derecha: 70 → altura 1. 2 − 1 = 1.'},
+{t:'arboles', q:'factorBalanceDe(99) y la estación 99 no existe. ¿Qué devuelve?', o:['999','0','-1','nullptr'], w:'Lo dice el enunciado. Leé siempre la lista de valores especiales antes de programar.'},
+{t:'arboles', q:'En alturaDe, ¿qué se devuelve cuando el nodo no es nulo?', o:['1 + el mayor entre la altura izquierda y la derecha.','1 + altura izquierda + altura derecha.','El mayor entre las dos alturas.','altura izquierda − altura derecha.'], w:'Sumar las dos da el tamaño, no la altura. Y sin el 1 no contás al nodo actual.'},
+{t:'arboles', q:'Contando servicios en [desde, hasta] en un BST: el nodo actual tiene un valor menor que desde. ¿Qué hacés?', o:['Sigo solo por el subárbol derecho.','Sigo solo por el subárbol izquierdo.','Sigo por los dos.','Devuelvo 0.'], w:'Todo lo que está a la izquierda es todavía más chico: no puede aportar. Eso es podar.'},
+{t:'arboles', q:'¿Qué recorrido de un BST devuelve las claves en orden ascendente?', o:['In-orden.','Pre-orden.','Post-orden.','Por niveles.'], w:'Izquierda, raíz, derecha: primero los menores, después el nodo, después los mayores.'},
+{t:'arboles', q:'Un nodo AVL quedó con FB = +2 y su hijo izquierdo con FB = +1. ¿Qué rotación corresponde?', o:['Simple a la derecha.','Simple a la izquierda.','Doble izquierda-derecha.','Ninguna, está balanceado.'], w:'Pesa a la izquierda dos veces seguidas (mismo signo): rotación simple hacia el lado contrario.'},
+{t:'arboles', q:'¿Cuánto cuesta buscar en un BST en el peor caso?', o:['O(n), si quedó degenerado como una lista.','O(log n) siempre.','O(1).','O(n log n).'], w:'Por eso existe el AVL: garantiza O(log n) manteniendo el balance.'},
+{t:'arboles', q:'cantidadServiciosEnVentana(200, 100) devuelve…', o:['0, porque la ventana es inválida.','La cantidad entre 100 y 200.','-1.','El total de servicios.'], w:'"Si minutoDesde > minutoHasta debe devolver 0". Es la validación del método público.'},
+{t:'otras', q:'El centro de control debe despachar siempre el tren con mayor prioridad. ¿Qué estructura conviene para consultar repetidamente el máximo?', o:['Un max-heap, porque mantiene el elemento de mayor prioridad en la raíz.','Una pila, porque siempre extrae el último insertado.','Una matriz de adyacencia.','Un recorrido in-order.'], w:'Pregunta real del modelo. Ver el máximo en un max-heap es O(1).'},
+{t:'otras', q:'En un max-heap, ¿qué propiedad debe cumplirse?', o:['Cada nodo padre tiene prioridad mayor o igual que sus hijos.','Los nodos del subárbol izquierdo son menores que la raíz y los del derecho mayores.','Todos los nodos tienen exactamente dos hijos.','El recorrido in-order devuelve prioridades ordenadas.'], w:'Pregunta real de la práctica. La opción de izquierda/derecha describe un BST, no un heap.'},
+{t:'otras', q:'Para representar qué vías están habilitadas o bloqueadas, ¿por qué puede convenir un bitset?', o:['Porque representa estados booleanos de forma compacta y permite operaciones rápidas sobre bits.','Porque almacena strings de tamaño variable.','Porque ordena automáticamente los trenes por prioridad.','Porque reemplaza cualquier algoritmo de grafos.'], w:'Pregunta real del modelo. Un bit por estado en vez de un byte por bool.'},
+{t:'otras', q:'Un heap guardado en un arreglo desde el índice 0: ¿dónde están los hijos del nodo i?', o:['En 2i + 1 y 2i + 2.','En i + 1 e i + 2.','En i / 2 e i / 2 + 1.','En 2i y 2i − 1.'], w:'Y el padre de i está en (i − 1) / 2.'},
+{t:'otras', q:'¿Cuánto cuesta en promedio buscar una clave en una tabla hash?', o:['O(1)','O(log n)','O(n)','O(n log n)'], w:'La función hash calcula directamente la casilla. Con muchas colisiones puede degradar a O(n).'},
+{t:'otras', q:'¿Qué es una colisión en una tabla hash?', o:['Dos claves distintas a las que la función hash les asigna la misma casilla.','Insertar dos veces la misma clave.','Que la tabla se quede sin memoria.','Buscar una clave que no existe.'], w:'Se resuelve con encadenamiento (una lista por casilla) o probando la casilla siguiente.'},
+{t:'otras', q:'Insertar un elemento en un heap de n elementos cuesta…', o:['O(log n)','O(1)','O(n)','O(n²)'], w:'Se agrega al final y sube intercambiándose con su padre, a lo sumo la altura del árbol.'},
+{t:'otras', q:'Necesitás buscar un tren por su código lo más rápido posible, sin importar el orden. ¿Qué estructura?', o:['Tabla hash.','Max-heap.','Lista enlazada.','Bitset.'], w:'"Buscar por clave, rápido, sin orden" es la frase que delata a la tabla hash.'},
+{t:'ordenamiento', q:'El arreglo ya está casi ordenado. ¿Qué algoritmo simple conviene?', o:['Inserción.','Selección.','Quicksort con pivote en el primer elemento.','Ninguno, todos tardan igual.'], w:'Inserción casi no entra al while: su mejor caso es O(n). Selección hace n² siempre.'},
+{t:'ordenamiento', q:'¿Cuál tiene O(n log n) garantizado pero necesita memoria extra?', o:['Mergesort.','Quicksort.','Burbuja.','Inserción.'], w:'Mergesort no es in-place: mezcla en un arreglo auxiliar de tamaño n.'},
+{t:'ordenamiento', q:'¿Cuál es el peor caso de Quicksort y cuándo ocurre?', o:['O(n²), cuando el pivote queda siempre en un extremo.','O(n log n), siempre.','O(n), con el arreglo ordenado.','O(n²), cuando hay elementos repetidos solamente.'], w:'Con mal pivote cada partición saca un solo elemento: n niveles en vez de log n.'},
+{t:'ordenamiento', q:'¿Cuáles de estos son estables?', o:['Burbuja, Inserción y Mergesort.','Selección y Quicksort.','Solo Quicksort.','Todos.'], w:'Estable = no cambia el orden relativo de los iguales. Selección y Quicksort no lo son.'},
+{t:'ordenamiento', q:'Después de la primera pasada completa de Burbuja, ¿qué se puede asegurar?', o:['El mayor quedó en la última posición.','El menor quedó en la primera posición.','El arreglo quedó ordenado.','La mitad izquierda está ordenada.'], w:'Burbuja arma lo ordenado desde la derecha. Selección lo hace desde la izquierda.'},
+{t:'ordenamiento', q:'¿Cuál es el mejor caso de Selección?', o:['O(n²): siempre recorre todo para buscar el mínimo.','O(n).','O(n log n).','O(1).'], w:'No tiene forma de darse cuenta de que ya está ordenado.'}
+];
+
+var FC = [
+{t:'grafos', q:'Las 4 partes de todo método del parcial', a:'V-I-B-R\nValidar → Inicializar → Bucle → Retornar'},
+{t:'grafos', q:'Validar un id de estación', a:'if (id < 0 || id >= cantidadEstaciones) return …;\n\nOjo: >= y no >'},
+{t:'grafos', q:'BFS: las dos líneas para tomar el siguiente de la cola', a:'int actual = cola.front();\ncola.dequeue();'},
+{t:'grafos', q:'BFS: condición para encolar al vecino v', a:'hayTunel[actual][v] && !visitada[v] && estaciones[v].habilitada\n\nY adentro: visitada[v] = true; cola.enqueue(v);'},
+{t:'grafos', q:'BFS: condición del while', a:'while (!cola.isEmpty())'},
+{t:'grafos', q:'DFS recursivo: las 3 cosas que hace dfsComponente', a:'1. visitada[id] = true;\n2. total = 1;\n3. por cada vecino no visitado y operativo:\n   total += dfsComponente(v, visitada);'},
+{t:'grafos', q:'Dijkstra: cómo se inicializa', a:'dist[i] = COSTO_INFINITO y visitado[i] = false para todos.\nDespués dist[origenId] = 0;'},
+{t:'grafos', q:'Dijkstra: los 4 pasos dentro del for', a:'E-C-F-R\nElijo el no visitado de menor dist\nCorto si no hay (u == -1 o dist infinita)\nFijo: visitado[u] = true\nRelajo a los vecinos'},
+{t:'grafos', q:'Dijkstra: la relajación', a:'int nuevo = dist[u] + conexiones[u][v].costoEnergia;\nif (nuevo < dist[v]) dist[v] = nuevo;'},
+{t:'grafos', q:'Dijkstra: las dos líneas finales', a:'if (dist[destinoId] == COSTO_INFINITO) return -1;\nreturn dist[destinoId];'},
+{t:'grafos', q:'¿Cuándo marco visitado? BFS / DFS / Dijkstra', a:'BFS: al encolar.\nDFS: al entrar a la función.\nDijkstra: al elegir el de menor distancia.'},
+{t:'grafos', q:'BFS vs DFS vs Dijkstra: ¿qué estructura usa cada uno?', a:'BFS: una cola.\nDFS: la recursión (pila de llamadas).\nDijkstra: arreglo dist[] + visitado[].'},
+{t:'grafos', q:'Dijkstra / Floyd / Prim: ¿qué calcula cada uno?', a:'Dijkstra: mínimo desde UN origen (pesos ≥ 0).\nFloyd-Warshall: mínimo entre TODOS los pares, O(V³).\nPrim: árbol de expansión mínima.'},
+{t:'grafos', q:'BFS que cuenta pasos: las 3 diferencias con el BFS normal', a:'1. pasos[i] = -1 para todos (reemplaza a visitada).\n2. pasos[origen] = 0;\n3. Al encolar: pasos[v] = pasos[actual] + 1;\n\nCondición del vecino: pasos[v] == -1'},
+{t:'grafos', q:'DFS que devuelve bool: la línea dentro del for', a:'if (alcanzableRec(v, destino, visitada)) return true;\n\nY al final de la función: return false;'},
+{t:'grafos', q:'Contar componentes: el for de afuera', a:'for (int i = 0; i < cantidadEstaciones; i++)\n  if (!visitada[i]) {\n    zonas++;\n    marcarZona(i, visitada);\n  }'},
+{t:'arboles', q:'alturaDe(nodo) completa', a:'if (nodo == nullptr) return 0;\nint izq = alturaDe(nodo->izquierdo);\nint der = alturaDe(nodo->derecho);\nreturn 1 + (izq > der ? izq : der);'},
+{t:'arboles', q:'Factor de balance', a:'altura(izquierdo) − altura(derecho)\n\nBalanceado: −1, 0 o +1'},
+{t:'arboles', q:'Buscar un id en un BST sin recursión', a:'actual = raiz;\nwhile (actual != nullptr && actual->dato.id != id) {\n  if (id < actual->dato.id) actual = actual->izquierdo;\n  else actual = actual->derecho;\n}'},
+{t:'arboles', q:'Contar en rango: las dos podas', a:'Si m < desde → sigo solo por la derecha.\nSi m > hasta → sigo solo por la izquierda.\nSi está adentro → 1 + izquierda + derecha.'},
+{t:'arboles', q:'Tamaño vs altura de un árbol', a:'Tamaño: 1 + tam(izq) + tam(der)  → suma\nAltura: 1 + max(alt(izq), alt(der))  → el mayor'},
+{t:'arboles', q:'Pre-orden, in-orden, post-orden', a:'Pre: Raíz Izq Der\nIn: Izq Raíz Der (BST → sale ordenado)\nPost: Izq Der Raíz'},
+{t:'arboles', q:'Rotaciones AVL: ¿simple o doble?', a:'FB +2 e hijo izq ≥ 0 → simple a la derecha\nFB +2 e hijo izq < 0 → doble izq-der\nFB −2 e hijo der ≤ 0 → simple a la izquierda\nFB −2 e hijo der > 0 → doble der-izq\n\nMismo signo: simple. Signos distintos: doble.'},
+{t:'arboles', q:'Insertar en un ABB: caso base', a:'if (nodo == nullptr) return new Nodo(valor);\n\nY al final de la función: return nodo;'},
+{t:'otras', q:'Propiedad del max-heap', a:'Cada padre es mayor o igual que sus hijos.\nEl máximo está siempre en la raíz: verlo cuesta O(1).'},
+{t:'otras', q:'Heap en arreglo: hijos y padre de i', a:'Hijo izquierdo: 2i + 1\nHijo derecho: 2i + 2\nPadre: (i − 1) / 2'},
+{t:'otras', q:'¿Por qué un bitset?', a:'Guarda estados booleanos de forma compacta (1 bit cada uno) y permite operaciones rápidas sobre bits: &, |, ^, ~, <<'},
+{t:'otras', q:'Prender, apagar y consultar el bit i', a:'Prender: x |= (1 << i)\nApagar: x &= ~(1 << i)\nConsultar: x & (1 << i)'},
+{t:'otras', q:'Tabla hash: costo y problema', a:'Buscar, insertar y borrar: O(1) promedio.\nProblema: colisiones → peor caso O(n).\nNo mantiene orden.'},
+{t:'otras', q:'Dos formas de resolver colisiones', a:'Encadenamiento: una lista en cada casilla.\nDireccionamiento abierto: probar la casilla siguiente (sondeo lineal).'},
+{t:'otras', q:'¿Qué estructura para…? máximo repetido / buscar por clave / habilitado-bloqueado', a:'Máximo repetido → max-heap\nBuscar por clave → tabla hash\nHabilitado o bloqueado → bitset'},
+{t:'ordenamiento', q:'Mejor y peor caso: Burbuja, Selección, Inserción', a:'Burbuja: O(n) / O(n²)\nSelección: O(n²) / O(n²)\nInserción: O(n) / O(n²)'},
+{t:'ordenamiento', q:'Mejor y peor caso: MergeSort y QuickSort', a:'MergeSort: O(n log n) / O(n log n)\nQuickSort: O(n log n) / O(n²)'},
+{t:'ordenamiento', q:'¿Cuáles son estables?', a:'Sí: Burbuja, Inserción, MergeSort.\nNo: Selección, QuickSort.'},
+{t:'ordenamiento', q:'¿Cuál NO es in-place?', a:'MergeSort: necesita un arreglo auxiliar.\nBurbuja, Selección, Inserción y QuickSort sí son in-place.'},
+{t:'ordenamiento', q:'La línea que distingue a cada uno: Burbuja / Selección / Inserción', a:'Burbuja: if (a[j] > a[j+1]) intercambiar\nSelección: if (a[j] < a[min]) min = j;\nInserción: a[j+1] = a[j]; (desplaza)'},
+{t:'ordenamiento', q:'¿Desde qué lado crece la parte ordenada?', a:'Selección e Inserción: desde la izquierda.\nBurbuja: desde la derecha (el mayor flota al final).'}
+];
+
+(function(){
+  function $(id){return document.getElementById(id);}
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function fmt(s){return esc(s).replace(/`([^`]+)`/g,'<code>$1</code>');}
+  function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+  function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+  function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+  var MODES=['completar','opciones','tarjetas'];
+  var state={mode:'completar', tema:load('ep2-tema','todos'), nivel:load('ep2-nivel',1)};
+  function byTema(list,key){return list.filter(function(x){return state.tema==='todos'||x[key]===state.tema;});}
+
+  // ---------- modo y tema ----------
+  function setMode(m){
+    if(MODES.indexOf(m)===-1) m='completar';
+    state.mode=m;
+    MODES.forEach(function(x){ $('p-'+x).hidden=(x!==m); $('tab-'+x).setAttribute('aria-selected', x===m?'true':'false'); });
+  }
+  document.querySelectorAll('.modes button').forEach(function(b){
+    b.addEventListener('click',function(){ location.hash=b.dataset.mode; setMode(b.dataset.mode); });
+  });
+  window.addEventListener('hashchange',function(){ setMode(location.hash.slice(1)); });
+  function setTema(t){
+    state.tema=t; save('ep2-tema',t);
+    document.querySelectorAll('#temas .chip').forEach(function(c){c.setAttribute('aria-pressed', c.dataset.tema===t?'true':'false');});
+    fillAlgos(); mcStart(); fcStart();
+  }
+  document.querySelectorAll('#temas .chip').forEach(function(c){ c.addEventListener('click',function(){setTema(c.dataset.tema);}); });
+
+  // ---------- completar código ----------
+  var curAlgo=null;
+  function renderLines(a, level, reveal){
+    var n=0;
+    return a.lineas.replace(/^\n/,'').split('\n').map(function(l){
+      var role=l[0]==='-'?'0':l[0], src=l.slice(2), out='', last=0;
+      src.replace(/⟦(\d):(.*?)⟧/g,function(m,lv,ans,off){
+        out+=esc(src.slice(last,off));
+        if(+lv<=level && !reveal){ n++; out+='<input class="gap" id="gap-'+a.id+'-'+n+'" data-a="'+esc(ans)+'" style="width:'+(ans.length+2)+'ch" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Hueco '+n+'">'; }
+        else if(+lv<=level){ out+='<span class="shown">'+esc(ans)+'</span>'; }
+        else out+=esc(ans);
+        last=off+m.length; return m;
+      });
+      out+=esc(src.slice(last));
+      return '<span class="ln r'+role+'">'+(out||' ')+'</span>';
+    }).join('');
+  }
+  function fillAlgos(){
+    var list=byTema(ALGOS,'tema');
+    var sel=$('algoSel');
+    if(!list.length){ sel.innerHTML='<option value="">No hay ejercicios de código de este tema</option>'; curAlgo=null; renderAlgo(); return; }
+    sel.innerHTML=list.map(function(a){return '<option value="'+a.id+'">'+esc(a.titulo)+'</option>';}).join('');
+    curAlgo=list[0]; renderAlgo();
+  }
+  function renderAlgo(){
+    document.querySelectorAll('#niveles .chip').forEach(function(c){c.setAttribute('aria-pressed', +c.dataset.nivel===state.nivel?'true':'false');});
+    $('gapResult').textContent='';
+    var none=!curAlgo;
+    ['checkBtn','solBtn','resetBtn'].forEach(function(id){$(id).disabled=none;});
+    if(none){ $('brief').innerHTML='<span>En los modelos de parcial este tema solo aparece en opción múltiple. Practicalo en los otros dos modos.</span>'; $('gapMode').hidden=true; $('memMode').hidden=true; return; }
+    var a=curAlgo;
+    $('brief').innerHTML='<span class="src">'+esc(a.origen)+'</span><span><b>Enunciado.</b> '+esc(a.enunciado)+'</span><span><b>Restricciones.</b> '+esc(a.restricciones)+'</span>';
+    var mem=state.nivel===3;
+    $('gapMode').hidden=mem; $('memMode').hidden=!mem;
+    if(mem){
+      var first=a.lineas.replace(/^\n/,'').split('\n')[0].slice(2).replace(/⟦\d:(.*?)⟧/g,'$1');
+      $('memText').value=first+'\n    \n}';
+      $('memSol').hidden=true; $('memCode').innerHTML=renderLines(a,0,true);
+      $('checkBtn').textContent='Comparar con la solución';
+      $('gapHint').textContent='Escribí el método entero como en el examen y después comparalo línea por línea con la solución.';
+    } else {
+      $('code').innerHTML=renderLines(a,state.nivel,false);
+      $('checkBtn').textContent='Comprobar';
+      $('gapHint').textContent='Los espacios no cuentan. Escribí los nombres tal cual aparecen en el código base.';
+    }
+  }
+  $('algoSel').addEventListener('change',function(e){ curAlgo=ALGOS.filter(function(a){return a.id===e.target.value;})[0]||null; renderAlgo(); });
+  document.querySelectorAll('#niveles .chip').forEach(function(c){ c.addEventListener('click',function(){ state.nivel=+c.dataset.nivel; save('ep2-nivel',state.nivel); renderAlgo(); }); });
+  function norm(s){return s.replace(/\s+/g,'');}
+  $('checkBtn').addEventListener('click',function(){
+    if(!curAlgo) return;
+    if(state.nivel===3){ $('memSol').hidden=false; $('gapResult').textContent='Solución abajo. Revisá validaciones, inicialización y retorno.'; return; }
+    var gaps=$('code').querySelectorAll('.gap'), ok=0;
+    if(!gaps.length){ return; }
+    gaps.forEach(function(g){ var good=norm(g.value)===norm(g.dataset.a); g.classList.toggle('ok',good); g.classList.toggle('ko',!good); if(good) ok++; });
+    $('gapResult').textContent= ok===gaps.length ? 'Todo bien: '+ok+' de '+gaps.length+'.' : ok+' de '+gaps.length+' correctos. Corregí los marcados o mirá la solución.';
+  });
+  $('solBtn').addEventListener('click',function(){
+    if(!curAlgo) return;
+    if(state.nivel===3){ $('memSol').hidden=false; return; }
+    $('code').innerHTML=renderLines(curAlgo,state.nivel,true); $('gapResult').textContent='Solución completa. Reiniciá e intentalo sin mirar.';
+  });
+  $('resetBtn').addEventListener('click',renderAlgo);
+  $('code').addEventListener('keydown',function(e){
+    if(e.key!=='Enter') return; e.preventDefault();
+    var gaps=[].slice.call($('code').querySelectorAll('.gap')), i=gaps.indexOf(e.target);
+    if(i>-1 && i<gaps.length-1) gaps[i+1].focus(); else $('checkBtn').click();
+  });
+
+  // ---------- opción múltiple ----------
+  var mc={list:[],i:0,score:0,done:false};
+  function mcStart(){ mc.list=shuffle(byTema(MC,'t')); mc.i=0; mc.score=0; mcRender(); }
+  function mcRender(){
+    var total=mc.list.length;
+    if(mc.i>=total){
+      $('mcCount').textContent='Terminaste'; $('mcScore').textContent=mc.score+' de '+total+' correctas';
+      $('mcQ').textContent= total ? 'Resultado: '+mc.score+' de '+total+'.' : 'No hay preguntas de este tema.';
+      $('mcOpts').innerHTML=''; $('mcWhy').hidden=true; $('mcNext').disabled=true; return;
+    }
+    var it=mc.list[mc.i]; mc.done=false;
+    $('mcCount').textContent='Pregunta '+(mc.i+1)+' de '+total; $('mcScore').textContent=mc.score+' correctas';
+    $('mcQ').innerHTML=fmt(it.q); $('mcWhy').hidden=true; $('mcNext').disabled=true;
+    var opts=shuffle(it.o.map(function(t,k){return {t:t,ok:k===0};}));
+    $('mcOpts').innerHTML='';
+    opts.forEach(function(o,k){
+      var b=document.createElement('button'); b.className='opt'; b.id='mc-opt-'+k;
+      b.innerHTML='<b>'+'abcd'[k]+'.</b><span>'+fmt(o.t)+'</span>';
+      b.addEventListener('click',function(){
+        if(mc.done) return; mc.done=true;
+        if(o.ok) mc.score++;
+        [].forEach.call($('mcOpts').children,function(c,j){ if(opts[j].ok) c.classList.add('right'); });
+        if(!o.ok) b.classList.add('wrong');
+        $('mcWhy').innerHTML=(o.ok?'<b>Correcto.</b> ':'<b>No.</b> ')+fmt(it.w); $('mcWhy').hidden=false;
+        $('mcScore').textContent=mc.score+' correctas'; $('mcNext').disabled=false; $('mcNext').focus();
+      });
+      $('mcOpts').appendChild(b);
+    });
+  }
+  $('mcNext').addEventListener('click',function(){ mc.i++; mcRender(); });
+  $('mcRestart').addEventListener('click',mcStart);
+
+  // ---------- flashcards ----------
+  var fc={queue:[],total:0,known:0,flipped:false};
+  function fcStart(){ fc.queue=shuffle(byTema(FC,'t')); fc.total=fc.queue.length; fc.known=0; fc.flipped=false; fcRender(); }
+  function fcRender(){
+    var card=$('fcCard'), c=fc.queue[0];
+    $('fcKnown').textContent=fc.known+' de '+fc.total+' sabidas';
+    var end=!c;
+    ['fcFlip','fcNo','fcYes'].forEach(function(id){$(id).disabled=end;});
+    if(end){ $('fcCount').textContent='Mazo terminado'; card.className='card flipped'; card.innerHTML='<span class="q">Sabés las '+fc.total+' tarjetas de este mazo.</span><span class="a">Reiniciá el mazo o cambiá de tema.</span>'; return; }
+    $('fcCount').textContent='Quedan '+fc.queue.length;
+    card.className='card'+(fc.flipped?' flipped':'');
+    card.innerHTML= fc.flipped
+      ? '<span class="side">Respuesta</span><span class="a">'+esc(c.a)+'</span>'
+      : '<span class="side">Pregunta · tocá para ver la respuesta</span><span class="q">'+esc(c.q)+'</span>';
+    $('fcNo').disabled=$('fcYes').disabled=!fc.flipped;
+  }
+  function fcFlip(){ if(!fc.queue.length) return; fc.flipped=!fc.flipped; fcRender(); }
+  $('fcCard').addEventListener('click',fcFlip); $('fcFlip').addEventListener('click',fcFlip);
+  $('fcYes').addEventListener('click',function(){ fc.queue.shift(); fc.known++; fc.flipped=false; fcRender(); });
+  $('fcNo').addEventListener('click',function(){ fc.queue.push(fc.queue.shift()); fc.flipped=false; fcRender(); });
+  $('fcReset').addEventListener('click',fcStart);
+
+  setMode(location.hash.slice(1)||'completar');
+  setTema(state.tema);
+})();
+</script>
+
+</body></html>

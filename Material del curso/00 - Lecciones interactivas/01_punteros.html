@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; PUNTEROS.exe — LAC</title>
+<style>
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:19px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(32px,5.4vw,54px); line-height:1.08; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre-wrap;}
+  .code .ln{display:block; padding:1px 6px; border-radius:4px; border-left:3px solid transparent;}
+  .code .ln.active{background:rgba(0,212,255,0.09); border-left-color:var(--cyan); color:#fff;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .tp{color:var(--cyan);}
+  .mem-wrap{position:relative; margin-top:8px;}
+  .mem-cols{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:720px){.mem-cols{grid-template-columns:1fr;}}
+  .mem-col{border-radius:8px; padding:14px; min-height:190px; border:1px dashed var(--border);}
+  .mem-col.stack{background:rgba(124,58,237,0.05); border-color:rgba(124,58,237,0.3);}
+  .mem-col.heap{background:rgba(0,212,255,0.05); border-color:rgba(0,212,255,0.3);}
+  .mem-col-title{font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; margin-bottom:10px;}
+  .mem-col.stack .mem-col-title{color:var(--violet);}
+  .mem-col.heap .mem-col-title{color:var(--cyan);}
+  .mem-box{display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:9px 12px; margin-bottom:8px; font-family:var(--font-mono); font-size:12.5px; opacity:0; transform:translateY(6px); animation:rise .35s ease forwards;}
+  @keyframes rise{to{opacity:1; transform:translateY(0);}}
+  .mem-box .nm{color:var(--text);}
+  .mem-box .val{color:var(--green); font-weight:bold;}
+  .mem-box .val.flash{animation:flash .6s ease;}
+  @keyframes flash{0%{color:var(--amber);} 100%{color:var(--green);}}
+  .mem-box .addr{color:var(--text-faint); font-size:11px;}
+  .mem-box.null .val{color:var(--amber);}
+  .mem-empty{color:var(--text-faint); font-family:var(--font-mono); font-size:12px;}
+  #arrowSvg{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible;}
+  #arrowSvg path{fill:none; stroke:var(--cyan); stroke-width:1.6; filter:drop-shadow(0 0 3px rgba(0,212,255,0.6));}
+  #arrowSvg circle{fill:var(--cyan);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+  .arr-row{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+  .arr-cell{width:64px; text-align:center; padding:10px 4px 8px; background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; font-family:var(--font-mono); position:relative; transition:border-color .2s, box-shadow .2s;}
+  .arr-cell .idx{font-size:10px; color:var(--text-faint);}
+  .arr-cell .v{font-size:15px; color:var(--text); margin-top:2px;}
+  .arr-cell .a{font-size:9.5px; color:var(--text-faint); margin-top:3px;}
+  .arr-cell.on{border-color:var(--cyan); box-shadow:0 0 0 1px var(--cyan), 0 0 16px rgba(0,212,255,0.35);}
+  .arr-cell.on .v{color:var(--cyan);}
+  .arr-cell .car{position:absolute; top:-16px; left:50%; transform:translateX(-50%); color:var(--cyan); font-size:12px; opacity:0; transition:opacity .2s;}
+  .arr-cell.on .car{opacity:1;}
+  .lab-readout{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px;}
+  .ro{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 12px;}
+  .ro .k{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.06em;}
+  .ro .v{font-family:var(--font-mono); font-size:14px; color:var(--cyan); margin-top:3px;}
+  input[type=range]{width:100%; accent-color:var(--cyan);}
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:520px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // MÓDULO 1 DE 3</div>
+  <div class="nav-title">PUNTEROS.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a></li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a></li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a></li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a></li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a></li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a></li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a></li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>módulo 1/3</div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">MÓDULO 1 DE 3 · PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">Punteros: cómo señalar<br>un dato sin <span class="accent">copiarlo</span>.</h1>
+    <p class="cover-sub">Antes de modelar entidades con clases, necesitás una forma de conectar cosas sin copiarlas enteras. Eso es un puntero.</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> C++ básico, tipos y variables</span>
+      <span><b>siguiente módulo:</b> POO</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>El primer boceto de DiagramaCba</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat notas_reunion.txt</p>
+        <p><span class="accent">maga_t:</span> Con el sistema de tickets arreglado, RRHH quiere algo nuevo: una herramienta para dibujar diagramas — cajas y flechas conectadas entre sí.</p>
+        <p><span class="ok">ema_v:</span> Genial, ya sé cómo modelar cada caja como una clase.</p>
+        <p><span class="accent">maga_t:</span> Esperá. Antes de eso: si el diagrama tiene un Nodo A conectado a un Nodo B, ¿cómo hacés esa conexión sin copiar el Nodo B entero adentro del A?</p>
+        <p><span class="ok">ema_v:</span> ...¿guardando dónde vive B, en vez de una copia de B?</p>
+        <p><span class="accent">maga_t:</span> Eso es un puntero. Dominalo bien — las clases van a apoyarse en esto todo el tiempo.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Explicar qué es un puntero sin recurrir a "es una variable rara".</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Declarar, tomar la dirección de (<code>&amp;</code>) y desreferenciar (<code>*</code>) un puntero correctamente.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Recorrer un arreglo usando aritmética de punteros, no solo índices.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Reconocer los errores de puntero que más rompen sistemas reales.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3>¿Qué es un puntero, en criollo?</h3>
+    <p>Pensalo como la dirección de una casa escrita en un papel. El papel no es la casa — es mucho más chico, lo podés llevar en el bolsillo o pasárselo a alguien. Pero con ese papel podés <em>ir</em> hasta la casa. Un puntero es eso: no es el dato, es la dirección de memoria donde vive el dato.</p>
+    <p>La confusión más común de quien arranca es pensar que un puntero es "otro tipo de variable, como un int pero más raro". No lo es: es una variable que, en vez de guardar un valor de uso directo, guarda <strong>una dirección de memoria</strong>.</p>
+
+    <h3>Declarar, tomar dirección y desreferenciar</h3>
+    <div class="code">
+      <span class="ln"><span class="tp">int</span> x = 42;      <span class="cm">// una variable común</span></span>
+      <span class="ln"><span class="tp">int</span>* p = &amp;x;    <span class="cm">// &amp;x = "la dirección de x". p la guarda.</span></span>
+      <span class="ln">*p = 100;         <span class="cm">// *p = "el valor al que apunta p". Modifica x.</span></span>
+    </div>
+    <p><code>int*</code> se lee "puntero a int". <code>&amp;x</code> te da la dirección de <code>x</code>. <code>*p</code> te da (o te deja modificar) lo que hay en la dirección que <code>p</code> guarda.</p>
+
+    <h3>Aritmética de punteros</h3>
+    <p>Un arreglo en C++ es un bloque contiguo de memoria. Si tenés un puntero al primer elemento, <code>p + 1</code> no suma 1 byte: suma <code>sizeof(tipo)</code> bytes — te mueve exactamente al siguiente elemento. Por eso <code>p++</code> avanza una casilla del arreglo, no un byte.</p>
+
+    <div class="callout"><span class="k">CLEAN CODE</span><p>Los punteros crudos se nombran con prefijo <code>p_</code> (ej. <code>p_siguiente</code>), y los miembros de clase con <code>m_</code> + nombre descriptivo en camelCase (ej. <code>m_cantidadNodos</code>). Un nombre como <code>p</code> a secas solo se usa en ejemplos cortos como los de abajo — en código real, siempre descriptivo.</p></div>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+    <p class="lead">Ejecutá cada ejemplo paso a paso. No hay nada que puedas romper acá.</p>
+
+    <h3>Cómo vive un puntero en la pila</h3>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="stepNum">0</span> / <span id="stepTotal">4</span></span>
+        <div class="btn-row">
+          <button id="btnPrev">◀ anterior</button>
+          <button id="btnNext" class="primary">ejecutar línea ▶</button>
+          <button id="btnReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="code" id="memCode">
+        <span class="ln" data-line="1">  <span class="tp">int</span> x = 42;              <span class="cm">// declara x en la pila</span></span>
+        <span class="ln" data-line="2">  <span class="tp">int</span>* p = &amp;x;            <span class="cm">// p guarda la DIRECCIÓN de x</span></span>
+        <span class="ln" data-line="3">  *p = 100;                <span class="cm">// modifica x A TRAVÉS de p</span></span>
+        <span class="ln" data-line="4">  <span class="tp">int</span>* q = <span class="kw">nullptr</span>;      <span class="cm">// q no apunta a nada — todavía</span></span>
+      </div>
+      <div class="mem-wrap">
+        <div class="mem-cols">
+          <div class="mem-col stack"><div class="mem-col-title">PILA (STACK)</div><div id="stackBoxes"><div class="mem-empty">— vacía —</div></div></div>
+          <div class="mem-col heap"><div class="mem-col-title">HEAP</div><div class="mem-empty">nada reservado dinámicamente en este ejemplo</div></div>
+        </div>
+        <svg id="arrowSvg"></svg>
+      </div>
+      <p class="step-caption" id="stepCaption">Tocá <span class="mono">ejecutar línea</span> para empezar.</p>
+    </div>
+
+    <h3>Recorrer un arreglo con aritmética de punteros</h3>
+    <div class="panel">
+      <p class="mono" style="color:var(--text-dim); font-size:13px; margin:0 0 12px;">int datos[5] = {10, 20, 30, 40, 50};&nbsp;&nbsp;int* p = datos;</p>
+      <div class="arr-row" id="arrRow"></div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button id="pDec">◀ p--</button>
+        <input type="range" id="pSlider" min="0" max="4" value="0" step="1" style="max-width:220px;" aria-label="Posición del puntero en el arreglo">
+        <button id="pInc">p++ ▶</button>
+      </div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">*p (valor actual)</div><div class="v" id="roVal">10</div></div>
+        <div class="ro"><div class="k">p (dirección)</div><div class="v" id="roAddr">0x7ffd3a20</div></div>
+        <div class="ro"><div class="k">p - datos (índice)</div><div class="v" id="roIdx">0</div></div>
+      </div>
+    </div>
+
+    <h3>Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla con el mouse en el código.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Lo que rompe sistemas reales</h2>
+    <p class="lead">Todos estos ejemplos compilan sin ningún warning. Eso es lo que los hace peligrosos.</p>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> Ya puedo conectar un Nodo con otro sin copiarlo.</p>
+        <p><span class="accent">maga_t:</span> Bien. Siguiente problema: contar cuántos nodos hay en una cadena de conexiones, sin saber de antemano cuántos son. Eso es el próximo módulo.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">EN EL PROYECTO INTEGRADOR</span><p>Punteros crudos con prefijo <code>p_</code>, miembros de clase con <code>m_</code> + nombre descriptivo en camelCase — convención estilo que usamos en Cyberpunk Córdoba 2077.</p></div>
+  </section>
+
+  <footer><p>PUNTEROS.exe · módulo 1/3 · Material de apoyo cátedra de Algoritmos y Estructuras de Datos, FCEFyN · Comisión Ing. Valenzuela</p></footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement;
+    var scrolled = doc.scrollTop;
+    var max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){
+      var rect = sections[i].getBoundingClientRect();
+      if (rect.top <= 120) activeId = sections[i].id;
+    }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  var navToggle = document.getElementById('navtoggle');
+  var sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  navLinks.forEach(function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  var ADDR_X = '0x7ffd3a1c', ADDR_P = '0x7ffd3a10', ADDR_Q = '0x7ffd3a08';
+  var stackBoxes = document.getElementById('stackBoxes');
+  var svg = document.getElementById('arrowSvg');
+  var stepCaption = document.getElementById('stepCaption');
+  var stepNumEl = document.getElementById('stepNum');
+  var codeLines = Array.prototype.slice.call(document.querySelectorAll('#memCode .ln'));
+  var TOTAL_STEPS = 4;
+  var step = 0;
+  var captions = [
+    'Tocá <span class="mono">ejecutar línea</span> para empezar. Todavía no se declaró nada.',
+    '<span class="mono">x</span> vive en la pila con su propia dirección (<span class="mono">' + ADDR_X + '</span>) y su valor, 42.',
+    '<span class="mono">p</span> también vive en la pila — pero lo que guarda no es un valor cualquiera, es la dirección de <span class="mono">x</span>.',
+    '<span class="mono">*p = 100</span> no toca a <span class="mono">p</span>. Sigue la flecha hasta <span class="mono">x</span> y modifica lo que encuentra ahí.',
+    '<span class="mono">q</span> se declara sin apuntar a nada válido. <span class="mono">nullptr</span> es honesto: dice "no señalo memoria alguna" en vez de mentir con una dirección al azar.'
+  ];
+  function boxHTML(id, name, value, addr, isNull){
+    return '<div class="mem-box' + (isNull ? ' null' : '') + '" id="' + id + '">' +
+      '<span class="nm">' + name + '</span>' +
+      '<span class="val" id="' + id + '-val">' + value + '</span>' +
+      '<span class="addr">@' + addr + '</span></div>';
+  }
+  function render(){
+    stepNumEl.textContent = step;
+    codeLines.forEach(function(l){ l.classList.toggle('active', parseInt(l.getAttribute('data-line'),10) === step); });
+    stepCaption.innerHTML = captions[step];
+    var html = '';
+    if (step >= 1) html += boxHTML('box-x', 'x', step >= 3 ? 100 : 42, ADDR_X, false);
+    if (step >= 2) html += boxHTML('box-p', 'p', ADDR_X, ADDR_P, false);
+    if (step >= 4) html += boxHTML('box-q', 'q', 'nullptr', ADDR_Q, true);
+    stackBoxes.innerHTML = html || '<div class="mem-empty">— vacía —</div>';
+    document.getElementById('btnPrev').disabled = (step === 0);
+    document.getElementById('btnNext').disabled = (step === TOTAL_STEPS);
+    if (step === 3){
+      var valEl = document.getElementById('box-x-val');
+      if (valEl){ valEl.classList.remove('flash'); void valEl.offsetWidth; valEl.classList.add('flash'); }
+    }
+    requestAnimationFrame(drawArrow);
+  }
+  var ARROW_DEFS = '<defs><marker id="arrowHead" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00D4FF"></path></marker></defs>';
+  function drawArrow(){
+    svg.innerHTML = ARROW_DEFS;
+    if (step < 2) return;
+    var from = document.getElementById('box-p');
+    var to = document.getElementById('box-x');
+    if (!from || !to) return;
+    var wrapRect = svg.parentElement.getBoundingClientRect();
+    var fr = from.getBoundingClientRect();
+    var tr = to.getBoundingClientRect();
+    var ns = 'http://www.w3.org/2000/svg';
+    var sameColumn = Math.abs(fr.left - tr.left) < 4;
+    var x1, y1, x2, y2, d;
+    if (sameColumn){
+      x1 = fr.left - wrapRect.left + 1; y1 = fr.top + fr.height/2 - wrapRect.top;
+      x2 = tr.left - wrapRect.left + 1; y2 = tr.top + tr.height/2 - wrapRect.top;
+      var bulge = 11;
+      d = 'M' + x1 + ',' + y1 + ' C' + (x1 - bulge) + ',' + y1 + ' ' + (x2 - bulge) + ',' + y2 + ' ' + x2 + ',' + y2;
+    } else {
+      x1 = fr.right - wrapRect.left - 2; y1 = fr.top + fr.height/2 - wrapRect.top;
+      x2 = tr.left - wrapRect.left - 5; y2 = tr.top + tr.height/2 - wrapRect.top;
+      var midX = (x1 + x2) / 2;
+      d = 'M' + x1 + ',' + y1 + ' C' + midX + ',' + y1 + ' ' + midX + ',' + y2 + ' ' + x2 + ',' + y2;
+    }
+    var path = document.createElementNS(ns, 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('marker-end', 'url(#arrowHead)');
+    svg.appendChild(path);
+    var startDot = document.createElementNS(ns, 'circle');
+    startDot.setAttribute('cx', x1); startDot.setAttribute('cy', y1); startDot.setAttribute('r', 2.4);
+    svg.appendChild(startDot);
+  }
+  document.getElementById('btnNext').addEventListener('click', function(){ if (step < TOTAL_STEPS){ step++; render(); } });
+  document.getElementById('btnPrev').addEventListener('click', function(){ if (step > 0){ step--; render(); } });
+  document.getElementById('btnReset').addEventListener('click', function(){ step = 0; render(); });
+  window.addEventListener('resize', function(){ requestAnimationFrame(drawArrow); });
+  render();
+
+  var arrData = [10,20,30,40,50];
+  var baseAddr = 0x7ffd3a20;
+  var pIdx = 0;
+  var arrRow = document.getElementById('arrRow');
+  var pSlider = document.getElementById('pSlider');
+  var roVal = document.getElementById('roVal');
+  var roAddr = document.getElementById('roAddr');
+  var roIdx = document.getElementById('roIdx');
+  arrData.forEach(function(v, i){
+    var cell = document.createElement('div');
+    cell.className = 'arr-cell';
+    cell.id = 'cell-' + i;
+    cell.innerHTML = '<div class="car">▼ p</div><div class="idx">datos[' + i + ']</div><div class="v">' + v + '</div><div class="a">0x' + (baseAddr + i*4).toString(16) + '</div>';
+    arrRow.appendChild(cell);
+  });
+  function renderLab(){
+    for (var i = 0; i < arrData.length; i++){ document.getElementById('cell-' + i).classList.toggle('on', i === pIdx); }
+    roVal.textContent = arrData[pIdx];
+    roAddr.textContent = '0x' + (baseAddr + pIdx*4).toString(16);
+    roIdx.textContent = pIdx;
+    pSlider.value = pIdx;
+    document.getElementById('pDec').disabled = (pIdx === 0);
+    document.getElementById('pInc').disabled = (pIdx === arrData.length - 1);
+  }
+  document.getElementById('pInc').addEventListener('click', function(){ if (pIdx < arrData.length-1){ pIdx++; renderLab(); } });
+  document.getElementById('pDec').addEventListener('click', function(){ if (pIdx > 0){ pIdx--; renderLab(); } });
+  pSlider.addEventListener('input', function(){ pIdx = parseInt(pSlider.value,10); renderLab(); });
+  renderLab();
+
+  var errors = [
+    { tag:'UB — comportamiento indefinido', title:'Puntero colgante (dangling pointer)',
+      bad:'int* fabricarValor(){\n  int valorLocal = 42;\n  return &amp;valorLocal; // muere al\n}                        // salir de la función',
+      cons:'El puntero devuelto "existe" en apariencia, pero apunta a memoria de la pila ya liberada. Leerlo después es azar.',
+      fix:'int* fabricarValor(){\n  int* p_valor = new int(42);\n  return p_valor; // vive en el heap\n}                 // hasta el delete' },
+    { tag:'crecimiento silencioso', title:'Fuga de memoria (memory leak)',
+      bad:'void procesar(bool esUrgente){\n  int* p_dato = new int(0);\n  if (esUrgente)\n    return;  // se pierde el puntero\n  delete p_dato;\n}',
+      cons:'Si es urgente, la función retorna antes del delete. Esa memoria queda reservada para siempre.',
+      fix:'void procesar(bool esUrgente){\n  int* p_dato = new int(0);\n  if (esUrgente){ delete p_dato; return; }\n  delete p_dato;\n}' },
+    { tag:'UB — comportamiento indefinido', title:'Doble liberación (double free)',
+      bad:'delete p_dato;\n...\nif (condicion)\n  delete p_dato;  // otra vez',
+      cons:'La segunda liberación intenta devolver memoria que ya no es tuya. Puede corromper el heap o crashear en un punto totalmente distinto.',
+      fix:'delete p_dato;\np_dato = nullptr;\n...\nif (condicion &amp;&amp; p_dato)\n  delete p_dato;' },
+    { tag:'UB — comportamiento indefinido', title:'Puntero nulo o sin inicializar',
+      bad:'int* p_dato;             // sin inicializar\nstd::cout &lt;&lt; *p_dato;   // o bien:\nint* p_otro = nullptr;\nstd::cout &lt;&lt; *p_otro;',
+      cons:'Sin inicializar, apunta a basura — leerlo es indefinido. Con nullptr al menos es predecible: crashea al instante en vez de fallar en silencio.',
+      fix:'int* p_dato = nullptr;\nif (p_dato) {\n  std::cout &lt;&lt; *p_dato;\n} else {\n  // manejar el caso válido\n}' }
+  ];
+  var errGrid = document.getElementById('errGrid');
+  errors.forEach(function(e, i){
+    var card = document.createElement('div');
+    card.className = 'err-card';
+    card.innerHTML =
+      '<div class="tag">' + e.tag + '</div>' +
+      '<h4>' + e.title + '</h4>' +
+      '<div class="code">' + e.bad + '</div>' +
+      '<div class="err-sec c2">CONSECUENCIA</div>' +
+      '<p class="why">' + e.cons + '</p>' +
+      '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+      '<div class="fix-box" id="fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code">' + e.fix + '</div></div>';
+    errGrid.appendChild(card);
+  });
+  errGrid.addEventListener('click', function(ev){
+    if (!ev.target.classList.contains('err-toggle')) return;
+    var i = ev.target.getAttribute('data-i');
+    var box = document.getElementById('fix-' + i);
+    var showing = box.classList.toggle('show');
+    ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+  });
+
+  var quizzes = [
+    { code:'int a = 5;\nint* p_a = &amp;a;\n*p_a = *p_a + 1;\nstd::cout &lt;&lt; a;',
+      q:'¿Qué imprime este programa?', opts:['5', '6', 'Error de compilación', 'Comportamiento indefinido'], correct:1,
+      fb:'p_a apunta a a, así que *p_a y a son la misma casilla de memoria vista de dos formas. Al sumarle 1 a través de p_a, a pasa a valer 6.' },
+    { code:'int datos[3] = {1,2,3};\nint* p_dato = datos;\np_dato = p_dato + 2;\nstd::cout &lt;&lt; *p_dato;',
+      q:'¿Qué imprime?', opts:['1', '2', '3', 'p_dato + 2 no es válido'], correct:2,
+      fb:'p_dato arranca apuntando a datos[0]. + 2 avanza dos posiciones de int (no dos bytes), así que termina apuntando a datos[2], cuyo valor es 3.' },
+    { code:'int a = 10, b = 20;\nint* p_dato = &amp;a;\np_dato = &amp;b;\n*p_dato = 99;\nstd::cout &lt;&lt; a &lt;&lt; " " &lt;&lt; b;',
+      q:'¿Qué imprime?', opts:['10 20', '10 99', '99 20', '99 99'], correct:1,
+      fb:'p_dato apuntaba a a, pero se reasignó a b antes de modificar nada. *p_dato = 99 modifica b, no a. a queda en 10, b pasa a 99.' },
+    { code:'int* p_dato = nullptr;\nif (p_dato) {\n  std::cout &lt;&lt; *p_dato;\n} else {\n  std::cout &lt;&lt; "vacío";\n}',
+      q:'¿Qué imprime?', opts:['Un número al azar', '0', 'vacío', 'Crashea'], correct:2,
+      fb:'p_dato es nullptr, que se evalúa como falso en el if. El programa entra directamente al else sin desreferenciar nada — por eso nunca crashea.' }
+  ];
+  var quizList = document.getElementById('quizList');
+  quizzes.forEach(function(qz, qi){
+    var wrap = document.createElement('div');
+    wrap.className = 'quiz';
+    var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+    wrap.innerHTML =
+      '<div class="badge violet">CHECKPOINT ' + (qi+1) + '</div>' +
+      '<div class="code" style="margin-top:8px;">' + qz.code + '</div>' +
+      '<p style="color:var(--text); margin:6px 0 10px;">' + qz.q + '</p>' +
+      '<div class="opt-row">' + optsHTML + '</div>' +
+      '<div class="quiz-fb" id="fb-' + qi + '"></div>' +
+      '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button>' +
+        '<button class="conf-btn" data-c="dude">dudé</button>' +
+        '<button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+    quizList.appendChild(wrap);
+  });
+  quizList.addEventListener('click', function(ev){
+    var t = ev.target;
+    if (t.classList.contains('opt')){
+      var qi = t.getAttribute('data-qi');
+      var oi = parseInt(t.getAttribute('data-oi'),10);
+      var qz = quizzes[qi];
+      var row = t.parentElement;
+      Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+      if (oi === qz.correct){ t.classList.add('correct'); }
+      else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+      var fb = document.getElementById('fb-' + qi);
+      fb.textContent = qz.fb;
+      fb.classList.add('show');
+    }
+    if (t.classList.contains('conf-btn')){
+      var siblings = t.parentElement.querySelectorAll('.conf-btn');
+      Array.prototype.forEach.call(siblings, function(b){ b.classList.remove('picked'); });
+      t.classList.add('picked');
+    }
+  });
+})();
+</script>
+</body>
+</html>

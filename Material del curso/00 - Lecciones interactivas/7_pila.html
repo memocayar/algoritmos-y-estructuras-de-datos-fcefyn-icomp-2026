@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; PILA.exe — LAC</title>
+<style>
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:19px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(30px,5vw,50px); line-height:1.1; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .primitivas-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin-top:14px;}
+  .prim{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:9px 13px; font-family:var(--font-mono); font-size:12px; color:var(--cyan);}
+  .prim span{display:block; font-family:var(--font-body); font-size:11.5px; color:var(--text-faint); margin-top:2px;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .tp{color:var(--cyan);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+
+  .stack-vis{display:flex; flex-direction:column-reverse; gap:8px; min-height:60px; margin-top:14px; max-width:260px;}
+  .stack-item{
+    border-radius:7px; padding:11px 16px; border:1px solid var(--border-soft); background:var(--bg-raised);
+    font-family:var(--font-mono); font-size:14px; color:var(--text); text-align:center;
+    opacity:0; transform:translateY(-6px); animation:riseDown .3s ease forwards;
+  }
+  @keyframes riseDown{to{opacity:1; transform:translateY(0);}}
+  .stack-item.top{border-color:var(--cyan); box-shadow:0 0 12px rgba(0,212,255,0.25); color:var(--cyan);}
+  .stack-empty{color:var(--text-faint); font-family:var(--font-mono); font-size:12px;}
+  .tope-label{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.06em; margin-top:6px;}
+
+  .lab-readout{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px;}
+  .ro{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 12px;}
+  .ro .k{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.06em;}
+  .ro .v{font-family:var(--font-mono); font-size:14px; color:var(--cyan); margin-top:3px;}
+  .ro .v.result{color:var(--green); font-size:16px;}
+  .ro .v.fail{color:var(--red); font-size:16px;}
+
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:560px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // TDA · PILA</div>
+  <div class="nav-title">PILA.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a></li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a></li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a></li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a></li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a></li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a></li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a></li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>continúa la serie TAD → estructuras</div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">Pila: lo último que entra<br>es lo <span class="accent">primero que sale</span>.</h1>
+    <p class="cover-sub">La lista enlazada de siempre, con la interfaz recortada a un puñado de primitivas — y esa limitación es exactamente lo que la hace útil.</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> Listas enlazadas, TAD</span>
+      <span><b>cubre:</b> LIFO · apilar/desapilar · paréntesis balanceados · notación postfija</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>DiagramaCba necesita un Ctrl+Z</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat notas_reunion.txt</p>
+        <p><span class="accent">maga_t:</span> RRHH pidió deshacer cambios con Ctrl+Z. Si hacés tres modificaciones seguidas y apretás deshacer, tiene que revertirse la última primero.</p>
+        <p><span class="ok">ema_v:</span> Entonces necesito que lo último que entró sea lo primero que sale.</p>
+        <p><span class="accent">maga_t:</span> Eso es exactamente una <strong>pila</strong>: Last In, First Out. Como una pila de platos — solo podés sacar el que está arriba de todo.</p>
+        <p><span class="ok">ema_v:</span> ¿Y esto es una estructura nueva, o...?</p>
+        <p><span class="accent">maga_t:</span> Es la misma lista enlazada de la clase pasada, con la interfaz recortada a propósito: apilar, desapilar, ver el tope, y saber si está vacía. Nada más. Y ya usaste una sin darte cuenta — la pila de llamadas de cualquier recursión.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Explicar qué significa LIFO y cuándo corresponde usar una pila.</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Usar las primitivas de Pila: apilar, desapilar, ver el tope, saber si está vacía.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Ver que la pila es la lista enlazada con la interfaz recortada, no una estructura nueva.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Resolver paréntesis balanceados y evaluar una expresión postfija usando una pila.</p></div>
+      <div class="obj-card"><div class="k">05</div><p>Reconocer la pila de llamadas de tu programa como una pila real, no una metáfora.</p></div>
+      <div class="obj-card"><div class="k">06</div><p>Reconocer los errores más comunes al usar o implementar una pila.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3>¿Qué es una pila?</h3>
+    <p>Pensala como una pila de platos: solo podés sacar (o mirar) el que está arriba. El último plato que pusiste es el primero que sacás — <strong>Last In, First Out (LIFO)</strong>.</p>
+
+    <h3>La interfaz: apenas cinco primitivas</h3>
+    <div class="primitivas-grid">
+      <div class="prim">pila_crear()<span>crea una pila vacía</span></div>
+      <div class="prim">pila_apilar(p, dato)<span>agrega arriba de todo (push)</span></div>
+      <div class="prim">pila_desapilar(p)<span>saca y devuelve el tope (pop)</span></div>
+      <div class="prim">pila_ver_tope(p)<span>mira el tope sin sacarlo (peek)</span></div>
+      <div class="prim">pila_esta_vacia(p)<span>true si no tiene elementos</span></div>
+    </div>
+    <p style="margin-top:14px;">Fijate lo que <em>no</em> está: no hay <code>pila_buscar</code>, no hay forma de leer el tercer elemento sin antes desapilar los dos de arriba. Esa ausencia es intencional — la pila no es una lista con menos funciones por accidente, es un TAD distinto porque garantiza un orden de acceso, y esa garantía se pierde si dejás tocar cualquier elemento.</p>
+
+    <h3>La pila como la lista, con la interfaz recortada</h3>
+    <p>No hace falta una estructura nueva por dentro. Con el TAD Lista alcanza: <code>pila_apilar</code> es <code>lista_insertar_comienzo</code>, y <code>pila_desapilar</code> es <code>lista_extraer_primero</code>. Las dos son O(1) porque trabajan siempre sobre la cabeza — nunca hace falta recorrer nada.</p>
+
+    <h3>Implementación: arreglo vs. lista enlazada</h3>
+    <p>Con arreglo: un bloque de memoria más un índice al tope; apilar y desapilar son O(1) mientras no haga falta redimensionar el arreglo (y si hace falta, ese redimensionar sí cuesta O(n), aunque en promedio "amortizado" sigue siendo barato). Con lista enlazada: cada apilar reserva un nodo nuevo en el head; no hay redimensionamiento porque no hay un tamaño fijo que respetar.</p>
+
+    <h3>Dónde ya usaste una pila sin saberlo</h3>
+    <p>En el módulo de Recursividad viste la <strong>pila de llamadas</strong>: cada vez que una función llama a otra, se apila un marco nuevo con sus variables locales y a dónde volver; cada <code>return</code> desapila el de arriba. Es una pila real, con las mismas reglas — y por eso una recursión sin caso base la desborda literalmente (<em>stack overflow</em>, "se desbordó la pila").</p>
+
+    <h3>Aplicación 1: paréntesis balanceados</h3>
+    <p>Dado un texto con <code>( ) [ ] { }</code>, hay que determinar si está bien balanceado. Se recorre una vez, apilando cada símbolo de apertura; ante un cierre, se desapila y se verifica que haga pareja. Si el tope no coincide, o si al final la pila no quedó vacía, el texto no está balanceado.</p>
+
+    <h3>Aplicación 2: evaluar una expresión en notación postfija</h3>
+    <p>En notación postfija (o "polaca inversa"), los operadores van después de sus operandos: <code>3 4 +</code> significa <code>3 + 4</code>. Se recorre la expresión de izquierda a derecha: si el token es un número, se apila; si es un operador, se desapilan los dos números de arriba, se aplica el operador, y el resultado se vuelve a apilar. Al terminar, el único elemento que queda en la pila es el resultado — sin necesidad de paréntesis ni de reglas de precedencia.</p>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+
+    <h3>Apilar y desapilar</h3>
+    <div class="panel">
+      <div class="btn-row">
+        <button id="stkPush" class="primary">apilar</button>
+        <button id="stkPop">desapilar</button>
+        <button id="stkReset">↺ vaciar</button>
+      </div>
+      <div class="stack-vis" id="stackVis"><div class="stack-empty">— pila vacía —</div></div>
+      <div class="tope-label" id="stkTopeLabel"></div>
+      <p class="step-caption" id="stkCaption">Apilá un par de elementos y mirá cuál sale primero al desapilar.</p>
+    </div>
+
+    <h3>Validando: ¿está balanceado?</h3>
+    <p>Vamos a procesar <code>( [ { } ] )</code> carácter por carácter.</p>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="balStepNum">0</span> / <span id="balStepTotal">7</span></span>
+        <div class="btn-row">
+          <button id="balPrev">◀ anterior</button>
+          <button id="balNext" class="primary">leer carácter ▶</button>
+          <button id="balReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="lab-readout" style="margin-bottom:6px;">
+        <div class="ro"><div class="k">texto</div><div class="v" id="balText" style="letter-spacing:4px;">( [ { } ] )</div></div>
+        <div class="ro"><div class="k">carácter actual</div><div class="v" id="balChar">—</div></div>
+      </div>
+      <div class="stack-vis" id="balStack"><div class="stack-empty">— pila vacía —</div></div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">resultado</div><div class="v" id="balResult">—</div></div>
+      </div>
+      <p class="step-caption" id="balCaption">Tocá <span class="mono">leer carácter</span> para empezar a procesar el texto.</p>
+    </div>
+
+    <h3>Evaluando una expresión postfija</h3>
+    <p>Vamos a evaluar <code>3 4 + 2 *</code> — en notación normal sería <code>(3 + 4) * 2</code>.</p>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="pfStepNum">0</span> / <span id="pfStepTotal">6</span></span>
+        <div class="btn-row">
+          <button id="pfPrev">◀ anterior</button>
+          <button id="pfNext" class="primary">leer token ▶</button>
+          <button id="pfReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="lab-readout" style="margin-bottom:6px;">
+        <div class="ro"><div class="k">expresión</div><div class="v">3 4 + 2 *</div></div>
+        <div class="ro"><div class="k">token actual</div><div class="v" id="pfToken">—</div></div>
+      </div>
+      <div class="stack-vis" id="pfStack"><div class="stack-empty">— pila vacía —</div></div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">resultado</div><div class="v result" id="pfResult">—</div></div>
+      </div>
+      <p class="step-caption" id="pfCaption">Tocá <span class="mono">leer token</span> para empezar a evaluar la expresión.</p>
+    </div>
+
+    <h3>Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Los errores que más aparecen con pilas</h2>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> El historial de deshacer va a ser una Pila de acciones: apilo cada cambio, y Ctrl+Z desapila el último.</p>
+        <p><span class="accent">maga_t:</span> Exacto. Y no tuviste que inventar ninguna estructura nueva — la misma lista de siempre, con menos puertas abiertas.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">DE ACÁ EN ADELANTE</span><p>La Cola — el otro recorte de la lista enlazada, esta vez FIFO — es el próximo módulo. Misma idea, orden de salida distinto.</p></div>
+  </section>
+
+  <footer><p>PILA.exe · material de apoyo cátedra de Algoritmos y Estructuras de Datos, FCEFyN · Ing. Valenzuela Gabriel.</p></footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement;
+    var scrolled = doc.scrollTop;
+    var max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){
+      var rect = sections[i].getBoundingClientRect();
+      if (rect.top <= 120) activeId = sections[i].id;
+    }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  var navToggle = document.getElementById('navtoggle');
+  var sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  navLinks.forEach(function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  /* ================= stack demo ================= */
+  var stackData = [];
+  var stackCounter = 0;
+  var stackVis = document.getElementById('stackVis');
+  var stkTopeLabel = document.getElementById('stkTopeLabel');
+  var stkCaption = document.getElementById('stkCaption');
+  function renderStack(){
+    if (stackData.length === 0){
+      stackVis.innerHTML = '<div class="stack-empty">— pila vacía —</div>';
+      stkTopeLabel.textContent = '';
+      document.getElementById('stkPop').disabled = true;
+      return;
+    }
+    document.getElementById('stkPop').disabled = false;
+    stackVis.innerHTML = stackData.map(function(v, i){
+      var isTop = (i === stackData.length - 1);
+      return '<div class="stack-item' + (isTop ? ' top' : '') + '">' + v + '</div>';
+    }).join('');
+    stkTopeLabel.textContent = '◀ tope: ' + stackData[stackData.length-1];
+  }
+  document.getElementById('stkPush').addEventListener('click', function(){
+    stackCounter++;
+    stackData.push('E' + stackCounter);
+    stkCaption.innerHTML = '<span class="mono">apilar(E' + stackCounter + ')</span> — se agrega arriba de todo.';
+    renderStack();
+  });
+  document.getElementById('stkPop').addEventListener('click', function(){
+    var v = stackData.pop();
+    stkCaption.innerHTML = '<span class="mono">desapilar()</span> devolvió <span class="mono">' + v + '</span> — era el último que se había apilado.';
+    renderStack();
+  });
+  document.getElementById('stkReset').addEventListener('click', function(){
+    stackData = []; stackCounter = 0;
+    stkCaption.textContent = 'Apilá un par de elementos y mirá cuál sale primero al desapilar.';
+    renderStack();
+  });
+  renderStack();
+
+  /* ================= balanceado() stepper ================= */
+  var balChars = ['(', '[', '{', '}', ']', ')'];
+  var pairs = { ')':'(', ']':'[', '}':'{' };
+  var openers = { '(':true, '[':true, '{':true };
+  var balStepNumEl = document.getElementById('balStepNum');
+  var balCaption = document.getElementById('balCaption');
+  var balStack = document.getElementById('balStack');
+  var balCharEl = document.getElementById('balChar');
+  var balResultEl = document.getElementById('balResult');
+  var BAL_TOTAL = 7;
+  var balStep = 0;
+  function computeBalState(step){
+    var stack = [];
+    var cap = Math.min(step, balChars.length);
+    var failed = false;
+    for (var i = 0; i < cap; i++){
+      var c = balChars[i];
+      if (openers[c]) stack.push(c);
+      else {
+        var top = stack.pop();
+        if (top !== pairs[c]) { failed = true; }
+      }
+    }
+    return { stack: stack, failed: failed, charIdx: cap - 1 };
+  }
+  function renderBal(){
+    balStepNumEl.textContent = balStep;
+    var s = computeBalState(balStep);
+    if (balStep === 0){
+      balCharEl.textContent = '—';
+      balCaption.innerHTML = 'Tocá <span class="mono">leer carácter</span> para empezar a procesar el texto.';
+      balResultEl.textContent = '—';
+      balResultEl.className = 'v';
+    } else {
+      var c = balChars[s.charIdx];
+      balCharEl.textContent = '"' + c + '"';
+      if (openers[c]){
+        balCaption.innerHTML = 'Es apertura: <span class="mono">apilar("' + c + '")</span>.';
+      } else {
+        balCaption.innerHTML = 'Es cierre: <span class="mono">desapilar()</span> y comparar con "' + pairs[c] + '" — ' + (s.failed ? 'no coincide.' : 'coincide, sigue todo bien.');
+      }
+      if (balStep === BAL_TOTAL){
+        if (!s.failed && s.stack.length === 0){
+          balResultEl.textContent = 'BALANCEADO';
+          balResultEl.className = 'v result';
+          balCaption.innerHTML += ' Se terminó el texto y la pila quedó vacía: <strong>balanceado</strong>.';
+        } else {
+          balResultEl.textContent = 'NO BALANCEADO';
+          balResultEl.className = 'v fail';
+        }
+      } else {
+        balResultEl.textContent = '—';
+        balResultEl.className = 'v';
+      }
+    }
+    balStack.innerHTML = s.stack.length === 0
+      ? '<div class="stack-empty">— pila vacía —</div>'
+      : s.stack.map(function(v, i){ return '<div class="stack-item' + (i===s.stack.length-1?' top':'') + '">' + v + '</div>'; }).join('');
+    document.getElementById('balPrev').disabled = (balStep === 0);
+    document.getElementById('balNext').disabled = (balStep === BAL_TOTAL);
+  }
+  document.getElementById('balNext').addEventListener('click', function(){ if (balStep < BAL_TOTAL){ balStep++; renderBal(); } });
+  document.getElementById('balPrev').addEventListener('click', function(){ if (balStep > 0){ balStep--; renderBal(); } });
+  document.getElementById('balReset').addEventListener('click', function(){ balStep = 0; renderBal(); });
+  renderBal();
+
+  /* ================= postfix evaluation stepper ================= */
+  var pfTokens = ['3', '4', '+', '2', '*'];
+  var pfStepNumEl = document.getElementById('pfStepNum');
+  var pfCaption = document.getElementById('pfCaption');
+  var pfStack = document.getElementById('pfStack');
+  var pfTokenEl = document.getElementById('pfToken');
+  var pfResultEl = document.getElementById('pfResult');
+  var PF_TOTAL = 5;
+  var pfStep = 0;
+  var isOp = { '+':true, '-':true, '*':true, '/':true };
+  function computePfState(step){
+    var stack = [];
+    var cap = Math.min(step, pfTokens.length);
+    for (var i = 0; i < cap; i++){
+      var t = pfTokens[i];
+      if (isOp[t]){
+        var b = stack.pop(), a = stack.pop();
+        var r;
+        if (t === '+') r = a + b;
+        else if (t === '-') r = a - b;
+        else if (t === '*') r = a * b;
+        else r = a / b;
+        stack.push(r);
+      } else {
+        stack.push(parseInt(t, 10));
+      }
+    }
+    return { stack: stack, tokenIdx: cap - 1 };
+  }
+  function renderPf(){
+    pfStepNumEl.textContent = pfStep;
+    var s = computePfState(pfStep);
+    if (pfStep === 0){
+      pfTokenEl.textContent = '—';
+      pfCaption.innerHTML = 'Tocá <span class="mono">leer token</span> para empezar a evaluar la expresión.';
+    } else {
+      var t = pfTokens[s.tokenIdx];
+      pfTokenEl.textContent = '"' + t + '"';
+      if (isOp[t]){
+        pfCaption.innerHTML = 'Es un operador: se desapilan los dos números de arriba, se aplica "' + t + '", y el resultado se vuelve a apilar.';
+      } else {
+        pfCaption.innerHTML = 'Es un número: se apila directamente.';
+      }
+    }
+    pfResultEl.textContent = (pfStep === PF_TOTAL && s.stack.length === 1) ? s.stack[0] : '—';
+    pfStack.innerHTML = s.stack.length === 0
+      ? '<div class="stack-empty">— pila vacía —</div>'
+      : s.stack.map(function(v, i){ return '<div class="stack-item' + (i===s.stack.length-1?' top':'') + '">' + v + '</div>'; }).join('');
+    document.getElementById('pfPrev').disabled = (pfStep === 0);
+    document.getElementById('pfNext').disabled = (pfStep === PF_TOTAL);
+  }
+  document.getElementById('pfNext').addEventListener('click', function(){ if (pfStep < PF_TOTAL){ pfStep++; renderPf(); } });
+  document.getElementById('pfPrev').addEventListener('click', function(){ if (pfStep > 0){ pfStep--; renderPf(); } });
+  document.getElementById('pfReset').addEventListener('click', function(){ pfStep = 0; renderPf(); });
+  renderPf();
+
+  /* ================= error gallery ================= */
+  var errors = [
+    { tag:'underflow', title:'Desapilar sin chequear si está vacía',
+      bad:'int valor = pila_desapilar(p);\n// ¿y si la pila ya estaba vacía?',
+      cons:'Sin chequear pila_esta_vacia() antes, desapilar de una pila vacía es comportamiento indefinido — puede devolver basura o crashear, según la implementación.',
+      fix:'if (!pila_esta_vacia(p)) {\n  int valor = pila_desapilar(p);\n  // usar valor\n} else {\n  // manejar el caso vacío\n}' },
+    { tag:'contrato roto', title:'Exponer una primitiva que rompe el TAD',
+      bad:'// interfaz pública de un TDA propio\ntype Gatito interface {\n  Redimensionar(nuevoTam int)\n  // "para que Bárbara me diga cómo\n  //  redimensionar el arreglo interno"\n}',
+      cons:'Redimensionar expone un detalle de implementación (que por dentro hay un arreglo) como si fuera parte del contrato. Bárbara nunca debería saber, ni decidir, cómo se maneja la memoria interna del TDA.',
+      fix:'type Gatito interface {\n  // solo primitivas que hablan\n  // del comportamiento del gatito,\n  // nunca de su representación interna\n}' },
+    { tag:'salto al TAD', title:'Acceder al arreglo interno en vez de usar las primitivas',
+      bad:'// implementación con arreglo\nint valor = pila-&gt;datos[pila-&gt;cima - 2];\n// leer el segundo desde arriba,\n// sin pasar por ninguna primitiva',
+      cons:'Esto rompe la garantía central de la pila: que solo se puede acceder al tope. Si mañana Alan cambia la implementación (por ejemplo a lista enlazada), este código deja de compilar o de tener sentido.',
+      fix:'// si de verdad hace falta ver el\n// segundo elemento, esa necesidad\n// tiene que ser una primitiva nueva,\n// documentada, no un acceso directo' },
+    { tag:'stack overflow, otra vez', title:'Olvidar que la pila de llamadas también se desborda',
+      bad:'int contar(int n){\n  return 1 + contar(n - 1);\n  // sin caso base\n}',
+      cons:'Cada llamada apila un marco en la pila de llamadas del programa. Sin caso base, esa pila crece hasta agotar la memoria disponible — un desborde de pila real, no una metáfora.',
+      fix:'int contar(int n){\n  if (n &lt;= 0) return 0; // caso base\n  return 1 + contar(n - 1);\n}' },
+    { tag:'lista huérfana', title:'Implementar apilar sobre una lista y olvidar mover head',
+      bad:'struct nodo* nuevo = crear_nodo(dato);\nnuevo-&gt;next = pila-&gt;head;\n// falta: pila-&gt;head = nuevo;',
+      cons:'El nodo nuevo queda creado y enlazado hacia el resto de la pila, pero nada apunta a él desde head. Es un nodo fantasma: nunca se va a ver como el tope, y nunca se va a poder liberar.',
+      fix:'struct nodo* nuevo = crear_nodo(dato);\nnuevo-&gt;next = pila-&gt;head;\npila-&gt;head = nuevo; // ahora sí es el tope' }
+  ];
+  var errGrid = document.getElementById('errGrid');
+  errors.forEach(function(e, i){
+    var card = document.createElement('div');
+    card.className = 'err-card';
+    card.innerHTML =
+      '<div class="tag">' + e.tag + '</div>' +
+      '<h4>' + e.title + '</h4>' +
+      '<div class="code">' + e.bad + '</div>' +
+      '<div class="err-sec c2">CONSECUENCIA</div>' +
+      '<p class="why">' + e.cons + '</p>' +
+      '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+      '<div class="fix-box" id="fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code">' + e.fix + '</div></div>';
+    errGrid.appendChild(card);
+  });
+  errGrid.addEventListener('click', function(ev){
+    if (!ev.target.classList.contains('err-toggle')) return;
+    var i = ev.target.getAttribute('data-i');
+    var box = document.getElementById('fix-' + i);
+    var showing = box.classList.toggle('show');
+    ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+  });
+
+  /* ================= quizzes ================= */
+  var quizzes = [
+    { code:'pila_apilar(p, 1);\npila_apilar(p, 2);\npila_apilar(p, 3);\nint a = pila_desapilar(p);\nint b = pila_desapilar(p);',
+      q:'¿Qué valores toman a y b?', opts:['a=1, b=2', 'a=3, b=2', 'a=1, b=3', 'a=3, b=1'], correct:1,
+      fb:'LIFO: el último en entrar (3) es el primero en salir. a=3, y el siguiente en salir es 2 (el anteúltimo en entrar).' },
+    { code:'balanceado("[{}")',
+      q:'¿Qué devuelve esta llamada?', opts:['true', 'false', 'Error de compilación', 'Ciclo infinito'], correct:1,
+      fb:'Se apilan "[" y "{", se desapila "{" al ver "}" (coincide), pero el texto termina ahí — la pila queda con "[" adentro, sin cerrar. Como no queda vacía, no está balanceado.' },
+    { code:'balanceado("([)]")',
+      q:'¿Qué devuelve esta llamada?', opts:['true', 'false', 'Depende del compilador', 'Solo falla en tiempo de ejecución'], correct:1,
+      fb:'Se apilan "(" y "[". Al leer ")", se desapila el tope ("["), que NO coincide con ")" — el cierre no hace pareja con el símbolo de apertura más reciente, así que es false.' },
+    { code:'// evaluar en postfija: 5 1 2 + 4 * + 3 -',
+      q:'¿Cuál es el resultado? (pista: 1+2=3, 3*4=12, 5+12=17, 17-3=14)', opts:['14', '17', '3', '12'], correct:0,
+      fb:'Paso a paso: apilar 5, 1, 2 → "+"pop 2 y 1, push 3 → apilar 4 → "*" pop 4 y 3, push 12 → "+" pop 12 y 5, push 17 → apilar 3 → "-" pop 3 y 17, push 14. Resultado: 14.' }
+  ];
+  var quizList = document.getElementById('quizList');
+  quizzes.forEach(function(qz, qi){
+    var wrap = document.createElement('div');
+    wrap.className = 'quiz';
+    var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+    wrap.innerHTML =
+      '<div class="badge violet">CHECKPOINT ' + (qi+1) + '</div>' +
+      '<div class="code" style="margin-top:8px;">' + qz.code + '</div>' +
+      '<p style="color:var(--text); margin:6px 0 10px;">' + qz.q + '</p>' +
+      '<div class="opt-row">' + optsHTML + '</div>' +
+      '<div class="quiz-fb" id="fb-' + qi + '"></div>' +
+      '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button>' +
+        '<button class="conf-btn" data-c="dude">dudé</button>' +
+        '<button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+    quizList.appendChild(wrap);
+  });
+  quizList.addEventListener('click', function(ev){
+    var t = ev.target;
+    if (t.classList.contains('opt')){
+      var qi = t.getAttribute('data-qi');
+      var oi = parseInt(t.getAttribute('data-oi'),10);
+      var qz = quizzes[qi];
+      var row = t.parentElement;
+      Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+      if (oi === qz.correct){ t.classList.add('correct'); }
+      else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+      var fb = document.getElementById('fb-' + qi);
+      fb.textContent = qz.fb;
+      fb.classList.add('show');
+    }
+    if (t.classList.contains('conf-btn')){
+      var siblings = t.parentElement.querySelectorAll('.conf-btn');
+      Array.prototype.forEach.call(siblings, function(b){ b.classList.remove('picked'); });
+      t.classList.add('picked');
+    }
+  });
+})();
+</script>
+</body>
+</html>

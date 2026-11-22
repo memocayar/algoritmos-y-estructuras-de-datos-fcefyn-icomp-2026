@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; UNIDAD7.exe — LAC</title>
+<style>
+
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:19px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(30px,5vw,50px); line-height:1.1; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .tp{color:var(--cyan);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+
+  /* ---------- tree visual ---------- */
+  .tree-wrap{position:relative; margin-top:16px; overflow-x:auto;}
+  .tree-svg{display:block; min-width:500px;}
+  .tree-svg .edge{stroke:var(--border-soft); stroke-width:2; fill:none;}
+  .tree-svg .edge.new{stroke:var(--amber); stroke-dasharray:4 3;}
+  .tree-node circle{fill:var(--bg-raised); stroke:var(--border-soft); stroke-width:1.5; transition:fill .25s, stroke .25s;}
+  .tree-node text{fill:var(--text); font-family:var(--font-mono); font-size:13px; text-anchor:middle; dominant-baseline:central;}
+  .tree-node.visited circle{fill:rgba(0,212,255,0.14); stroke:var(--cyan);}
+  .tree-node.visited text{fill:var(--cyan);}
+  .tree-node.current circle{fill:rgba(245,158,11,0.18); stroke:var(--amber); stroke-width:2.5;}
+  .tree-node.current text{fill:var(--amber);}
+  .tree-node.newnode circle{fill:rgba(16,185,129,0.18); stroke:var(--green); stroke-width:2.5;}
+  .tree-node.newnode text{fill:var(--green);}
+  .tree-node.hidden{opacity:0;}
+  .edge.hidden{opacity:0;}
+
+  .lab-readout{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px;}
+  .ro{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 12px;}
+  .ro .k{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.06em;}
+  .ro .v{font-family:var(--font-mono); font-size:14px; color:var(--cyan); margin-top:3px;}
+  .ro .v.wide{font-size:13px; word-break:break-all;}
+
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:560px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+
+
+  /* ---------- extras compartidos ---------- */
+  .nav-sub{display:block; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint); text-decoration:none; padding:5px 10px 5px 24px; border-radius:6px;}
+  .nav-sub:hover{color:var(--text); background:var(--bg-panel);}
+  .tbl-wrap{overflow-x:auto; margin:14px 0;}
+  table.tbl{border-collapse:collapse; width:100%; font-size:13.5px; min-width:480px;}
+  table.tbl th, table.tbl td{border:1px solid var(--border-soft); padding:8px 11px; text-align:left; color:var(--text); vertical-align:top;}
+  table.tbl th{background:var(--bg-panel-2); font-family:var(--font-mono); font-size:11.5px; color:var(--cyan); letter-spacing:.04em; font-weight:normal;}
+  table.tbl td.dim{color:var(--text-dim);}
+  select, input[type=text], input[type=number]{background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 10px; font-family:var(--font-mono); font-size:12.5px; max-width:100%;}
+  input[type=number]{width:84px;} input[type=text]{width:150px;}
+  select:focus, input:focus{outline:2px solid var(--cyan); outline-offset:1px;}
+  .ctrl-row{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;}
+  .field{display:flex; flex-direction:column; gap:4px;}
+  .field > label{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.06em;}
+  .log{background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:10px 14px; font-family:var(--font-mono); font-size:12.5px; max-height:210px; overflow:auto; color:#B9E9FF; margin-top:14px; line-height:1.55;}
+  .log p{margin:0 0 5px; color:inherit; max-width:none;}
+  .log .ok{color:var(--green);} .log .bad{color:var(--red);} .log .warn{color:var(--amber);} .log .dim{color:var(--text-faint);}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:10px;}
+  .legend i{display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-2px; margin-right:6px; border:1.5px solid;}
+  .code .num{color:var(--amber);} .code .str{color:var(--green);}
+  .steps-list{margin:10px 0 0; padding-left:20px; color:var(--text); font-size:13.5px;}
+  .steps-list li{margin-bottom:5px;}
+  .note-small{font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  strong{color:var(--text);}
+
+
+  .hgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); gap:8px; margin-top:6px;}
+  .hcell{background:var(--bg-raised); border:1.5px solid var(--border-soft); border-radius:8px; padding:6px 8px 8px; min-height:74px; transition:border-color .2s, background .2s;}
+  .hcell .ix{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-bottom:4px;}
+  .hcell .val{font-family:var(--font-mono); font-size:14px; color:var(--text); word-break:break-word;}
+  .hcell .val.empty{color:var(--text-faint);}
+  .hcell .val.tomb{color:var(--text-dim);}
+  .hcell .chain{display:flex; flex-direction:column; gap:3px;}
+  .hcell .chain span{font-family:var(--font-mono); font-size:13px; background:rgba(0,212,255,0.08); border:1px solid var(--border); border-radius:4px; padding:1px 6px; display:inline-block; width:fit-content;}
+  .hcell.try{border-color:var(--amber); background:rgba(245,158,11,0.10);}
+  .hcell.ok{border-color:var(--green); background:rgba(16,185,129,0.12);}
+  .hcell.bad{border-color:var(--red); background:rgba(239,68,68,0.10);}
+  .hcell .ord{float:right; font-family:var(--font-mono); font-size:10.5px; color:var(--amber);}
+  .chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{font-family:var(--font-mono); font-size:13px; min-width:38px; padding:7px 10px; border-radius:7px; background:var(--bg-raised); border:1px solid var(--border-soft); color:var(--text-faint); cursor:pointer; text-align:center;}
+  .chip.on{background:rgba(0,212,255,0.12); border-color:var(--cyan); color:var(--cyan);}
+  .chips.res .chip{cursor:default;}
+  .chips.res .chip.on{background:rgba(16,185,129,0.14); border-color:var(--green); color:var(--green);}
+  .hbars{display:grid; grid-template-columns:repeat(auto-fill,minmax(54px,1fr)); gap:8px; align-items:end; margin:10px 0 6px; min-height:90px;}
+  .hbar{display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:4px; font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint);}
+  .hbar .bar{width:100%; background:var(--cyan); opacity:.75; border-radius:4px 4px 0 0; min-height:2px;}
+  .hbar .bar.hot{background:var(--amber); opacity:.95;}
+  .hbar .nm{font-size:9.5px; text-align:center; color:var(--text-dim); line-height:1.2; word-break:break-word;}
+  .bits16{display:flex; gap:14px; flex-wrap:wrap;}
+  .bits16 .byte, .bits8{display:flex; gap:4px;}
+  .bits16 .byte{padding:8px; border:1px solid var(--border-soft); border-radius:8px;}
+  .bitc{width:34px; text-align:center; cursor:pointer; font-family:var(--font-mono); user-select:none;}
+  .bitc .ixl{font-size:10px; color:var(--text-faint); margin-bottom:3px;}
+  .bitc .b{display:block; padding:7px 0; border-radius:6px; background:var(--bg-raised); border:1.5px solid var(--border-soft); color:var(--text-faint); font-size:14px;}
+  .bitc.on .b{background:rgba(0,212,255,0.14); border-color:var(--cyan); color:var(--cyan);}
+  .bitc.hl .b{border-color:var(--amber); color:var(--amber); background:rgba(245,158,11,0.15);}
+  .bitc.ro{cursor:default;}
+  .bitc.ro.on .b{background:rgba(16,185,129,0.14); border-color:var(--green); color:var(--green);}
+  .pmchk{width:18px; height:18px; accent-color:var(--cyan); cursor:pointer;}
+  td.mono, .mono{font-family:var(--font-mono);}
+  .tbl td.bitsres{font-family:var(--font-mono); letter-spacing:.12em; color:var(--green);}
+
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // UNIDAD 7</div>
+  <div class="nav-title">UNIDAD7.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a>
+    </li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a>
+    </li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a>
+    </li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a>
+      <a class="nav-sub" href="#e71">7.1 dispersión</a>
+      <a class="nav-sub" href="#e72">7.2 conjuntos y bolsas</a>
+      <a class="nav-sub" href="#e73">7.3 mapas de bits</a>
+    </li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a>
+      <a class="nav-sub" href="#x71">7.1 tabla hash</a>
+      <a class="nav-sub" href="#x71b">7.1 funciones hash</a>
+      <a class="nav-sub" href="#x72">7.2 conjuntos</a>
+      <a class="nav-sub" href="#x72b">7.2 bolsas</a>
+      <a class="nav-sub" href="#x73">7.3 mapa de bits</a>
+      <a class="nav-sub" href="#x73b">7.3 AND / OR / XOR</a>
+      <a class="nav-sub" href="#x73c">7.3 permisos</a>
+      <a class="nav-sub" href="#x-quiz">checkpoints</a>
+    </li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a>
+    </li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a>
+    </li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>requiere Arreglos, Listas, Árboles, Big O</div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">Otras estructuras de datos:<br><span class="accent">dispersión, conjuntos y bits</span>.</h1>
+    <p class="cover-sub">Tres formas de resolver "dame esto ya": tablas hash para encontrar por clave en O(1) promedio, conjuntos y bolsas para colecciones sin orden, y mapas de bits para guardar un sí/no por elemento en un solo bit.</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> Arreglos, Listas, Árboles, Big O</span>
+      <span><b>cubre:</b> 7.1 dispersión · 7.2 conjuntos y bolsas · 7.3 mapas de bits</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>RRHH pide tres cosas nuevas para DiagramaCba</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat pedidos_rrhh.txt</p>
+        <p><span class="accent">maga_t:</span> Primero: encontrar un Nodo por su id al instante, tenga diez o diez millones.</p>
+        <p><span class="ok">ema_v:</span> Un árbol balanceado da O(log n).</p>
+        <p><span class="accent">maga_t:</span> Se puede mejorar en promedio: en vez de comparar y bajar, calculás la posición a partir de la clave. Eso es una tabla de dispersión.</p>
+        <p><span class="ok">ema_v:</span> ¿Y lo segundo?</p>
+        <p><span class="accent">maga_t:</span> Cada Nodo tiene etiquetas ("crítico", "revisado"): sin repetidas y sin orden, o sea un conjunto. Y para las estadísticas, cuántas veces aparece cada etiqueta en todo el proyecto: una bolsa.</p>
+        <p><span class="ok">ema_v:</span> ¿Y lo tercero?</p>
+        <p><span class="accent">maga_t:</span> Permisos. Cada Nodo tiene 12 flags de sí/no. Guardarlas en 12 booleanos de un byte cada uno es un desperdicio: un mapa de bits las pone en 12 bits.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Explicar cómo una función de dispersión convierte una clave en un índice y por qué hay colisiones.</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Resolver colisiones con encadenamiento y con direccionamiento abierto (lineal, cuadrático, doble hash).</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Calcular el factor de carga y decidir cuándo hacer rehash.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Distinguir conjunto de bolsa y elegir una implementación (vector, árbol, hash o bitmap).</p></div>
+      <div class="obj-card"><div class="k">05</div><p>Manipular bits con máscaras (set, clear, toggle, test) y operar mapas con AND, OR y XOR.</p></div>
+      <div class="obj-card"><div class="k">06</div><p>Reconocer los errores típicos: % con negativos, borrar sin tombstone, 1 &lt;&lt; i que desborda.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3 id="e71">7.1 Tablas y funciones de dispersión</h3>
+    <p>Una <strong>tabla de dispersión</strong> (hash table) es un arreglo de <code>M</code> casilleros donde cada clave tiene "su" casillero, calculado con una <strong>función de dispersión</strong> <code>h(k)</code> que devuelve un índice entre <code>0</code> y <code>M − 1</code>. Para buscar no se compara ni se recorre: se calcula <code>h(k)</code> y se mira ese casillero. Por eso, en promedio, buscar, insertar y borrar cuestan <code>O(1)</code>.</p>
+    <div class="callout"><span class="k">EL TRATO</span><p>A cambio de esa velocidad, la tabla <strong>no guarda orden</strong>: no sirve para "el menor", "el siguiente" ni "todo entre A y C". Para eso están los árboles (por ejemplo el B+ del módulo anterior).</p></div>
+
+    <h3>Qué hace buena a una función de dispersión</h3>
+    <ul class="plain">
+      <li><strong>Determinista</strong>: la misma clave da siempre el mismo índice.</li>
+      <li><strong>Rápida</strong>: se calcula en tiempo casi constante.</li>
+      <li><strong>Uniforme</strong>: reparte las claves parejo entre los casilleros.</li>
+      <li><strong>Usa toda la clave</strong>: si ignora parte de la clave, claves distintas chocan sin necesidad.</li>
+    </ul>
+    <p>Para enteros, lo clásico es <code>h(k) = k mod M</code>, con <code>M</code> primo y no cercano a una potencia de 2. Para texto, una función <strong>polinomial</strong> que combine cada letra con su posición, como la de abajo. Sumar los códigos de las letras es una mala idea: los anagramas ("ROL", "LOR") dan el mismo valor (lo vas a ver en el laboratorio).</p>
+    <div class="code" data-cpp="1">// Función de dispersión polinomial para texto: usa TODAS las letras y su posición.
+std::size_t hashString(const std::string&amp; text, const std::size_t bucketCount)
+{
+    constexpr std::uint32_t BASE{ 31 };
+    std::uint32_t           hash{};
+    for (const char letter : text)
+    {
+        hash = hash * BASE + static_cast&lt;unsigned char&gt;(letter);   // desborda a propósito (módulo 2^32)
+    }
+    return hash % bucketCount;
+}</div>
+
+    <h3>Las colisiones son inevitables</h3>
+    <p>Hay muchas más claves posibles que casilleros, así que dos claves distintas van a caer en el mismo casillero tarde o temprano (a eso se le dice <strong>colisión</strong>). Y pasa antes de lo que parece: con 365 casilleros, alcanzan <strong>23 claves</strong> para que la probabilidad de al menos una colisión supere el 50% (la paradoja del cumpleaños). Entonces no se trata de evitarlas, sino de <strong>resolverlas</strong>.</p>
+
+    <h3>Resolución 1: encadenamiento</h3>
+    <p>Cada casillero guarda una <strong>lista</strong> con todas las claves que caen ahí. Insertar es agregar a la lista; buscar es calcular el casillero y recorrer su lista; borrar es sacar de la lista. Es simple, borrar es fácil, y la tabla sigue funcionando aunque tenga más claves que casilleros (el factor de carga puede pasar de 1).</p>
+    <div class="code" data-cpp="1">class ChainedHashTable final
+{
+public:
+    explicit ChainedHashTable(const std::size_t bucketCount) : m_buckets(bucketCount) {}
+
+    bool insert(const int key)
+    {
+        std::list&lt;int&gt;&amp; bucket{ m_buckets[indexOf(key)] };
+        const bool      isNew{ std::find(bucket.begin(), bucket.end(), key) == bucket.end() };
+        if (isNew)
+        {
+            bucket.emplace_back(key);
+            ++m_size;
+        }
+        return isNew;
+    }
+
+    double loadFactor() const noexcept
+    {
+        return static_cast&lt;double&gt;(m_size) / static_cast&lt;double&gt;(m_buckets.size());
+    }
+
+private:
+    // El módulo de un negativo en C++ es negativo: se corrige para que el índice caiga en [0, M).
+    std::size_t indexOf(const int key) const
+    {
+        const long long bucketCount{ static_cast&lt;long long&gt;(m_buckets.size()) };
+        return static_cast&lt;std::size_t&gt;(((key % bucketCount) + bucketCount) % bucketCount);
+    }
+
+    std::vector&lt;std::list&lt;int&gt;&gt; m_buckets;
+    std::size_t                 m_size{};
+};</div>
+
+    <h3>Resolución 2: direccionamiento abierto</h3>
+    <p>Todo vive dentro del arreglo, sin listas. Si el casillero <code>h(k)</code> está ocupado, se prueba otro siguiendo una secuencia fija, hasta encontrar un hueco. Las tres secuencias más conocidas:</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>método</th><th>casillero que se prueba en el intento j</th><th>característica</th></tr>
+      <tr><td>sondeo lineal</td><td><code>(h(k) + j) mod M</code></td><td class="dim">el más simple; forma "racimos" de casilleros ocupados que crecen (agrupamiento primario)</td></tr>
+      <tr><td>sondeo cuadrático</td><td><code>(h(k) + j²) mod M</code></td><td class="dim">evita los racimos largos; con M primo y la tabla a lo sumo mitad llena, siempre encuentra lugar</td></tr>
+      <tr><td>doble hashing</td><td><code>(h₁(k) + j·h₂(k)) mod M</code></td><td class="dim">el paso depende de la clave (acá, <code>h₂(k) = 1 + k mod (M−1)</code>); con M primo recorre todos los casilleros</td></tr>
+    </table></div>
+    <p><strong>Borrar es delicado.</strong> Si al borrar dejás el casillero vacío, cortás la cadena de sondeo de otras claves que pasaron por ahí, y una búsqueda posterior se detiene antes de tiempo. Por eso se marca el casillero como <strong>borrado</strong> (<em>tombstone</em>): la búsqueda sigue de largo, y una inserción puede reutilizarlo.</p>
+    <div class="code" data-cpp="1">enum class SlotState { Empty, Used, Deleted };
+
+struct Slot
+{
+    SlotState state{ SlotState::Empty };
+    int       key{};
+};
+
+class OpenHashTable final
+{
+public:
+    static constexpr std::size_t NOT_FOUND{ static_cast&lt;std::size_t&gt;(-1) };
+
+    explicit OpenHashTable(const std::size_t slotCount) : m_slots(slotCount) {}
+
+    // Sondeo lineal: prueba h, h+1, h+2, ... (módulo M) hasta encontrar la clave o un hueco NUNCA usado.
+    std::size_t find(const int key) const
+    {
+        std::size_t result{ NOT_FOUND };
+        std::size_t index{ indexOf(key) };
+        for (std::size_t probes{}; probes &lt; m_slots.size() &amp;&amp; result == NOT_FOUND; ++probes)
+        {
+            const Slot&amp; slot{ m_slots[index] };
+            if (slot.state == SlotState::Empty)
+            {
+                break;                                    // si hubiera estado, habría quedado antes de este hueco
+            }
+            if (slot.state == SlotState::Used &amp;&amp; slot.key == key)
+            {
+                result = index;
+            }
+            index = (index + 1) % m_slots.size();
+        }
+        return result;
+    }
+
+    // Borrar NO deja el casillero vacío: lo marca como Deleted (tombstone) para no cortar la cadena de sondeo.
+    bool erase(const int key)
+    {
+        const std::size_t index{ find(key) };
+        const bool        found{ index != NOT_FOUND };
+        if (found)
+        {
+            m_slots[index].state = SlotState::Deleted;
+        }
+        return found;
+    }
+
+private:
+    std::size_t indexOf(const int key) const
+    {
+        const long long slotCount{ static_cast&lt;long long&gt;(m_slots.size()) };
+        return static_cast&lt;std::size_t&gt;(((key % slotCount) + slotCount) % slotCount);
+    }
+
+    std::vector&lt;Slot&gt; m_slots;
+};</div>
+
+    <h3>Factor de carga y rehash</h3>
+    <p>El <strong>factor de carga</strong> es <code>α = n / M</code> (claves guardadas sobre casilleros). Cuanto más alto, más colisiones. Con sondeo lineal, la cantidad esperada de casilleros que se revisan crece muy rápido cerca de 1:</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>α</th><th>revisados si la clave está</th><th>revisados si no está</th></tr>
+      <tr><td>0,5</td><td>1,5</td><td>2,5</td></tr>
+      <tr><td>0,75</td><td>2,5</td><td>8,5</td></tr>
+      <tr><td>0,9</td><td>5,5</td><td>50,5</td></tr>
+    </table></div>
+    <p class="note-small">Fórmulas de Knuth para sondeo lineal: ½(1 + 1/(1−α)) y ½(1 + 1/(1−α)²).</p>
+    <p>Cuando α supera un umbral (por ejemplo 0,7 en direccionamiento abierto, o 1 en encadenamiento) se hace un <strong>rehash</strong>: se crea una tabla más grande (alrededor del doble, con M primo) y se <strong>reinsertan todas las claves</strong>. No se pueden copiar tal cual, porque al cambiar <code>M</code> cambia el casillero de cada clave. Cuesta <code>O(n)</code>, pero ocurre pocas veces: el costo amortizado por inserción sigue siendo <code>O(1)</code>.</p>
+    <p>En la biblioteca estándar, <code>std::unordered_map</code> y <code>std::unordered_set</code> son tablas de dispersión (en la práctica, con encadenamiento) con rehash automático cuando el factor de carga pasa de <code>max_load_factor()</code> (por defecto 1,0).</p>
+
+    <h3 id="e72">7.2 Conjuntos y bolsas (sets y bags)</h3>
+    <p>Un <strong>conjunto</strong> (set) es una colección de elementos <strong>sin repetidos</strong> y sin un orden que importe. Un <strong>bolsa</strong> (bag o multiconjunto) es lo mismo pero <strong>permite repetidos</strong>: no importa el orden, pero sí cuántas veces está cada elemento. Los dos son TADs: se definen por lo que hacen, no por cómo se guardan.</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>operación</th><th>conjunto</th><th>bolsa</th></tr>
+      <tr><td>agregar</td><td class="dim"><code>add(x)</code>: si ya estaba, no pasa nada</td><td class="dim"><code>add(x)</code>: el contador de x sube en 1</td></tr>
+      <tr><td>quitar</td><td class="dim"><code>remove(x)</code></td><td class="dim"><code>removeOne(x)</code>: baja el contador en 1 (o <code>removeAll</code>)</td></tr>
+      <tr><td>consultar</td><td class="dim"><code>contains(x)</code>: sí o no</td><td class="dim"><code>count(x)</code>: cuántas veces</td></tr>
+      <tr><td>tamaño</td><td class="dim"><code>size()</code></td><td class="dim"><code>size()</code> (total con repetidos) y <code>distinct()</code> (sin repetidos)</td></tr>
+      <tr><td>combinar</td><td class="dim">unión ∪, intersección ∩, diferencia −, diferencia simétrica △</td><td class="dim">suma (cuentas se suman), unión (máximo), intersección (mínimo), diferencia (resta, sin bajar de 0)</td></tr>
+    </table></div>
+
+    <h3>¿Cómo se implementan?</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>implementación</th><th>contains</th><th>add</th><th>¿ordenado?</th><th>cuándo</th></tr>
+      <tr><td>vector sin ordenar</td><td>O(n)</td><td>O(n) (hay que revisar duplicados)</td><td>no</td><td class="dim">pocos elementos</td></tr>
+      <tr><td>vector ordenado</td><td>O(log n)</td><td>O(n) (hay que correr elementos)</td><td>sí</td><td class="dim">muchas consultas, pocas altas</td></tr>
+      <tr><td>árbol balanceado (<code>std::set</code>)</td><td>O(log n)</td><td>O(log n)</td><td>sí</td><td class="dim">necesitás recorrer en orden</td></tr>
+      <tr><td>tabla hash (<code>std::unordered_set</code>)</td><td>O(1) promedio</td><td>O(1) promedio</td><td>no</td><td class="dim">solo pertenencia, lo más rápido</td></tr>
+      <tr><td>mapa de bits (7.3)</td><td>O(1)</td><td>O(1)</td><td>por índice</td><td class="dim">universo pequeño de enteros</td></tr>
+    </table></div>
+    <p>Una bolsa suele implementarse como un <strong>mapa de elemento a contador</strong>, o con <code>std::multiset</code>, que guarda cada copia. Las operaciones entre conjuntos de la STL (<code>std::set_union</code>, <code>std::set_intersection</code>, <code>std::set_difference</code>) trabajan sobre rangos <strong>ordenados</strong> y cuestan <code>O(n + m)</code>, porque recorren los dos a la vez como en el merge de un merge sort.</p>
+    <div class="code" data-cpp="1">// std::set guarda sin repetidos y ordenado. set_union necesita DOS rangos ORDENADOS y escribe el resultado
+// por un iterador de salida: inserter(resultado, ...) inserta cada elemento en el set resultado.
+std::set&lt;int&gt; unionOf(const std::set&lt;int&gt;&amp; a, const std::set&lt;int&gt;&amp; b)
+{
+    std::set&lt;int&gt; result;
+    std::set_union(a.begin(), a.end(), b.begin(), b.end(), std::inserter(result, result.end()));
+    return result;
+}
+
+std::set&lt;int&gt; intersectionOf(const std::set&lt;int&gt;&amp; a, const std::set&lt;int&gt;&amp; b)
+{
+    std::set&lt;int&gt; result;
+    std::set_intersection(a.begin(), a.end(), b.begin(), b.end(), std::inserter(result, result.end()));
+    return result;
+}</div>
+    <div class="code" data-cpp="1">// Una bolsa (multiconjunto) guarda cuántas veces aparece cada elemento: elemento -&gt; contador.
+class Bag final
+{
+public:
+    void add(const std::string&amp; item)
+    {
+        ++m_counts[item];           // operator[] crea el contador en 0 si no existe, y después lo incrementa
+    }
+
+    bool removeOne(const std::string&amp; item)
+    {
+        const auto it{ m_counts.find(item) };    // find: O(log n); devuelve end() si no está
+        const bool found{ it != m_counts.end() };
+        if (found &amp;&amp; --it-&gt;second == 0)
+        {
+            m_counts.erase(it);                  // si no quedan copias, el elemento se elimina
+        }
+        return found;
+    }
+
+    std::size_t count(const std::string&amp; item) const
+    {
+        const auto it{ m_counts.find(item) };
+        return it == m_counts.end() ? 0 : it-&gt;second;
+    }
+
+    std::size_t distinct() const noexcept
+    {
+        return m_counts.size();
+    }
+
+    std::size_t size() const noexcept         // total, contando repetidos
+    {
+        std::size_t total{};
+        for (const auto&amp; entry : m_counts)
+        {
+            total += entry.second;
+        }
+        return total;
+    }
+
+private:
+    std::map&lt;std::string, std::size_t&gt; m_counts;
+};</div>
+
+    <h3 id="e73">7.3 Mapas de bits</h3>
+    <p>Un <strong>mapa de bits</strong> (bitmap) guarda <strong>un bit por elemento</strong>: 1 significa "está / sí / ocupado" y 0 significa "no está / no / libre". Sirve cuando los elementos son enteros en un universo chico y denso (ids de 0 a 1.000.000, números de bloque de un disco, flags de permisos). Un millón de elementos ocupan <strong>125.000 bytes</strong>, y no un millón.</p>
+    <p>El bit número <code>i</code> vive en el <strong>byte</strong> <code>i / 8</code>, en la <strong>posición</strong> <code>i % 8</code>, y se manipula con una <strong>máscara</strong> <code>1 &lt;&lt; (i % 8)</code>:</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>operación</th><th>en C++</th><th>qué hace el operador</th></tr>
+      <tr><td>prender (set)</td><td><code>byte |= mask</code></td><td class="dim">OR: deja en 1 el bit de la máscara y no toca los demás</td></tr>
+      <tr><td>apagar (clear)</td><td><code>byte &amp;= ~mask</code></td><td class="dim">AND con la máscara negada: pone en 0 solo ese bit</td></tr>
+      <tr><td>invertir (toggle)</td><td><code>byte ^= mask</code></td><td class="dim">XOR: si estaba en 1 pasa a 0 y viceversa</td></tr>
+      <tr><td>consultar (test)</td><td><code>(byte &amp; mask) != 0</code></td><td class="dim">AND: queda distinto de 0 solo si ese bit está prendido</td></tr>
+    </table></div>
+    <div class="code" data-cpp="1">class Bitmap final
+{
+public:
+    explicit Bitmap(const std::size_t bitCount) : m_bytes((bitCount + BITS_PER_BYTE - 1) / BITS_PER_BYTE, 0) {}
+
+    void set(const std::size_t index)
+    {
+        m_bytes[index / BITS_PER_BYTE] |= maskOf(index);                 // OR: prende el bit
+    }
+
+    void clear(const std::size_t index)
+    {
+        m_bytes[index / BITS_PER_BYTE] &amp;= static_cast&lt;std::uint8_t&gt;(~maskOf(index));   // AND con la máscara negada: apaga
+    }
+
+    void toggle(const std::size_t index)
+    {
+        m_bytes[index / BITS_PER_BYTE] ^= maskOf(index);                 // XOR: invierte
+    }
+
+    bool test(const std::size_t index) const
+    {
+        return (m_bytes[index / BITS_PER_BYTE] &amp; maskOf(index)) != 0;    // AND: ¿está prendido?
+    }
+
+private:
+    static constexpr std::size_t BITS_PER_BYTE{ 8 };
+
+    // Bit i vive en el byte i / 8, en la posición i % 8. 1u evita el desborde de un int con signo.
+    static std::uint8_t maskOf(const std::size_t index)
+    {
+        return static_cast&lt;std::uint8_t&gt;(1u &lt;&lt; (index % BITS_PER_BYTE));
+    }
+
+    std::vector&lt;std::uint8_t&gt; m_bytes;
+};</div>
+    <p>Lo más lindo: las operaciones de conjuntos se vuelven operaciones sobre bytes (o palabras de 64 bits), que procesan muchos elementos <strong>a la vez</strong>. Unión = <code>|</code>, intersección = <code>&amp;</code>, diferencia = <code>a &amp; ~b</code>, diferencia simétrica = <code>^</code>. Contar los bits prendidos (<em>popcount</em>) da el tamaño del conjunto.</p>
+    <p><strong>Un ejemplo que ya usás:</strong> los permisos de Unix. <code>chmod 755</code> son 9 bits: <code>111 101 101</code> = <code>rwxr-xr-x</code> (cada dígito octal agrupa 3 bits: r = 4, w = 2, x = 1). En la biblioteca estándar: <code>std::bitset&lt;N&gt;</code> (tamaño fijo en compilación) y <code>std::vector&lt;bool&gt;</code> (tamaño dinámico, empaquetado en bits).</p>
+
+    <h3>¿Cuál uso?</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>necesito...</th><th>uso</th></tr>
+      <tr><td>encontrar por clave lo más rápido posible, sin orden</td><td class="dim">tabla hash (<code>unordered_map</code>)</td></tr>
+      <tr><td>buscar y además recorrer en orden o por rangos</td><td class="dim">árbol balanceado o B+ (<code>std::map</code>, índice en disco)</td></tr>
+      <tr><td>elementos únicos, pregunto "¿está?"</td><td class="dim">conjunto (<code>unordered_set</code> si no importa el orden, <code>set</code> si sí)</td></tr>
+      <tr><td>contar cuántas veces aparece cada cosa</td><td class="dim">bolsa (mapa elemento → contador)</td></tr>
+      <tr><td>un sí/no por cada entero de un rango chico y denso</td><td class="dim">mapa de bits (<code>bitset</code>, <code>vector&lt;bool&gt;</code>)</td></tr>
+    </table></div>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+
+    <h3 id="x71">7.1 Tabla de dispersión: insertá, buscá, borrá y hacé rehash</h3>
+    <p>Probá insertar <code>15</code>, <code>22</code>, <code>29</code> y <code>36</code>: con M = 7 todas caen en el casillero 1. Cambiá el método de resolución y compará el camino que sigue cada una. Después borrá una del medio y buscá la siguiente.</p>
+    <div class="panel">
+      <div class="ctrl-row">
+        <div class="field"><label>CASILLEROS M</label><select id="htM"><option>7</option><option>11</option><option>13</option></select></div>
+        <div class="field"><label>MÉTODO</label><select id="htMode"><option value="chain">encadenamiento</option><option value="lin">sondeo lineal</option><option value="quad">sondeo cuadrático</option><option value="dbl">doble hashing</option></select></div>
+        <div class="field"><label>CLAVE (entero ≥ 0)</label><input type="number" id="htKey" value="15" min="0" max="999"></div>
+        <button id="htIns" class="primary">insertar</button><button id="htFind">buscar</button><button id="htDel">borrar</button>
+      </div>
+      <div class="ctrl-row"><button id="htEx">cargar 15, 22, 29, 36</button><button id="htRehash">rehash (duplicar)</button><button id="htReset">↺ vaciar</button></div>
+      <div class="hgrid" id="htGrid"></div>
+      <div class="legend"><span><i style="border-color:#F59E0B"></i>casillero probado</span><span><i style="border-color:#10B981"></i>donde quedó / se encontró</span><span><i style="border-color:#EF4444"></i>no encontrado</span><span><i style="border-color:#8892B0"></i>⚰ borrado (tombstone)</span></div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">claves (n)</div><div class="v" id="htN">0</div></div>
+        <div class="ro"><div class="k">casilleros (M)</div><div class="v" id="htMv">7</div></div>
+        <div class="ro"><div class="k">factor de carga α = n/M</div><div class="v" id="htAlpha">0,00</div></div>
+        <div class="ro"><div class="k">tombstones</div><div class="v" id="htTomb">0</div></div>
+      </div>
+      <div class="log" id="htLog"><p class="dim">Elegí un método e insertá claves. Cada operación explica el camino que siguió.</p></div>
+    </div>
+
+    <h3 id="x71b">7.1 Funciones de dispersión: ¿reparten parejo?</h3>
+    <p>Escribí palabras separadas por comas y compará tres funciones. Mirá qué pasa con los anagramas <code>ROL</code>, <code>LOR</code> y <code>ORL</code> usando la suma de códigos.</p>
+    <div class="panel">
+      <div class="ctrl-row">
+        <div class="field"><label>PALABRAS</label><input type="text" id="hfWords" value="ROL, LOR, ORL, Nodo, Grupo, Clase, Usuario, Permiso" style="width:340px"></div>
+        <div class="field"><label>FUNCIÓN</label><select id="hfFn"><option value="sum">suma de códigos</option><option value="poly" selected>polinomial (base 31)</option><option value="djb2">djb2 (base 33)</option></select></div>
+        <div class="field"><label>CASILLEROS M</label><select id="hfM"><option>7</option><option selected>11</option><option>13</option></select></div>
+      </div>
+      <div class="tbl-wrap"><table class="tbl" id="hfTable"></table></div>
+      <div class="hbars" id="hfBars"></div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">palabras</div><div class="v" id="hfCount">0</div></div>
+        <div class="ro"><div class="k">casilleros usados</div><div class="v" id="hfUsed">0</div></div>
+        <div class="ro"><div class="k">colisiones (palabras − usados)</div><div class="v" id="hfColl">0</div></div>
+      </div>
+      <p class="step-caption" id="hfCap"></p>
+    </div>
+
+    <h3 id="x72">7.2 Conjuntos: unión, intersección y diferencias</h3>
+    <p>Tocá los números para armar A y B, y después elegí una operación. Debajo de cada conjunto ves su <strong>mapa de bits</strong>: un bit por elemento del universo 1..12 (anticipo de 7.3).</p>
+    <div class="panel">
+      <p class="note-small" style="margin:0 0 6px;">CONJUNTO A</p><div class="chips" id="setA"></div>
+      <p class="note-small" style="margin:12px 0 6px;">CONJUNTO B</p><div class="chips" id="setB"></div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button data-op="union" class="setop primary">A ∪ B</button><button data-op="inter" class="setop">A ∩ B</button><button data-op="diff" class="setop">A − B</button><button data-op="rdiff" class="setop">B − A</button><button data-op="sym" class="setop">A △ B</button>
+        <button id="setSub">¿A ⊆ B?</button><button id="setDis">¿disjuntos?</button>
+      </div>
+      <p class="step-caption" id="setCap"></p>
+      <div class="chips" id="setRes"></div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">|A|</div><div class="v" id="setNA">0</div></div>
+        <div class="ro"><div class="k">|B|</div><div class="v" id="setNB">0</div></div>
+        <div class="ro"><div class="k">bits de A</div><div class="v wide" id="setBitsA"></div></div>
+        <div class="ro"><div class="k">bits de B</div><div class="v wide" id="setBitsB"></div></div>
+      </div>
+    </div>
+
+    <h3 id="x72b">7.2 Bolsas: contar repeticiones</h3>
+    <p>Agregá y quitá etiquetas de dos bolsas. Fijate la diferencia entre <strong>tamaño</strong> (total con repetidos) y <strong>distintos</strong>, y cómo cambian las cuentas según la operación.</p>
+    <div class="panel">
+      <div class="tbl-wrap"><table class="tbl" id="bagTable"></table></div>
+      <div class="btn-row">
+        <button data-bop="sum" class="bagop primary">A + B (suma)</button><button data-bop="max" class="bagop">A ∪ B (máximo)</button><button data-bop="min" class="bagop">A ∩ B (mínimo)</button><button data-bop="diff" class="bagop">A − B (resta ≥ 0)</button><button id="bagReset">↺ vaciar</button>
+      </div>
+      <p class="step-caption" id="bagCap"></p>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">A: tamaño / distintos</div><div class="v" id="bagA">0 / 0</div></div>
+        <div class="ro"><div class="k">B: tamaño / distintos</div><div class="v" id="bagB">0 / 0</div></div>
+        <div class="ro"><div class="k">resultado</div><div class="v wide" id="bagRes">—</div></div>
+      </div>
+    </div>
+
+    <h3 id="x73">7.3 Mapa de bits: prender, apagar y mirar el byte</h3>
+    <p>Hacé clic en un bit para invertirlo, o elegí un índice y una operación. Mirá cómo se calcula <strong>byte = i / 8</strong>, <strong>bit = i % 8</strong> y la máscara.</p>
+    <div class="panel">
+      <div class="bits16" id="bmCells"></div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">byte 0 (bits 0..7)</div><div class="v" id="bmB0">—</div></div>
+        <div class="ro"><div class="k">byte 1 (bits 8..15)</div><div class="v" id="bmB1">—</div></div>
+        <div class="ro"><div class="k">bits prendidos (popcount)</div><div class="v" id="bmPop">0</div></div>
+      </div>
+      <div class="ctrl-row" style="margin-top:14px;">
+        <div class="field"><label>ÍNDICE i (0..15)</label><input type="number" id="bmIdx" value="11" min="0" max="15"></div>
+        <button id="bmSet" class="primary">set(i)</button><button id="bmClear">clear(i)</button><button id="bmToggle">toggle(i)</button><button id="bmTest">test(i)</button><button id="bmReset">↺ vaciar</button>
+      </div>
+      <div class="log" id="bmLog"><p class="dim">Elegí un índice y una operación.</p></div>
+    </div>
+
+    <h3 id="x73b">7.3 Operar dos mapas con AND, OR y XOR</h3>
+    <p>Cada fila es un byte (el bit 7 a la izquierda, el 0 a la derecha, como se escribe un número binario). Tocá los bits de A y B.</p>
+    <div class="panel">
+      <p class="note-small" style="margin:0 0 6px;">A &nbsp;(bit 7 … bit 0)</p><div class="bits8" id="bwA"></div>
+      <p class="note-small" style="margin:10px 0 6px;">B</p><div class="bits8" id="bwB"></div>
+      <div class="tbl-wrap"><table class="tbl" id="bwTable"></table></div>
+    </div>
+
+    <h3 id="x73c">7.3 Permisos de Unix: 9 bits que ya conocés</h3>
+    <div class="panel">
+      <div class="tbl-wrap"><table class="tbl" id="pmTable"></table></div>
+      <div class="btn-row"><button data-pm="755">755</button><button data-pm="644">644</button><button data-pm="600">600</button><button data-pm="777">777</button></div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">octal</div><div class="v" id="pmOct">000</div></div>
+        <div class="ro"><div class="k">símbolos</div><div class="v" id="pmSym">---------</div></div>
+        <div class="ro"><div class="k">9 bits</div><div class="v" id="pmBits">000 000 000</div></div>
+      </div>
+      <p class="step-caption" id="pmCap"></p>
+    </div>
+
+    <h3 id="x-quiz">Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla, y marcá qué tan seguro estabas.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Los errores que más aparecen en esta unidad</h2>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> Entonces el índice de Nodos por id va en una tabla hash, las etiquetas en un conjunto, el conteo en una bolsa y los permisos en un mapa de bits.</p>
+        <p><span class="accent">maga_t:</span> Exacto. Y acordate del trato de la tabla hash: es velocísima para "dame este", pero no sabe de orden. Si alguien pide "todos los Nodos entre A y C", ahí volvés al árbol.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">EN EL PROYECTO INTEGRADOR</span><p>Documentá en el Doxygen qué estructura elegiste y por qué: "O(1) promedio, O(n) en el peor caso" no es lo mismo que "O(log n) siempre", y el código que usa la estructura necesita saber cuál de las dos garantías tiene.</p></div>
+  </section>
+
+  <footer><p>Material de apoyo cátedra de Algoritmos y Estructuras de Datos, FCEFyN · Ing. Valenzuela Gabriel.</p></footer>
+
+</main>
+
+<script>
+
+(function(){
+  'use strict';
+  /* ---- barra de progreso + navegación ---- */
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement, max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (doc.scrollTop / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){ if (sections[i].getBoundingClientRect().top <= 120) activeId = sections[i].id; }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+  var navToggle = document.getElementById('navtoggle'), sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open'); navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#sidenav a'), function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  /* ---- resaltado de código C++ (liviano, sin dependencias) ---- */
+  var KW = /\b(class|struct|template|typename|public|private|static|const|constexpr|final|noexcept|return|if|else|for|while|do|break|continue|new|delete|nullptr|true|false|using|auto|bool|void|enum|switch|case|default|operator|this|namespace|include|define|ifndef|endif|unsigned)\b/g;
+  var TP = /\b(int|char|size_t|std|uint32_t|uint8_t|uint64_t|long|short|string|vector|bitset|unordered_map|unordered_set|set|multiset|map|TData|Node|Split)\b/g;
+  function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function highlight(src){
+    var out = '', re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*")|([^\/"]+|\/)/g, m;
+    while ((m = re.exec(src)) !== null){
+      if (m[1]) out += '<span class="cm">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="str">' + esc(m[2]) + '</span>';
+      else {
+        var t = esc(m[3]);
+        t = t.replace(/\b(\d+(?:\.\d+)?[uUlL]*)\b/g, '<span class="num">$1</span>');
+        t = t.replace(KW, '<span class="kw">$1</span>').replace(TP, '<span class="tp">$1</span>');
+        out += t;
+      }
+    }
+    return out;
+  }
+  window.CC = { esc: esc, highlight: highlight };
+  window.CC.hlAll = function(root){
+    Array.prototype.forEach.call((root || document).querySelectorAll('.code[data-cpp]'), function(el){
+      if (el.getAttribute('data-done')) return;
+      el.innerHTML = highlight(el.textContent); el.setAttribute('data-done', '1');
+    });
+  };
+
+  /* ---- galería de errores ---- */
+  window.CC.buildErrors = function(gridId, errors){
+    var grid = document.getElementById(gridId);
+    errors.forEach(function(e, i){
+      var card = document.createElement('div'); card.className = 'err-card';
+      card.innerHTML =
+        '<div class="tag">' + e.tag + '</div><h4>' + e.title + '</h4>' +
+        '<div class="code" data-cpp="1">' + esc(e.bad) + '</div>' +
+        '<div class="err-sec c2">CONSECUENCIA</div><p class="why">' + e.cons + '</p>' +
+        '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+        '<div class="fix-box" id="' + gridId + '-fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code" data-cpp="1">' + esc(e.fix) + '</div></div>';
+      grid.appendChild(card);
+    });
+    grid.addEventListener('click', function(ev){
+      if (!ev.target.classList.contains('err-toggle')) return;
+      var box = document.getElementById(gridId + '-fix-' + ev.target.getAttribute('data-i'));
+      var showing = box.classList.toggle('show');
+      ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+    });
+    window.CC.hlAll(grid);
+  };
+
+  /* ---- checkpoints con nivel de seguridad ---- */
+  window.CC.buildQuiz = function(listId, quizzes){
+    var list = document.getElementById(listId);
+    quizzes.forEach(function(qz, qi){
+      var wrap = document.createElement('div'); wrap.className = 'quiz';
+      var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+      wrap.innerHTML =
+        '<div class="badge violet">CHECKPOINT ' + (qi + 1) + '</div>' +
+        (qz.code ? '<div class="code" data-cpp="1" style="margin-top:8px;">' + esc(qz.code) + '</div>' : '') +
+        '<p style="color:var(--text); margin:8px 0 10px;">' + qz.q + '</p>' +
+        '<div class="opt-row">' + optsHTML + '</div>' +
+        '<div class="quiz-fb" id="' + listId + '-fb-' + qi + '"></div>' +
+        '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button><button class="conf-btn" data-c="dude">dudé</button><button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+      list.appendChild(wrap);
+    });
+    list.addEventListener('click', function(ev){
+      var t = ev.target;
+      if (t.classList.contains('opt')){
+        var qi = t.getAttribute('data-qi'), oi = parseInt(t.getAttribute('data-oi'), 10), qz = quizzes[qi], row = t.parentElement;
+        Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+        if (oi === qz.correct) t.classList.add('correct');
+        else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+        var fb = document.getElementById(listId + '-fb-' + qi); fb.textContent = qz.fb; fb.classList.add('show');
+      }
+      if (t.classList.contains('conf-btn')){
+        Array.prototype.forEach.call(t.parentElement.querySelectorAll('.conf-btn'), function(b){ b.classList.remove('picked'); });
+        t.classList.add('picked');
+      }
+    });
+    window.CC.hlAll(list);
+  };
+
+  /* ---- bitácora de operaciones (log) ---- */
+  window.CC.logTo = function(el, lines){
+    el.innerHTML = lines.map(function(l){ return '<p class="' + (l.c || '') + '">' + l.t + '</p>'; }).join('');
+    el.scrollTop = 0;
+  };
+  document.addEventListener('DOMContentLoaded', function(){ window.CC.hlAll(); });
+})();
+
+</script>
+<script>
+
+(function(){
+  'use strict';
+/* ================= motores de la Unidad 7 ================= */
+function isPrime(n){ if (n < 2) return false; for (var i = 2; i * i <= n; i++) if (n % i === 0) return false; return true; }
+function nextPrime(n){ while (!isPrime(n)) n++; return n; }
+function mod(a, m){ return ((a % m) + m) % m; }
+
+/* ---------- 7.1 tabla de dispersión ---------- */
+var MODES = { chain: 'encadenamiento', lin: 'sondeo lineal', quad: 'sondeo cuadrático', dbl: 'doble hashing' };
+function HT(M, mode){ this.M = M; this.mode = mode; this.n = 0; this.reset(); }
+HT.prototype.reset = function(){
+  this.n = 0;
+  if (this.mode === 'chain'){ this.b = []; for (var i = 0; i < this.M; i++) this.b.push([]); }
+  else { this.s = []; for (var j = 0; j < this.M; j++) this.s.push({ st: 0, k: null }); }  /* st: 0 vacío, 1 ocupado, 2 borrado (tombstone) */
+};
+HT.prototype.h1 = function(k){ return mod(k, this.M); };
+HT.prototype.h2 = function(k){ return 1 + mod(k, this.M - 1); };
+HT.prototype.probe = function(k, j){
+  var h = this.h1(k);
+  if (this.mode === 'lin') return (h + j) % this.M;
+  if (this.mode === 'quad') return (h + j * j) % this.M;
+  return (h + j * this.h2(k)) % this.M;
+};
+/* devuelve { found, trail, index, probes } */
+HT.prototype.lookup = function(k){
+  var trail = [], i, j;
+  if (this.mode === 'chain'){
+    var ch = this.b[this.h1(k)], pos = ch.indexOf(k);
+    return { found: pos >= 0, trail: [this.h1(k)], index: this.h1(k), pos: pos, probes: (pos >= 0 ? pos + 1 : ch.length) };
+  }
+  for (j = 0; j < this.M; j++){
+    i = this.probe(k, j); trail.push(i);
+    if (this.s[i].st === 0) return { found: false, trail: trail, index: i, probes: j + 1 };
+    if (this.s[i].st === 1 && this.s[i].k === k) return { found: true, trail: trail, index: i, probes: j + 1 };
+  }
+  return { found: false, trail: trail, index: -1, probes: this.M };
+};
+HT.prototype.insert = function(k){
+  var r = this.lookup(k), i, j, trail = [];
+  if (r.found) return { ok: false, why: 'dup', trail: r.trail, index: r.index, probes: r.probes };
+  if (this.mode === 'chain'){
+    this.b[this.h1(k)].push(k); this.n++;
+    return { ok: true, trail: [this.h1(k)], index: this.h1(k), probes: this.b[this.h1(k)].length, pos: this.b[this.h1(k)].length - 1 };
+  }
+  for (j = 0; j < this.M; j++){
+    i = this.probe(k, j); trail.push(i);
+    if (this.s[i].st !== 1){ var reused = this.s[i].st === 2; this.s[i] = { st: 1, k: k }; this.n++; return { ok: true, trail: trail, index: i, probes: j + 1, reused: reused }; }
+  }
+  return { ok: false, why: 'full', trail: trail, index: -1, probes: this.M };
+};
+HT.prototype.erase = function(k){
+  var r = this.lookup(k);
+  if (!r.found) return { ok: false, trail: r.trail, index: r.index, probes: r.probes };
+  if (this.mode === 'chain') this.b[this.h1(k)].splice(r.pos, 1);
+  else this.s[r.index] = { st: 2, k: k };
+  this.n--;
+  return { ok: true, trail: r.trail, index: r.index, probes: r.probes };
+};
+HT.prototype.keys = function(){
+  var out = [];
+  if (this.mode === 'chain') this.b.forEach(function(c){ out = out.concat(c); });
+  else this.s.forEach(function(x){ if (x.st === 1) out.push(x.k); });
+  return out;
+};
+HT.prototype.rehash = function(){
+  var ks = this.keys(), old = this.M;
+  this.M = nextPrime(2 * old); this.reset();
+  for (var i = 0; i < ks.length; i++) this.insert(ks[i]);
+  return { from: old, to: this.M, moved: ks.length };
+};
+HT.prototype.alpha = function(){ return this.n / this.M; };
+HT.prototype.tombstones = function(){ return this.mode === 'chain' ? 0 : this.s.filter(function(x){ return x.st === 2; }).length; };
+
+/* ---------- funciones de dispersión de texto ---------- */
+var HASHFN = {
+  sum:  function(t){ var h = 0; for (var i = 0; i < t.length; i++) h += t.charCodeAt(i); return h >>> 0; },
+  poly: function(t){ var h = 0; for (var i = 0; i < t.length; i++) h = (Math.imul(h, 31) + t.charCodeAt(i)) >>> 0; return h; },
+  djb2: function(t){ var h = 5381; for (var i = 0; i < t.length; i++) h = (Math.imul(h, 33) + t.charCodeAt(i)) >>> 0; return h; }
+};
+
+/* ---------- 7.2 conjuntos y bolsas ---------- */
+function setOp(op, A, B){
+  return A.map(function(a, i){
+    var b = B[i];
+    switch (op){
+      case 'union': return a || b;
+      case 'inter': return a && b;
+      case 'diff':  return a && !b;
+      case 'rdiff': return b && !a;
+      case 'sym':   return a !== b;
+    }
+  });
+}
+function bagOp(op, a, b){
+  var out = {}, keys = {}; Object.keys(a).concat(Object.keys(b)).forEach(function(k){ keys[k] = 1; });
+  Object.keys(keys).forEach(function(k){
+    var x = a[k] || 0, y = b[k] || 0, r = 0;
+    if (op === 'sum') r = x + y; else if (op === 'max') r = Math.max(x, y); else if (op === 'min') r = Math.min(x, y); else if (op === 'diff') r = Math.max(0, x - y);
+    if (r > 0) out[k] = r;
+  });
+  return out;
+}
+
+/* ---------- 7.3 mapas de bits ---------- */
+function bitInfo(i){ return { byte: Math.floor(i / 8), bit: i % 8, mask: 1 << (i % 8) }; }
+function bin8(v){ var s = (v & 255).toString(2); while (s.length < 8) s = '0' + s; return s; }
+function hex2(v){ var s = (v & 255).toString(16).toUpperCase(); return '0x' + (s.length < 2 ? '0' + s : s); }
+function permString(bits9){
+  var ch = 'rwxrwxrwx', s = '';
+  for (var i = 0; i < 9; i++) s += bits9[i] ? ch[i] : '-';
+  return s;
+}
+function permOctal(bits9){
+  var d = '';
+  for (var g = 0; g < 3; g++) d += ((bits9[3 * g] ? 4 : 0) + (bits9[3 * g + 1] ? 2 : 0) + (bits9[3 * g + 2] ? 1 : 0));
+  return d;
+}
+
+if (typeof module !== 'undefined') module.exports = { HT: HT, HASHFN: HASHFN, nextPrime: nextPrime, setOp: setOp, bagOp: bagOp, bitInfo: bitInfo, bin8: bin8, permString: permString, permOctal: permOctal };
+
+  function $(id){ return document.getElementById(id); }
+  function fmtAlpha(a){ return a.toFixed(2).replace('.', ','); }
+
+  /* ================= 7.1 tabla de dispersión ================= */
+  var ht = new HT(7, 'chain');
+  var KEY_EX = [15, 22, 29, 36];
+  function htKey(){ var v = parseInt($('htKey').value, 10); return (isNaN(v) || v < 0) ? null : v; }
+  function htDraw(trail, finalIdx, finalCls){
+    var html = '';
+    for (var i = 0; i < ht.M; i++){
+      var cls = 'hcell', ord = '', t = trail ? trail.indexOf(i) : -1;
+      if (t >= 0){ cls += (i === finalIdx ? ' ' + finalCls : ' try'); ord = '<span class="ord">#' + (t + 1) + '</span>'; }
+      var content;
+      if (ht.mode === 'chain'){
+        content = ht.b[i].length ? '<div class="chain">' + ht.b[i].map(function(k){ return '<span>' + k + '</span>'; }).join('') + '</div>' : '<div class="val empty">∅</div>';
+      } else {
+        var s = ht.s[i];
+        content = s.st === 1 ? '<div class="val">' + s.k + '</div>' : (s.st === 2 ? '<div class="val tomb">⚰ ' + s.k + '</div>' : '<div class="val empty">∅</div>');
+      }
+      html += '<div class="' + cls + '"><div class="ix">[' + i + ']' + ord + '</div>' + content + '</div>';
+    }
+    $('htGrid').innerHTML = html;
+    $('htN').textContent = ht.n; $('htMv').textContent = ht.M; $('htAlpha').textContent = fmtAlpha(ht.alpha()); $('htTomb').textContent = ht.tombstones();
+  }
+  function seqText(k, trail){
+    if (ht.mode === 'chain') return 'h(' + k + ') = ' + k + ' mod ' + ht.M + ' = ' + ht.h1(k) + '.';
+    var h = ht.h1(k), parts = [];
+    trail.forEach(function(i, j){
+      parts.push(ht.mode === 'lin' ? '(' + h + ' + ' + j + ')' : ht.mode === 'quad' ? '(' + h + ' + ' + j + '²)' : '(' + h + ' + ' + j + '·' + ht.h2(k) + ')');
+    });
+    return 'h(' + k + ') = ' + k + ' mod ' + ht.M + ' = ' + h + (ht.mode === 'dbl' ? '; h₂ = 1 + ' + k + ' mod ' + (ht.M - 1) + ' = ' + ht.h2(k) : '') + '. Secuencia de casilleros: ' + trail.map(function(i, j){ return parts[j] + ' mod ' + ht.M + ' = ' + i; }).join(' → ') + '.';
+  }
+  function warnLoad(lines){
+    var a = ht.alpha();
+    if (ht.mode === 'chain' ? a > 1 : a > 0.7) lines.push({ t: 'Factor de carga α = ' + fmtAlpha(a) + ': ya es alto para este método. Conviene hacer rehash.', c: 'warn' });
+  }
+  function htRebuild(){ ht = new HT(parseInt($('htM').value, 10), $('htMode').value); htDraw(); CC.logTo($('htLog'), [{ t: 'Tabla nueva: ' + MODES[ht.mode] + ', M = ' + ht.M + '.', c: 'dim' }]); }
+  $('htM').addEventListener('change', htRebuild); $('htMode').addEventListener('change', htRebuild);
+  $('htIns').addEventListener('click', function(){
+    var k = htKey(); if (k === null) return;
+    var r = ht.insert(k), lines = [{ t: seqText(k, r.trail) }];
+    if (r.ok){
+      lines.push({ t: ht.mode === 'chain' ? 'Se agrega al final de la lista del casillero ' + r.index + ' (había ' + (r.pos) + ' clave' + (r.pos === 1 ? '' : 's') + ' antes: ' + (r.pos ? 'colisión resuelta con la lista' : 'sin colisión') + ').'
+        : (r.probes === 1 ? 'Casillero libre al primer intento: queda en [' + r.index + '].' : 'Colisión: se necesitaron ' + r.probes + ' intentos. Queda en [' + r.index + ']' + (r.reused ? ' (reutiliza un tombstone).' : '.')), c: 'ok' });
+      warnLoad(lines); htDraw(r.trail, r.index, 'ok');
+    } else if (r.why === 'dup'){ lines.push({ t: 'La clave ' + k + ' ya está: no se admiten repetidas.', c: 'warn' }); htDraw(r.trail, r.index, 'ok'); }
+    else { lines.push({ t: 'No se encontró casillero libre tras ' + r.probes + ' intentos. ' + (ht.mode === 'quad' ? 'Con sondeo cuadrático la secuencia no recorre todos los casilleros: puede fallar aunque queden libres (por eso se pide α ≤ 0,5).' : 'La tabla está llena.'), c: 'bad' }); htDraw(r.trail, -1, 'bad'); }
+    CC.logTo($('htLog'), lines);
+  });
+  $('htFind').addEventListener('click', function(){
+    var k = htKey(); if (k === null) return;
+    var r = ht.lookup(k), lines = [{ t: seqText(k, r.trail) }];
+    lines.push({ t: r.found ? 'Encontrada tras revisar ' + r.probes + (ht.mode === 'chain' ? ' elemento' + (r.probes === 1 ? '' : 's') + ' de la lista.' : ' casillero' + (r.probes === 1 ? '.' : 's.')) : 'No está: ' + (ht.mode === 'chain' ? 'se recorrió toda la lista (' + r.probes + ' elemento' + (r.probes === 1 ? '' : 's') + ').' : 'la búsqueda terminó en un casillero nunca usado (o tras revisar todos).'), c: r.found ? 'ok' : 'bad' });
+    htDraw(r.trail, r.index, r.found ? 'ok' : 'bad'); CC.logTo($('htLog'), lines);
+  });
+  $('htDel').addEventListener('click', function(){
+    var k = htKey(); if (k === null) return;
+    var r = ht.erase(k), lines = [{ t: seqText(k, r.trail) }];
+    if (r.ok) lines.push({ t: ht.mode === 'chain' ? 'Se saca ' + k + ' de la lista del casillero ' + r.index + '.' : 'Se marca el casillero [' + r.index + '] como borrado (⚰), NO como vacío: así no se corta la cadena de sondeo de otras claves.', c: 'ok' });
+    else lines.push({ t: 'La clave ' + k + ' no estaba: no se borra nada.', c: 'warn' });
+    htDraw(r.trail, r.index, r.ok ? 'ok' : 'bad'); CC.logTo($('htLog'), lines);
+  });
+  $('htEx').addEventListener('click', function(){
+    ht = new HT(ht.M, ht.mode);
+    var lines = [{ t: 'Se cargaron 15, 22, 29 y 36. Con M = 7 todas valen 1 mod 7: colisionan en el casillero 1.', c: 'dim' }];
+    KEY_EX.forEach(function(k){ var r = ht.insert(k); lines.push({ t: k + ' → ' + (r.ok ? (ht.mode === 'chain' ? 'lista del casillero ' + r.index + ' (posición ' + (r.pos + 1) + ')' : 'casillero [' + r.index + '] tras ' + r.probes + ' intento' + (r.probes === 1 ? '' : 's')) : 'sin lugar (' + (r.why === 'full' ? 'secuencia agotada' : 'repetida') + ')'), c: r.ok ? 'ok' : 'bad' }); });
+    htDraw(); CC.logTo($('htLog'), lines);
+  });
+  $('htRehash').addEventListener('click', function(){
+    var r = ht.rehash(); $('htM').value = r.to <= 13 ? String(r.to) : $('htM').value;
+    htDraw(); CC.logTo($('htLog'), [{ t: 'Rehash: M pasó de ' + r.from + ' a ' + r.to + ' (primo ≥ 2M). Se reinsertaron ' + r.moved + ' claves, porque al cambiar M cambia el casillero de cada una. α = ' + fmtAlpha(ht.alpha()) + '.', c: 'ok' }]);
+  });
+  $('htReset').addEventListener('click', function(){ ht.reset(); htDraw(); CC.logTo($('htLog'), [{ t: 'Tabla vacía.', c: 'dim' }]); });
+  $('htKey').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('htIns').click(); });
+  htDraw();
+
+  /* ================= 7.1 funciones de dispersión ================= */
+  function hfDraw(){
+    var words = $('hfWords').value.split(',').map(function(w){ return w.trim(); }).filter(function(w){ return w.length; });
+    var fn = $('hfFn').value, M = parseInt($('hfM').value, 10), buckets = []; for (var i = 0; i < M; i++) buckets.push([]);
+    var rows = '<tr><th>palabra</th><th>h(palabra)</th><th>h mod ' + M + '</th></tr>';
+    words.forEach(function(w){ var h = HASHFN[fn](w), ix = h % M; buckets[ix].push(w); rows += '<tr><td class="mono">' + CC.esc(w) + '</td><td class="mono">' + h + '</td><td class="mono">' + ix + '</td></tr>'; });
+    $('hfTable').innerHTML = rows;
+    var maxc = Math.max.apply(null, buckets.map(function(b){ return b.length; }).concat([1]));
+    $('hfBars').innerHTML = buckets.map(function(b, i){ return '<div class="hbar"><span>' + b.length + '</span><div class="bar' + (b.length > 1 ? ' hot' : '') + '" style="height:' + (b.length / maxc * 70) + 'px"></div><span>[' + i + ']</span><span class="nm">' + b.map(CC.esc).join(', ') + '</span></div>'; }).join('');
+    var used = buckets.filter(function(b){ return b.length; }).length;
+    $('hfCount').textContent = words.length; $('hfUsed').textContent = used; $('hfColl').textContent = words.length - used;
+    var cap = { sum: 'Sumar los códigos ignora el orden de las letras: ROL, LOR y ORL valen lo mismo y colisionan siempre, sin importar M.',
+                poly: 'La función polinomial (h = h·31 + letra) tiene en cuenta la posición de cada letra: los anagramas dan valores distintos.',
+                djb2: 'djb2 es otra función polinomial muy usada (base 33, arranca en 5381): también distingue el orden de las letras.' }[fn];
+    $('hfCap').textContent = cap + ' (Las barras ámbar son casilleros con colisión.)';
+  }
+  ['hfWords', 'hfFn', 'hfM'].forEach(function(id){ $(id).addEventListener('input', hfDraw); $(id).addEventListener('change', hfDraw); });
+  hfDraw();
+
+  /* ================= 7.2 conjuntos ================= */
+  var U = 12, A = [], B = [];
+  for (var u = 0; u < U; u++){ A.push(u < 5); B.push(u >= 3 && u < 7); }
+  function chipsHTML(arr, cls){ return arr.map(function(on, i){ return '<button class="chip' + (on ? ' on' : '') + '" data-i="' + i + '">' + (i + 1) + '</button>'; }).join(''); }
+  function bitStr(arr){ return arr.map(function(b){ return b ? '1' : '0'; }).join(''); }
+  function listOf(arr){ var r = []; arr.forEach(function(b, i){ if (b) r.push(i + 1); }); return r; }
+  function setDraw(res, cap){
+    $('setA').innerHTML = chipsHTML(A); $('setB').innerHTML = chipsHTML(B);
+    $('setNA').textContent = listOf(A).length; $('setNB').textContent = listOf(B).length;
+    $('setBitsA').textContent = bitStr(A); $('setBitsB').textContent = bitStr(B);
+    $('setRes').className = 'chips res';
+    $('setRes').innerHTML = res ? res.map(function(on, i){ return '<span class="chip' + (on ? ' on' : '') + '">' + (i + 1) + '</span>'; }).join('') : '';
+    $('setCap').innerHTML = cap || 'Armá A y B con un clic en cada número y elegí una operación.';
+  }
+  $('setA').addEventListener('click', function(e){ var i = e.target.getAttribute('data-i'); if (i !== null){ A[i] = !A[i]; setDraw(); } });
+  $('setB').addEventListener('click', function(e){ var i = e.target.getAttribute('data-i'); if (i !== null){ B[i] = !B[i]; setDraw(); } });
+  var OPN = { union: 'A ∪ B: está en A <strong>o</strong> en B (OR de los bits).', inter: 'A ∩ B: está en A <strong>y</strong> en B (AND de los bits).', diff: 'A − B: está en A y <strong>no</strong> en B (A AND NOT B).', rdiff: 'B − A: está en B y no en A (B AND NOT A).', sym: 'A △ B: está en uno <strong>o</strong> en el otro, pero no en los dos (XOR de los bits).' };
+  Array.prototype.forEach.call(document.querySelectorAll('.setop'), function(b){
+    b.addEventListener('click', function(){
+      var op = b.getAttribute('data-op'), r = setOp(op, A, B), l = listOf(r);
+      setDraw(r, OPN[op] + ' Resultado: {' + l.join(', ') + '} (' + l.length + ' elemento' + (l.length === 1 ? '' : 's') + '). Bits: <span class="mono">' + bitStr(r) + '</span>');
+    });
+  });
+  $('setSub').addEventListener('click', function(){
+    var extra = listOf(setOp('diff', A, B)), ok = extra.length === 0;
+    setDraw(null, ok ? 'A ⊆ B: sí. Todo lo de A está en B (A − B es vacío).' : 'A ⊆ B: no. Estos elementos de A no están en B: {' + extra.join(', ') + '}.');
+  });
+  $('setDis').addEventListener('click', function(){
+    var com = listOf(setOp('inter', A, B));
+    setDraw(null, com.length === 0 ? 'Disjuntos: sí. A ∩ B es vacío.' : 'Disjuntos: no. Tienen en común {' + com.join(', ') + '}.');
+  });
+  setDraw();
+
+  /* ================= 7.2 bolsas ================= */
+  var TAGS = ['crítico', 'revisado', 'legacy', 'urgente', 'docs'], bagA = { 'crítico': 2, 'revisado': 1 }, bagB = { 'crítico': 1, 'legacy': 3 };
+  function bagSize(b){ var t = 0, d = 0; Object.keys(b).forEach(function(k){ if (b[k] > 0){ t += b[k]; d++; } }); return t + ' / ' + d; }
+  function bagFmt(b){ var ks = Object.keys(b); return ks.length ? ks.map(function(k){ return k + '×' + b[k]; }).join(', ') : '(vacía)'; }
+  function bagDraw(res, cap){
+    var rows = '<tr><th>etiqueta</th><th>bolsa A</th><th>bolsa B</th></tr>';
+    TAGS.forEach(function(t){
+      rows += '<tr><td class="mono">' + t + '</td>' +
+        '<td><button class="bg" data-w="A" data-t="' + t + '" data-d="-1">−</button> <span class="mono">' + (bagA[t] || 0) + '</span> <button class="bg" data-w="A" data-t="' + t + '" data-d="1">+</button></td>' +
+        '<td><button class="bg" data-w="B" data-t="' + t + '" data-d="-1">−</button> <span class="mono">' + (bagB[t] || 0) + '</span> <button class="bg" data-w="B" data-t="' + t + '" data-d="1">+</button></td></tr>';
+    });
+    $('bagTable').innerHTML = rows;
+    $('bagA').textContent = bagSize(bagA); $('bagB').textContent = bagSize(bagB);
+    $('bagRes').textContent = res ? bagFmt(res) : '—';
+    $('bagCap').innerHTML = cap || 'Cada tabla muestra cuántas veces está cada etiqueta. "Tamaño" cuenta repetidos; "distintos", no.';
+  }
+  $('bagTable').addEventListener('click', function(e){
+    var t = e.target; if (!t.classList.contains('bg')) return;
+    var b = t.getAttribute('data-w') === 'A' ? bagA : bagB, tag = t.getAttribute('data-t'), d = parseInt(t.getAttribute('data-d'), 10);
+    b[tag] = Math.max(0, (b[tag] || 0) + d); if (b[tag] === 0) delete b[tag];
+    bagDraw();
+  });
+  var BOP = { sum: 'Suma: las cuentas se suman (como juntar dos bolsas).', max: 'Unión: para cada elemento, la mayor de las dos cuentas.', min: 'Intersección: para cada elemento, la menor de las dos cuentas.', diff: 'Diferencia A − B: se resta la cuenta de B a la de A, sin bajar de 0.' };
+  Array.prototype.forEach.call(document.querySelectorAll('.bagop'), function(b){
+    b.addEventListener('click', function(){ var op = b.getAttribute('data-bop'), r = bagOp(op, bagA, bagB); bagDraw(r, BOP[op] + ' Resultado: ' + bagFmt(r) + ' (tamaño / distintos: ' + bagSize(r) + ').'); });
+  });
+  $('bagReset').addEventListener('click', function(){ bagA = {}; bagB = {}; bagDraw(); });
+  bagDraw();
+
+  /* ================= 7.3 mapa de bits ================= */
+  var bits = []; for (var q = 0; q < 16; q++) bits.push(q === 3 || q === 11 || q === 12 ? 1 : 0);
+  function byteVal(n){ var v = 0; for (var i = 0; i < 8; i++) if (bits[n * 8 + i]) v |= (1 << i); return v; }
+  function bmDraw(hl){
+    var html = '';
+    for (var by = 0; by < 2; by++){
+      html += '<div class="byte">';
+      for (var i = 0; i < 8; i++){ var ix = by * 8 + i; html += '<div class="bitc' + (bits[ix] ? ' on' : '') + (hl === ix ? ' hl' : '') + '" data-i="' + ix + '"><div class="ixl">' + ix + '</div><span class="b">' + bits[ix] + '</span></div>'; }
+      html += '</div>';
+    }
+    $('bmCells').innerHTML = html;
+    $('bmB0').textContent = bin8(byteVal(0)) + '  ' + hex2(byteVal(0)); $('bmB1').textContent = bin8(byteVal(1)) + '  ' + hex2(byteVal(1));
+    $('bmPop').textContent = bits.reduce(function(a, b){ return a + b; }, 0);
+  }
+  function bmOp(op){
+    var i = parseInt($('bmIdx').value, 10); if (isNaN(i) || i < 0 || i > 15) return;
+    var info = bitInfo(i), before = byteVal(info.byte), lines;
+    var head = 'i = ' + i + ' → byte = ' + i + ' / 8 = ' + info.byte + ', bit = ' + i + ' % 8 = ' + info.bit + ', máscara = 1 &lt;&lt; ' + info.bit + ' = ' + bin8(info.mask) + ' (' + hex2(info.mask) + ').';
+    if (op === 'test'){
+      lines = [{ t: head }, { t: 'test: (byte &amp; máscara) = ' + bin8(before) + ' &amp; ' + bin8(info.mask) + ' = ' + bin8(before & info.mask) + (before & info.mask ? ' ≠ 0 → el bit ESTÁ prendido (true).' : ' = 0 → el bit está apagado (false).'), c: before & info.mask ? 'ok' : 'warn' }];
+    } else {
+      var nv = op === 'set' ? (before | info.mask) : op === 'clear' ? (before & ~info.mask & 255) : (before ^ info.mask);
+      var sym = op === 'set' ? '|=' : op === 'clear' ? '&amp;= ~' : '^=';
+      bits[i] = (nv >> info.bit) & 1;
+      lines = [{ t: head }, { t: op + ': byte ' + sym + ' máscara → ' + bin8(before) + ' → ' + bin8(nv) + '  (' + hex2(before) + ' → ' + hex2(nv) + ').', c: 'ok' }];
+    }
+    bmDraw(i); CC.logTo($('bmLog'), lines);
+  }
+  $('bmSet').addEventListener('click', function(){ bmOp('set'); }); $('bmClear').addEventListener('click', function(){ bmOp('clear'); });
+  $('bmToggle').addEventListener('click', function(){ bmOp('toggle'); }); $('bmTest').addEventListener('click', function(){ bmOp('test'); });
+  $('bmReset').addEventListener('click', function(){ bits = bits.map(function(){ return 0; }); bmDraw(); CC.logTo($('bmLog'), [{ t: 'Mapa vacío: 16 bits en 0 (2 bytes).', c: 'dim' }]); });
+  $('bmCells').addEventListener('click', function(e){
+    var el = e.target.closest('.bitc'); if (!el) return;
+    var i = parseInt(el.getAttribute('data-i'), 10); $('bmIdx').value = i; bmOp('toggle');
+  });
+  bmDraw(); CC.logTo($('bmLog'), [{ t: 'Bits 3, 11 y 12 prendidos. Probá test(11), clear(11) o toggle(0).', c: 'dim' }]);
+
+  /* ================= 7.3 operar bytes ================= */
+  var bwA = [0, 1, 1, 0, 1, 1, 0, 0], bwB = [0, 0, 1, 1, 1, 0, 1, 0];   /* posición 0 = bit 7 */
+  function bwVal(a){ var v = 0; for (var i = 0; i < 8; i++) if (a[i]) v |= (1 << (7 - i)); return v; }
+  function bwCells(id, arr, ro){
+    var h = ''; for (var i = 0; i < 8; i++) h += '<div class="bitc' + (arr[i] ? ' on' : '') + (ro ? ' ro' : '') + '" data-i="' + i + '"><div class="ixl">bit ' + (7 - i) + '</div><span class="b">' + arr[i] + '</span></div>';
+    $(id).innerHTML = h;
+  }
+  function bwDraw(){
+    bwCells('bwA', bwA); bwCells('bwB', bwB);
+    var a = bwVal(bwA), b = bwVal(bwB);
+    var rows = [['A', a, ''], ['B', b, ''], ['A &amp; B (AND)', a & b, 'intersección: 1 solo donde ambos tienen 1'], ['A | B (OR)', a | b, 'unión: 1 donde alguno tiene 1'], ['A ^ B (XOR)', a ^ b, 'diferencia simétrica: 1 donde difieren'], ['~A (NOT)', (~a) & 255, 'invierte todos los bits de A'], ['A &amp; ~B', a & (~b & 255), 'diferencia A − B'], ['A &lt;&lt; 1', (a << 1) & 255, 'corre un lugar a la izquierda (≈ ×2; el bit 7 se pierde)'], ['A &gt;&gt; 1', a >> 1, 'corre un lugar a la derecha (≈ ÷2)']];
+    var h = '<tr><th>expresión</th><th>bits</th><th>hex</th><th>decimal</th><th>significado</th></tr>';
+    rows.forEach(function(r){ h += '<tr><td class="mono">' + r[0] + '</td><td class="bitsres">' + bin8(r[1]) + '</td><td class="mono">' + hex2(r[1]) + '</td><td class="mono">' + r[1] + '</td><td class="dim">' + r[2] + '</td></tr>'; });
+    $('bwTable').innerHTML = h;
+  }
+  $('bwA').addEventListener('click', function(e){ var el = e.target.closest('.bitc'); if (el){ var i = el.getAttribute('data-i'); bwA[i] ^= 1; bwDraw(); } });
+  $('bwB').addEventListener('click', function(e){ var el = e.target.closest('.bitc'); if (el){ var i = el.getAttribute('data-i'); bwB[i] ^= 1; bwDraw(); } });
+  bwDraw();
+
+  /* ================= permisos ================= */
+  var pm = [1, 1, 1, 1, 0, 1, 1, 0, 1];
+  function pmDraw(){
+    var who = ['usuario (u)', 'grupo (g)', 'otros (o)'], h = '<tr><th></th><th>lectura r (4)</th><th>escritura w (2)</th><th>ejecución x (1)</th></tr>';
+    for (var g = 0; g < 3; g++){
+      h += '<tr><td>' + who[g] + '</td>';
+      for (var k = 0; k < 3; k++) h += '<td><input type="checkbox" class="pmchk" data-i="' + (3 * g + k) + '"' + (pm[3 * g + k] ? ' checked' : '') + ' aria-label="' + who[g] + ' ' + 'rwx'[k] + '"></td>';
+      h += '</tr>';
+    }
+    $('pmTable').innerHTML = h;
+    var oct = permOctal(pm), sym = permString(pm), b = pm.map(function(x){ return x ? 1 : 0; }).join('');
+    $('pmOct').textContent = oct; $('pmSym').textContent = sym; $('pmBits').textContent = b.slice(0, 3) + ' ' + b.slice(3, 6) + ' ' + b.slice(6);
+    $('pmCap').innerHTML = '<span class="mono">chmod ' + oct + ' archivo</span>: cada dígito octal es un grupo de 3 bits (r = 4, w = 2, x = 1). Por ejemplo, ' + oct[0] + ' = ' + b.slice(0, 3) + '.';
+  }
+  $('pmTable').addEventListener('change', function(e){ var i = e.target.getAttribute('data-i'); if (i !== null){ pm[i] = e.target.checked ? 1 : 0; pmDraw(); } });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-pm]'), function(b){
+    b.addEventListener('click', function(){ var s = b.getAttribute('data-pm'); pm = []; for (var g = 0; g < 3; g++){ var d = parseInt(s[g], 10); pm.push((d >> 2) & 1, (d >> 1) & 1, d & 1); } pmDraw(); });
+  });
+  pmDraw();
+
+  /* ================= fallas ================= */
+  CC.buildErrors('errGrid', [
+    { tag:'índice negativo', title:'Usar % directamente con claves que pueden ser negativas',
+      bad:'std::size_t indexOf(const int key) const\n{\n    return key % m_buckets.size();   // key = -3, M = 7\n}',
+      cons:'En C++ el resto de un número negativo es negativo (<code>-3 % 7 == -3</code>), y además <code>key</code> se convierte a unsigned antes de dividir: el resultado es un valor enorme, fuera del arreglo. Es un acceso fuera de rango silencioso.',
+      fix:'std::size_t indexOf(const int key) const\n{\n    const long long m{ static_cast<long long>(m_buckets.size()) };\n    return static_cast<std::size_t>(((key % m) + m) % m);   // siempre en [0, M)\n}' },
+    { tag:'búsqueda cortada', title:'Borrar en direccionamiento abierto dejando el casillero vacío',
+      bad:'bool erase(const int key)\n{\n    const std::size_t index{ find(key) };\n    if (index != NOT_FOUND)\n    {\n        m_slots[index].state = SlotState::Empty;   // ¡rompe la cadena!\n    }\n    return index != NOT_FOUND;\n}',
+      cons:'Supongamos que 15 y 22 chocaron y 22 quedó un casillero más allá. Si borrás 15 dejando el casillero vacío, buscar 22 se detiene ahí ("hueco nunca usado") y dice que no está, aunque sigue en la tabla.',
+      fix:'m_slots[index].state = SlotState::Deleted;   // tombstone: la búsqueda sigue de largo\n// y una inserción puede reutilizar el casillero' },
+    { tag:'degradación a O(n)', title:'No redimensionar nunca la tabla',
+      bad:'bool insert(const int key)\n{\n    // inserta siempre, sin mirar loadFactor()\n    ...\n}',
+      cons:'Con α cerca de 1 (o mayor) hay racimos enormes o listas largas: la cantidad de casilleros revisados por operación crece y la tabla se parece cada vez más a una lista. El "O(1)" depende de mantener α acotado.',
+      fix:'constexpr double MAX_LOAD_FACTOR{ 0.7 };\n...\nif (loadFactor() > MAX_LOAD_FACTOR)\n{\n    rehash();   // tabla ~2M (M primo) y se reinsertan todas las claves\n}' },
+    { tag:'función de dispersión pobre', title:'Dispersar texto sumando los códigos de las letras',
+      bad:'std::size_t hashString(const std::string& text, const std::size_t m)\n{\n    std::size_t sum{};\n    for (const char letter : text)\n    {\n        sum += static_cast<unsigned char>(letter);   // ignora el orden\n    }\n    return sum % m;\n}',
+      cons:'Todos los anagramas ("ROL", "LOR", "ORL") dan el mismo valor y colisionan siempre. Además, los textos cortos se concentran en unos pocos casilleros. La tabla funciona, pero con muchas más colisiones de las necesarias.',
+      fix:'hash = hash * BASE + static_cast<unsigned char>(letter);   // polinomial: cuenta la posición de cada letra' },
+    { tag:'comportamiento indefinido', title:'Construir la máscara con 1 << i en un int',
+      bad:'void set(const std::size_t index)\n{\n    m_words[index / 32] |= (1 << (index % 32));   // 1 es int con signo\n}',
+      cons:'Para <code>index % 32 == 31</code>, <code>1 &lt;&lt; 31</code> desborda un entero con signo (comportamiento indefinido hasta C++17) y puede dar un valor negativo que se extiende de forma inesperada al combinarlo con tipos más anchos.',
+      fix:'void set(const std::size_t index)\n{\n    m_words[index / 32] |= (1u << (index % 32));   // 1u: sin signo, el desplazamiento es seguro\n}' },
+    { tag:'duplicados', title:'Usar un vector como conjunto sin chequear repetidos',
+      bad:'std::vector<int> tags;\ntags.emplace_back(7);\ntags.emplace_back(7);   // ahora hay dos 7\n// size() == 2, pero "el conjunto" tiene 1 elemento',
+      cons:'Un conjunto no admite repetidos: si no lo verificás, el tamaño y las operaciones (unión, intersección) dan resultados incorrectos. Verificar con un vector cuesta O(n) por alta.',
+      fix:'std::set<int> tags;      // o std::unordered_set<int>\ntags.insert(7);\ntags.insert(7);          // se ignora: sigue habiendo un solo 7' }
+  ]);
+
+  /* ================= checkpoints ================= */
+  CC.buildQuiz('quizList', [
+    { code:'// h(k) = k mod 7, sondeo lineal\n// tabla vacía: se insertan 15 y después 22',
+      q:'¿En qué casillero queda el 22?', opts:['1', '2', '3', '0'], correct:1,
+      fb:'15 mod 7 = 1 y 22 mod 7 = 1: colisión. Con sondeo lineal se prueba el casillero siguiente, el 2, que está libre.' },
+    { code:'// tabla de 10 casilleros con 8 claves',
+      q:'¿Cuál es el factor de carga α?', opts:['0,2', '0,8', '1,25', '8'], correct:1,
+      fb:'α = n / M = 8 / 10 = 0,8. Con sondeo lineal, ya es alto: conviene hacer rehash.' },
+    { code:'// ¿qué estructura?',
+      q:'Quiero guardar las etiquetas de un Nodo: sin repetidas y sin importar el orden. ¿Qué elijo?', opts:['Una pila', 'Un conjunto (set)', 'Una cola', 'Una bolsa'], correct:1,
+      fb:'Sin repetidas y sin orden es exactamente un conjunto. Si además necesitara saber cuántas veces aparece cada etiqueta, sería una bolsa.' },
+    { code:'Bag bag;\nbag.add("x"); bag.add("x"); bag.add("x");\nbag.removeOne("x");',
+      q:'¿Cuánto vale bag.count("x") y bag.distinct()?', opts:['3 y 1', '2 y 1', '2 y 2', '1 y 1'], correct:1,
+      fb:'Tres altas y una baja dejan count("x") = 2. Hay un solo elemento distinto ("x"), así que distinct() = 1 (y size() = 2).' },
+    { code:'// mapa de bits con 32 bits\n// bit número i = 19',
+      q:'¿En qué byte y en qué posición dentro del byte está?', opts:['byte 1, bit 3', 'byte 2, bit 3', 'byte 3, bit 2', 'byte 2, bit 19'], correct:1,
+      fb:'byte = 19 / 8 = 2 (división entera) y bit = 19 % 8 = 3. La máscara es 1u << 3 = 0b00001000.' },
+    { code:'std::uint8_t byte{ 0b11111111 };\nbyte &= ~(1u << 3);',
+      q:'¿Cómo queda el byte?', opts:['0b11110111', '0b00001000', '0b11111111', '0b00000000'], correct:0,
+      fb:'~(1u << 3) es una máscara con todos los bits en 1 menos el bit 3. El AND apaga solamente ese bit: 11110111.' },
+    { code:'// sondeo lineal; 15 y 22 chocaron en el\n// casillero 1: 15 en [1], 22 en [2]\n// se borra el 15',
+      q:'¿Por qué hay que marcar el casillero [1] como "borrado" y no como "vacío"?', opts:['Para ahorrar memoria', 'Para que la búsqueda del 22 siga de largo y lo encuentre', 'Porque C++ no permite casilleros vacíos', 'Para que el 15 pueda volver a insertarse'], correct:1,
+      fb:'La búsqueda se detiene en el primer casillero NUNCA usado. Si [1] queda vacío, buscar el 22 termina ahí y dice que no está. Con el tombstone, la búsqueda sigue hasta [2].' }
+  ]);
+})();
+
+</script>
+</body>
+</html>

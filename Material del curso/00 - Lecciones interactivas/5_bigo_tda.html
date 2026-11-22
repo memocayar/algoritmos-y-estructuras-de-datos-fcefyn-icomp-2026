@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; BIGO_TDA.exe — LAC</title>
+<style>
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:18px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(30px,5vw,50px); line-height:1.1; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .callout ul{margin:6px 0 0; padding-left:18px; color:var(--text); font-size:13.5px;}
+  .callout ul li{margin-bottom:4px;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .tp{color:var(--cyan);}
+  .code .op{color:var(--amber);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+
+  .dispatch-flow{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:16px; font-family:var(--font-mono); font-size:12.5px;}
+  .dispatch-box{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 14px;}
+  .dispatch-box.result{border-color:var(--green); color:var(--green);}
+  .dispatch-arrow{color:var(--cyan); font-size:11.5px; white-space:nowrap;}
+
+  .lab-readout{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px;}
+  .ro{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 12px;}
+  .ro .k{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.06em;}
+  .ro .v{font-family:var(--font-mono); font-size:14px; color:var(--cyan); margin-top:3px;}
+  .ro .v.result{color:var(--green); font-size:16px;}
+
+  /* ---------- TAD toggle ---------- */
+  .interfaz-box{background:var(--bg-raised); border:1px solid var(--violet); border-radius:8px; padding:14px 16px; margin-top:14px;}
+  .interfaz-box .k{font-family:var(--font-mono); font-size:10.5px; color:var(--violet); letter-spacing:.06em; margin-bottom:6px; display:block;}
+
+  /* ---------- error gallery ---------- */
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+
+  /* ---------- quiz (6-option complexity picker) ---------- */
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; max-width:640px;}
+  .opt{text-align:center; padding:10px 8px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // BIG O Y TDA</div>
+  <div class="nav-title">BIGO_TDA.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a></li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a></li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a></li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a></li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a></li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a></li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a></li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>previo a estructuras — TAD y complejidad primero</div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">Antes de programar: pensar en<br><span class="accent">qué hace</span> y en <span class="accent">cuánto tarda</span>.</h1>
+    <p class="cover-sub">Dos herramientas que usás en cada estructura que vas a construir de acá en adelante: separar la interfaz de la implementación (TAD), y predecir cómo escala tu código antes de que deje de andar (Big O).</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> C++ básico, funciones y arreglos</span>
+      <span><b>se usa en:</b> todas las estructuras de datos que siguen</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>DiagramaCba empieza a tener miles de nodos</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat notas_reunion.txt</p>
+        <p><span class="ok">ema_v:</span> Con pocos nodos vuela, pero apenas cargamos un diagrama de varios miles, mover un nodo tarda una eternidad. No entiendo por qué.</p>
+        <p><span class="accent">maga_t:</span> Eso es exactamente lo que la complejidad algorítmica te deja predecir ANTES de que pase, no después de que un usuario se queje. Y hay otra cosa que necesitamos resolver ahora que somos más en el equipo.</p>
+        <p><span class="ok">ema_v:</span> ¿Qué cosa?</p>
+        <p><span class="accent">maga_t:</span> Que alguien pueda usar tu Vector de nodos sin tener que leer cómo lo implementaste por dentro. Eso es un Tipo Abstracto de Datos: separar QUÉ hace de CÓMO lo hace.</p>
+        <p><span class="ok">ema_v:</span> ¿Como cuando yo soy Bárbara y uso una lista que implementó otra persona, y esa persona es Alan?</p>
+        <p><span class="accent">maga_t:</span> Exacto — y vas a ser las dos cosas todo el cuatrimestre, a veces Alan, a veces Bárbara. Hoy vemos las dos herramientas juntas.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Explicar qué es un TAD y por qué separar interfaz de implementación.</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Diseñar las primitivas de un TAD: qué reciben, qué hacen, qué devuelven.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Calcular la complejidad temporal de un fragmento de código contando operaciones.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Aplicar las reglas prácticas para simplificar una expresión a notación Big O.</p></div>
+      <div class="obj-card"><div class="k">05</div><p>Usar el Teorema Maestro para resolver la complejidad de una recursión tipo divide y vencerás.</p></div>
+      <div class="obj-card"><div class="k">06</div><p>Reconocer los errores más comunes al diseñar un TAD o al estimar complejidad.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3>¿Qué es un TAD?</h3>
+    <p>Un Tipo Abstracto de Datos es un conjunto de valores y de operaciones definidos mediante una especificación independiente de cualquier representación. La manipulación de un TAD depende solamente de su especificación — nunca de su implementación.</p>
+    <p>Ejemplo simple: una puerta. Lo único que te importa desde afuera es que se puede <code>Abrir()</code>, <code>Cerrar()</code>, y consultar si <code>EstaAbierta()</code>. No necesitás saber si por dentro guarda un booleano, un entero, o un string para representar su estado.</p>
+
+    <h3>Interfaz vs implementación</h3>
+    <p>Separamos siempre estas dos cosas:</p>
+    <div class="dispatch-flow">
+      <div class="dispatch-box">Declaración<br><span style="font-size:10.5px; color:var(--text-faint);">QUÉ dice que hace</span></div>
+      <span class="dispatch-arrow">interfaz</span>
+      <span class="dispatch-arrow" style="color:var(--text-faint);">— vs —</span>
+      <div class="dispatch-box result">Definición<br><span style="font-size:10.5px; color:var(--green);">CÓMO lo hace</span></div>
+      <span class="dispatch-arrow" style="color:var(--green);">implementación</span>
+    </div>
+    <p style="margin-top:14px;">La interfaz es un contrato entre quien <strong>implementa</strong> el TAD (Alan) y quien lo <strong>consume</strong> (Bárbara). Uno de sus objetivos centrales es enmascarar la implementación concreta: Bárbara solo trabaja con las primitivas que la interfaz expone, nunca con código que dependa de cómo Alan las armó por dentro. Por eso las interfaces no tienen constructores — no se pueden instanciar directamente, solo se accede a ellas a través de una función que devuelve una implementación concreta.</p>
+
+    <h3>Primitivas e invariantes</h3>
+    <p>Cada primitiva de un TAD se especifica respondiendo tres preguntas: ¿qué recibe?, ¿qué hace?, ¿qué devuelve? Una <strong>invariante</strong> es una condición que esa primitiva garantiza — por ejemplo, la invariante de <code>Abrir()</code> es "luego de aplicar Abrir(), el estado de la puerta será abierta". Las invariantes son las que forman las precondiciones y postcondiciones de cada primitiva, y las que un corrector automático (o vos mismo) van a verificar sin mirar nunca tu implementación interna.</p>
+
+    <h3>¿Qué es la complejidad de un algoritmo?</h3>
+    <p>Es una forma de describir cuántos recursos consume un algoritmo — típicamente tiempo y espacio. Nos importa para comparar implementaciones distintas de un mismo TAD, y para predecir el comportamiento cuando el input crece, sin tener que esperar a que realmente crezca en producción.</p>
+    <p>Medir tiempo real de ejecución depende de la computadora y de la implementación — no sirve para predecir. Contar operaciones básicas una por una es tedioso y ambiguo. Por eso usamos <strong>complejidad asintótica (Big O)</strong>: contamos operaciones en función del tamaño del input, tomando siempre el peor escenario posible, y buscamos una cota superior.</p>
+
+    <h3>Cómo calcular complejidad, paso a paso</h3>
+    <p>Contás las operaciones en función de <code>n</code> y simplificás con estas cuatro reglas:</p>
+    <div class="callout"><span class="k">REGLAS PRÁCTICAS</span>
+      <ul>
+        <li>Se desprecian las constantes que suman o restan: O(n + 2) = O(n)</li>
+        <li>Se desprecian las constantes que multiplican o dividen: O(2·n) = O(n)</li>
+        <li>Nos quedamos con el término más pesado: O(n² + n + 2) = O(n²)</li>
+        <li>Siempre revisar si la complejidad resultante tiene sentido</li>
+      </ul>
+    </div>
+    <p>Ojo con los bucles anidados con límites distintos: recorrer una matriz de <code>n</code> filas por <code>m</code> columnas es <code>O(n·m)</code> — solo se simplifica a O(n²) si <code>n</code> es igual a <code>m</code>.</p>
+
+    <h3>Notación formal: O, Ω y Θ</h3>
+    <p><strong>O(g(n))</strong> es una cota superior: decimos que T(n) = O(g(n)) si existe una constante c y un n₀ tal que, para todo n ≥ n₀, T(n) ≤ c·g(n). <strong>Ω(g(n))</strong> es una cota inferior: la misma idea, pero T(n) ≥ c·g(n). <strong>Θ(g(n))</strong> significa ambas cosas a la vez — una cota ajustada por arriba y por abajo.</p>
+
+    <h3>Complejidad de la recursividad y Teorema Maestro</h3>
+    <p>Una función recursiva que se llama a sí misma dividiendo el problema se puede describir con una ecuación de recurrencia de la forma <code>T(N) = A·T(N/B) + O(N^C)</code>, donde <code>A</code> es la cantidad de llamados recursivos, <code>B</code> la proporción en la que se divide el problema, y <code>O(N^C)</code> el costo de dividir y combinar (fuera de las llamadas recursivas). El Teorema Maestro resuelve esta ecuación comparando <code>log_B(A)</code> contra <code>C</code>:</p>
+    <div class="dispatch-flow">
+      <div class="dispatch-box">log_B(A) &lt; C</div>
+      <span class="dispatch-arrow">→</span>
+      <div class="dispatch-box result">O(N^C)</div>
+    </div>
+    <div class="dispatch-flow" style="margin-top:8px;">
+      <div class="dispatch-box">log_B(A) = C</div>
+      <span class="dispatch-arrow">→</span>
+      <div class="dispatch-box result">O(N^C · log N)</div>
+    </div>
+    <div class="dispatch-flow" style="margin-top:8px;">
+      <div class="dispatch-box">log_B(A) &gt; C</div>
+      <span class="dispatch-arrow">→</span>
+      <div class="dispatch-box result">O(N^log_B(A))</div>
+    </div>
+    <p style="margin-top:14px;">Lo vas a usar en vivo en la próxima sección con búsqueda binaria, MergeSort y un clásico: StoogeSort.</p>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+
+    <h3>La misma interfaz, dos implementaciones distintas</h3>
+    <p>La interfaz de <code>Puerta</code> nunca cambia. Tocá el interruptor y mirá cómo cambia lo que hay <em>adentro</em> — sin que Bárbara, que solo usa las tres primitivas, se entere jamás.</p>
+    <div class="panel">
+      <div class="interfaz-box">
+        <span class="k">INTERFAZ (fija, esto es lo único que ve Bárbara)</span>
+        <div class="code">type Puerta interface {
+  Abrir()
+  Cerrar()
+  EstaAbierta() bool
+}</div>
+      </div>
+      <div class="btn-row" style="margin-top:16px;">
+        <span class="mono" style="color:var(--text-dim); font-size:12.5px;">implementación de Alan:</span>
+        <button id="implInt" class="primary">con int</button>
+        <button id="implBool">con bool</button>
+      </div>
+      <div class="code" id="implCode" style="margin-top:12px;"></div>
+      <p class="step-caption" id="implCaption"></p>
+    </div>
+
+    <h3>Calculando complejidad paso a paso: imprimir una matriz</h3>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="cxStepNum">0</span> / <span id="cxStepTotal">4</span></span>
+        <div class="btn-row">
+          <button id="cxPrev">◀ anterior</button>
+          <button id="cxNext" class="primary">contar ▶</button>
+          <button id="cxReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="code" id="cxCode">
+        <span class="ln" data-line="1">void imprimirMatriz(<span class="tp">size_t</span> n, <span class="tp">size_t</span> m, <span class="tp">int</span> matriz[][n]) {</span>
+        <span class="ln" data-line="2">  <span class="kw">for</span> (<span class="tp">size_t</span> i = 0; i &lt; n; i++) {</span>
+        <span class="ln" data-line="3">    <span class="kw">for</span> (<span class="tp">size_t</span> j = 0; j &lt; m; j++) {</span>
+        <span class="ln" data-line="4">      printf(<span class="op">"%d\n"</span>, matriz[i][j]);</span>
+        <span class="ln" data-line="4">    }</span>
+        <span class="ln" data-line="4">  }</span>
+        <span class="ln" data-line="4">}</span>
+      </div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">operación por celda</div><div class="v" id="cxCell">—</div></div>
+        <div class="ro"><div class="k">bucle interno (por fila)</div><div class="v" id="cxInner">—</div></div>
+        <div class="ro"><div class="k">bucle externo</div><div class="v" id="cxOuter">—</div></div>
+        <div class="ro"><div class="k">T(n, m)</div><div class="v result" id="cxFinal">—</div></div>
+      </div>
+      <p class="step-caption" id="cxCaption">Tocá <span class="mono">contar</span> para empezar a contar operaciones, de adentro hacia afuera.</p>
+    </div>
+
+    <h3>Calculadora de Teorema Maestro</h3>
+    <p>Probá con tres recursiones reales: búsqueda binaria, MergeSort, y StoogeSort (el algoritmo de ordenamiento basado en los Tres Chiflados — funciona, pero no lo vas a usar en producción).</p>
+    <div class="panel">
+      <div class="btn-row">
+        <button id="mtBin" class="primary">Búsqueda binaria</button>
+        <button id="mtMerge">MergeSort</button>
+        <button id="mtStooge">StoogeSort</button>
+      </div>
+      <div class="code" id="mtFormula" style="margin-top:14px;"></div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">A (llamados recursivos)</div><div class="v" id="mtA">—</div></div>
+        <div class="ro"><div class="k">B (división del problema)</div><div class="v" id="mtB">—</div></div>
+        <div class="ro"><div class="k">C (costo fuera de la recursión)</div><div class="v" id="mtC">—</div></div>
+        <div class="ro"><div class="k">log_B(A) vs C</div><div class="v" id="mtCompare">—</div></div>
+        <div class="ro"><div class="k">resultado</div><div class="v result" id="mtResult">—</div></div>
+      </div>
+      <p class="step-caption" id="mtCaption">Elegí un algoritmo para ver cómo el Teorema Maestro resuelve su complejidad.</p>
+    </div>
+
+    <h3>Practicá: ¿qué complejidad tiene?</h3>
+    <p class="lead">Mismo formato que usamos siempre en la práctica: elegí entre las seis opciones antes de razonarlo.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Los errores que más aparecen con TAD y Big O</h2>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> Entonces cuando implemente el Vector de nodos, mientras respete la interfaz, ¿puedo cambiar cómo lo hago por dentro sin romperle nada a nadie?</p>
+        <p><span class="accent">maga_t:</span> Exacto — vos vas a ser Alan para ese TAD. Y ahora, antes de elegir cómo implementarlo, vas a poder predecir si esa elección va a aguantar miles de nodos, no vas a tener que esperar a que se rompa en producción.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">DE ACÁ EN ADELANTE</span><p>Toda estructura de datos que viene (Vector, Listas, Pilas, Colas, Árboles) se presenta primero como TAD — su interfaz, sus primitivas, sus invariantes — y recién después como implementación en C++. Y cada una se va a evaluar también por su complejidad, no solo por si "anda".</p></div>
+  </section>
+
+  <footer><p>BIGO_TDA.exe · material de apoyo cátedra de Algoritmos y Estructuras de Datos, Ing. Valenzuela Gabriel.</p></footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement;
+    var scrolled = doc.scrollTop;
+    var max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){
+      var rect = sections[i].getBoundingClientRect();
+      if (rect.top <= 120) activeId = sections[i].id;
+    }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  var navToggle = document.getElementById('navtoggle');
+  var sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  navLinks.forEach(function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  /* ================= TAD interfaz/implementación toggle ================= */
+  var implInt = document.getElementById('implInt');
+  var implBool = document.getElementById('implBool');
+  var implCode = document.getElementById('implCode');
+  var implCaption = document.getElementById('implCaption');
+  var codeInt = 'type puertaImplInt struct {\n  estado int  // 0 = abierta, 1 = cerrada\n}\n\nfunc (p *puertaImplInt) Abrir()  { p.estado = 0 }\nfunc (p *puertaImplInt) Cerrar() { p.estado = 1 }\nfunc (p *puertaImplInt) EstaAbierta() bool { return p.estado == 0 }';
+  var codeBool = 'type puertaImplBool struct {\n  estado bool  // true = abierta\n}\n\nfunc (p *puertaImplBool) Abrir()  { p.estado = true }\nfunc (p *puertaImplBool) Cerrar() { p.estado = false }\nfunc (p *puertaImplBool) EstaAbierta() bool { return p.estado }';
+  function setImpl(useInt){
+    implInt.classList.toggle('primary', useInt);
+    implBool.classList.toggle('primary', !useInt);
+    implCode.textContent = useInt ? codeInt : codeBool;
+    implCaption.innerHTML = 'La interfaz de arriba no cambió ni un carácter. Bárbara sigue llamando <span class="mono">Abrir()</span>, <span class="mono">Cerrar()</span>, <span class="mono">EstaAbierta()</span> exactamente igual — nunca se entera de que Alan cambió ' + (useInt ? 'de bool a int' : 'de int a bool') + ' por dentro.';
+  }
+  implInt.addEventListener('click', function(){ setImpl(true); });
+  implBool.addEventListener('click', function(){ setImpl(false); });
+  setImpl(true);
+
+  /* ================= complexity counting stepper (matrix) ================= */
+  var cxLines = Array.prototype.slice.call(document.querySelectorAll('#cxCode .ln'));
+  var cxCaption = document.getElementById('cxCaption');
+  var cxStepNumEl = document.getElementById('cxStepNum');
+  var CX_TOTAL = 4;
+  var cxStep = 0;
+  var cxData = [
+    { line:0, cell:'—', inner:'—', outer:'—', final:'—', cap:'Tocá <span class="mono">contar</span> para empezar a contar operaciones, de adentro hacia afuera.' },
+    { line:4, cell:'1 op (printf)', inner:'—', outer:'—', final:'—', cap:'Cada celda cuesta 1 operación: el <span class="mono">printf</span>.' },
+    { line:3, cell:'1 op (printf)', inner:'m · 1 op', outer:'—', final:'—', cap:'El bucle interno recorre <span class="mono">m</span> columnas: <span class="mono">m</span> operaciones por cada fila.' },
+    { line:2, cell:'1 op (printf)', inner:'m · 1 op', outer:'n · (m)', final:'—', cap:'El bucle externo recorre <span class="mono">n</span> filas, y en cada una repite el trabajo del bucle interno: <span class="mono">n · m</span> operaciones.' },
+    { line:1, cell:'1 op (printf)', inner:'m · 1 op', outer:'n · m', final:'T(n,m) = O(n·m)', cap:'No hay más trabajo fuera de los bucles. <span class="mono">T(n,m) = O(n·m)</span> — y solo se simplifica a O(n²) si además sabés que n = m.' }
+  ];
+  function renderCx(){
+    cxStepNumEl.textContent = cxStep;
+    var d = cxData[cxStep];
+    cxLines.forEach(function(l){ l.classList.toggle('active', parseInt(l.getAttribute('data-line'),10) === d.line && d.line !== 0); });
+    document.getElementById('cxCell').textContent = d.cell;
+    document.getElementById('cxInner').textContent = d.inner;
+    document.getElementById('cxOuter').textContent = d.outer;
+    document.getElementById('cxFinal').textContent = d.final;
+    cxCaption.innerHTML = d.cap;
+    document.getElementById('cxPrev').disabled = (cxStep === 0);
+    document.getElementById('cxNext').disabled = (cxStep === CX_TOTAL);
+  }
+  document.getElementById('cxNext').addEventListener('click', function(){ if (cxStep < CX_TOTAL){ cxStep++; renderCx(); } });
+  document.getElementById('cxPrev').addEventListener('click', function(){ if (cxStep > 0){ cxStep--; renderCx(); } });
+  document.getElementById('cxReset').addEventListener('click', function(){ cxStep = 0; renderCx(); });
+  renderCx();
+
+  /* ================= master theorem calculator ================= */
+  var mtPresets = {
+    bin: {
+      label:'Búsqueda binaria', A:'1', B:'2', C:'0',
+      formula:'T(N) = 1·T(N/2) + O(1)',
+      logBA:'log₂(1) = 0', cmp:'0 = 0  →  log_B(A) = C', result:'O(N⁰ · log N) = O(log N)',
+      cap:'Cada llamada descarta la mitad del arreglo y hace trabajo constante fuera de la recursión — el caso clásico de "igual", que da logarítmico.'
+    },
+    merge: {
+      label:'MergeSort', A:'2', B:'2', C:'1',
+      formula:'T(N) = 2·T(N/2) + O(N)',
+      logBA:'log₂(2) = 1', cmp:'1 = 1  →  log_B(A) = C', result:'O(N¹ · log N) = O(N log N)',
+      cap:'Dos llamadas recursivas, cada una sobre la mitad, más O(N) de Merge — otro caso de "igual", esta vez con costo de combinación lineal.'
+    },
+    stooge: {
+      label:'StoogeSort', A:'3', B:'3/2', C:'0',
+      formula:'T(N) = 3·T(⅔N) + O(1)',
+      logBA:'log_{1.5}(3) ≈ 2.71', cmp:'2.71 &gt; 0  →  log_B(A) &gt; C', result:'O(N^log_B(A)) ≈ O(N^2.71)',
+      cap:'Tres llamadas recursivas sobre 2/3 del arreglo cada una — mucho más trabajo recursivo del que "compensa" la reducción de tamaño. Por eso es peor que cuadrático, a pesar de ser divide y vencerás.'
+    }
+  };
+  var mtButtons = { bin: document.getElementById('mtBin'), merge: document.getElementById('mtMerge'), stooge: document.getElementById('mtStooge') };
+  function setMt(key){
+    Object.keys(mtButtons).forEach(function(k){ mtButtons[k].classList.toggle('primary', k === key); });
+    var p = mtPresets[key];
+    document.getElementById('mtFormula').textContent = p.formula;
+    document.getElementById('mtA').textContent = p.A;
+    document.getElementById('mtB').textContent = p.B;
+    document.getElementById('mtC').textContent = p.C;
+    document.getElementById('mtCompare').textContent = p.logBA + ' vs C=' + p.C;
+    document.getElementById('mtResult').textContent = p.result;
+    document.getElementById('mtCaption').innerHTML = '<strong>' + p.label + ':</strong> ' + p.cap;
+  }
+  mtButtons.bin.addEventListener('click', function(){ setMt('bin'); });
+  mtButtons.merge.addEventListener('click', function(){ setMt('merge'); });
+  mtButtons.stooge.addEventListener('click', function(){ setMt('stooge'); });
+  setMt('bin');
+
+  /* ================= error gallery ================= */
+  var errors = [
+    { tag:'contrato roto', title:'Depender de la implementación, no de la interfaz',
+      bad:'// Bárbara, usando el Vector de Alan:\nif (vector.datosInternos[3] == 0) {\n  // accede directo al campo interno\n}',
+      cons:'Si Alan decide cambiar cómo representa el Vector por dentro (otro tipo, otra estrategia de redimensión), este código de Bárbara se rompe — aunque la interfaz nunca haya cambiado.',
+      fix:'// Bárbara, usando solo primitivas:\nif (Obtener(vector, 3) == 0) {\n  // nunca le importa cómo\n  // está hecho por dentro\n}' },
+    { tag:'contrato ambiguo', title:'Primitivas sin invariantes claras',
+      bad:'// interfaz sin especificar\nAgregar(dato)\n// ¿agrega al final? ¿al principio?\n// ¿qué pasa si ya está lleno?',
+      cons:'Sin invariantes explícitas, Alan y Bárbara pueden asumir cosas distintas sobre la misma primitiva — y el bug aparece recién cuando el corrector (que sí conoce el contrato real) prueba un caso que ninguno de los dos anticipó.',
+      fix:'// Agregar(dato): inserta al final.\n// Invariante: después de Agregar(x),\n// el último elemento es x, y la\n// cantidad de elementos aumentó en 1.' },
+    { tag:'subestimar el anidamiento', title:'Contar mal un bucle anidado',
+      bad:'// "el bucle for es O(n),\n//  así que esto es O(n)"\nfor (i = 0; i &lt; n; i++)\n  for (j = 0; j &lt; m; j++)\n    procesar(matriz[i][j]);',
+      cons:'Cada vuelta del bucle externo repite las m vueltas completas del interno. El costo real es O(n·m), no O(n) — confundir esto lleva a subestimar drásticamente cuánto va a tardar con inputs grandes.',
+      fix:'// bucle interno: O(m) por vuelta\n// bucle externo: n vueltas\n// T(n,m) = O(n · m)\n// (solo es O(n²) si n == m)' },
+    { tag:'regla mal aplicada', title:'Quedarse con el término liviano',
+      bad:'T(n) = n² + 1000·n\n// "el 1000 es gigante, así que\n//  esto es básicamente O(n)"',
+      cons:'La notación Big O describe el comportamiento cuando n crece sin límite — y no importa cuán grande sea la constante, n² siempre termina superando a 1000·n a partir de cierto n₀. El término más pesado manda, siempre.',
+      fix:'T(n) = n² + 1000·n = O(n²)\n// para n > 1000, el término n²\n// ya domina completamente' },
+    { tag:'teorema mal aplicado', title:'Usar el Teorema Maestro sin verificar las condiciones',
+      bad:'T(n) = T(n/2) + O(2^n)\n// "A=1, B=2, entonces aplico\n//  el teorema maestro derecho"',
+      cons:'El Teorema Maestro exige que el costo fuera de la recursión sea polinomial (O(n^C)). O(2ⁿ) no lo es — aplicarlo igual da un resultado sin sentido. Siempre hay que revisar la forma de T(n) antes de usar la fórmula.',
+      fix:'// con un término no polinomial,\n// el Teorema Maestro NO aplica:\n// hay que resolver la recurrencia\n// por otro método (ej. sustitución)' }
+  ];
+  var errGrid = document.getElementById('errGrid');
+  errors.forEach(function(e, i){
+    var card = document.createElement('div');
+    card.className = 'err-card';
+    card.innerHTML =
+      '<div class="tag">' + e.tag + '</div>' +
+      '<h4>' + e.title + '</h4>' +
+      '<div class="code">' + e.bad + '</div>' +
+      '<div class="err-sec c2">CONSECUENCIA</div>' +
+      '<p class="why">' + e.cons + '</p>' +
+      '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+      '<div class="fix-box" id="fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code">' + e.fix + '</div></div>';
+    errGrid.appendChild(card);
+  });
+  errGrid.addEventListener('click', function(ev){
+    if (!ev.target.classList.contains('err-toggle')) return;
+    var i = ev.target.getAttribute('data-i');
+    var box = document.getElementById('fix-' + i);
+    var showing = box.classList.toggle('show');
+    ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+  });
+
+  /* ================= quizzes: 6-option complexity picker ================= */
+  var COMPLEX_OPTS = ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)', 'O(n³)'];
+  var quizzes = [
+    { code:'int primerElemento(int arreglo[]) {\n  return arreglo[0];\n}',
+      q:'¿Qué complejidad tiene esta función?', correctIdx:0,
+      fb:'Una sola operación, sin importar cuán grande sea el arreglo: T(n) = 1 = O(1).' },
+    { code:'void funcionRecursiva(size_t i) {\n  if (i == 0) return;\n  i--;\n  funcionRecursiva(i);\n}',
+      q:'¿Qué complejidad tiene esta función, llamada con funcionRecursiva(n)?', correctIdx:2,
+      fb:'T(N) = O(1) + T(N-1). En cada llamada restamos 1 hasta llegar a 0 — se hacen N llamadas en total, así que T(N) = O(N).' },
+    { code:'int busqBin(int* v, int ini, int fin, int x) {\n  if (ini &gt; fin) return -1;\n  int medio = (ini + fin) / 2;\n  if (v[medio] == x) return medio;\n  if (v[medio] &lt; x) return busqBin(v, medio+1, fin, x);\n  return busqBin(v, ini, medio-1, x);\n}',
+      q:'¿Qué complejidad tiene la búsqueda binaria?', correctIdx:1,
+      fb:'T(N) = 1·T(N/2) + O(1). Por el Teorema Maestro, A=1, B=2, C=0: log₂(1) = 0 = C, así que T(N) = O(N⁰ · log N) = O(log N).' },
+    { code:'void hacerAlgo(int n, int k) {\n  for (int i = 0; i &lt; n; ) {\n    for (int j = 0; j &lt; k; j++) {\n      i++;\n      // O(1) acá adentro\n    }\n  }\n}',
+      q:'El bucle interno corre k veces por cada vuelta, y esa vuelta avanza i en k. ¿Cuántas veces corre el bucle externo en total?',
+      correctIdx:2,
+      fb:'i avanza de a k por vuelta del bucle externo, y necesita llegar a n. Eso son n/k vueltas externas, cada una con k operaciones internas: (n/k)·k = n operaciones en total. La complejidad es O(n), no depende de k.' },
+    { code:'void stoogesort(int* v, int ini, int fin) {\n  if (v[ini] &gt; v[fin]) swap(v, ini, fin);\n  if (fin - ini + 1 &gt; 2) {\n    int t = (fin - ini + 1) / 3;\n    stoogesort(v, ini, fin-t);\n    stoogesort(v, ini+t, fin);\n    stoogesort(v, ini, fin-t);\n  }\n}',
+      q:'Tres llamadas recursivas, cada una sobre 2/3 del arreglo. ¿Qué complejidad da el Teorema Maestro?', correctIdx:4,
+      fb:'A=3, B=3/2, C=0. log_1.5(3) ≈ 2.71 &gt; C=0, así que T(N) = O(N^log_B(A)) ≈ O(N^2.71) — peor que cuadrático. De las opciones dadas, O(n²) es la cota más cercana entre las estándar, aunque el valor real es N^2.71.' }
+  ];
+  var quizList = document.getElementById('quizList');
+  quizzes.forEach(function(qz, qi){
+    var wrap = document.createElement('div');
+    wrap.className = 'quiz';
+    var optsHTML = COMPLEX_OPTS.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+    wrap.innerHTML =
+      '<div class="badge violet">CHECKPOINT ' + (qi+1) + '</div>' +
+      '<div class="code" style="margin-top:8px;">' + qz.code + '</div>' +
+      '<p style="color:var(--text); margin:6px 0 10px;">' + qz.q + '</p>' +
+      '<div class="opt-row">' + optsHTML + '</div>' +
+      '<div class="quiz-fb" id="fb-' + qi + '"></div>' +
+      '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button>' +
+        '<button class="conf-btn" data-c="dude">dudé</button>' +
+        '<button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+    quizList.appendChild(wrap);
+  });
+  quizList.addEventListener('click', function(ev){
+    var t = ev.target;
+    if (t.classList.contains('opt')){
+      var qi = t.getAttribute('data-qi');
+      var oi = parseInt(t.getAttribute('data-oi'),10);
+      var qz = quizzes[qi];
+      var row = t.parentElement;
+      Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+      if (oi === qz.correctIdx){ t.classList.add('correct'); }
+      else { t.classList.add('incorrect'); row.children[qz.correctIdx].classList.add('correct'); }
+      var fb = document.getElementById('fb-' + qi);
+      fb.textContent = qz.fb;
+      fb.classList.add('show');
+    }
+    if (t.classList.contains('conf-btn')){
+      var siblings = t.parentElement.querySelectorAll('.conf-btn');
+      Array.prototype.forEach.call(siblings, function(b){ b.classList.remove('picked'); });
+      t.classList.add('picked');
+    }
+  });
+})();
+</script>
+</body>
+</html>

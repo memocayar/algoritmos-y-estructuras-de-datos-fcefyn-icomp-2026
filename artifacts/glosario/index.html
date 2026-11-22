@@ -1,0 +1,494 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glosario AyED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f2ede1; --panel:#fffdf7; --panel2:#e9e1cd; --ink:#231f16; --muted:#726b57; --line:#dcd2b6;
+  --accent:#a5451f; --accent-ink:#fff7ef; --accent2:#2c6b62; --accent2-ink:#f2fbf9;
+  --code-bg:#211d17; --code-text:#f1ead9; --code-line:#3a352a;
+  --k:#e2a86a; --t:#7fc7c0; --s:#d99a8f; --n:#c9a6e0; --c:#7c7566;
+  --shadow:0 1px 2px rgba(35,31,22,.06), 0 10px 26px -14px rgba(35,31,22,.28);
+  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#191510; --panel:#221d16; --panel2:#2b241b; --ink:#ece3d1; --muted:#a89a7d; --line:#3a3225;
+    --accent:#e2814f; --accent-ink:#241206; --accent2:#5fb3a8; --accent2-ink:#062017;
+    --code-bg:#120f0b; --code-text:#eee5d2; --code-line:#2b261d;
+    --k:#e6b57e; --t:#7fc7c0; --s:#e2a89c; --n:#c9a6e0; --c:#8a8064;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#191510; --panel:#221d16; --panel2:#2b241b; --ink:#ece3d1; --muted:#a89a7d; --line:#3a3225;
+  --accent:#e2814f; --accent-ink:#241206; --accent2:#5fb3a8; --accent2-ink:#062017;
+  --code-bg:#120f0b; --code-text:#eee5d2; --code-line:#2b261d;
+  --k:#e6b57e; --t:#7fc7c0; --s:#e2a89c; --n:#c9a6e0; --c:#8a8064;
+  --shadow:none;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);}
+::selection{background:var(--accent);color:var(--accent-ink);}
+
+/* ---------- shell ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;display:flex;align-items:center;gap:14px;
+  padding:12px 20px;background:color-mix(in srgb, var(--bg) 86%, transparent);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);}
+.brandmark{display:flex;align-items:center;gap:10px;flex:0 0 auto;}
+.brandmark .idx{font:600 11px/1 var(--mono);color:var(--accent2-ink);background:var(--accent2);
+  border-radius:5px;padding:5px 6px;letter-spacing:.03em;}
+.brandmark h1{font:600 17px/1.1 var(--serif);margin:0;letter-spacing:-.01em;}
+.brandmark small{display:block;font:400 11px/1 var(--sans);color:var(--muted);margin-top:2px;}
+.searchwrap{flex:1;min-width:0;max-width:440px;position:relative;margin-left:auto;}
+.searchwrap input{width:100%;font:14px/1.4 var(--sans);background:var(--panel);color:var(--ink);
+  border:1px solid var(--line);border-radius:9px;padding:9px 12px 9px 34px;}
+.searchwrap input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent;}
+.searchwrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.55;pointer-events:none;}
+.counthint{font:11px var(--mono);color:var(--muted);white-space:nowrap;}
+
+.shell{max-width:1280px;margin:0 auto;padding:0 20px 90px;display:grid;grid-template-columns:1fr;gap:0;}
+@media (min-width:980px){.shell{grid-template-columns:200px minmax(0,1fr);gap:34px;padding:0 24px 90px;}}
+
+/* ---------- nav ---------- */
+nav.units{display:none;}
+@media (min-width:980px){
+  nav.units{display:block;position:sticky;top:64px;align-self:start;padding-top:26px;max-height:calc(100vh - 90px);overflow:auto;}
+}
+nav.units .lbl{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 10px 2px;}
+nav.units a{display:flex;align-items:baseline;gap:8px;padding:7px 8px;border-radius:7px;color:var(--ink);
+  text-decoration:none;font:500 13.5px/1.3 var(--sans);margin-bottom:2px;}
+nav.units a .tag{font:600 10.5px var(--mono);color:var(--muted);flex:0 0 auto;}
+nav.units a:hover{background:var(--panel2);}
+nav.units a.active{background:var(--panel2);color:var(--accent);}
+nav.units a.active .tag{color:var(--accent);}
+
+.mobtabs{display:flex;gap:6px;overflow-x:auto;padding:12px 0 4px;margin-bottom:6px;}
+@media (min-width:980px){.mobtabs{display:none;}}
+.mobtabs a{flex:0 0 auto;font:600 12px var(--mono);padding:6px 11px;border-radius:99px;border:1px solid var(--line);
+  color:var(--muted);text-decoration:none;background:var(--panel);}
+.mobtabs a.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+
+/* ---------- content ---------- */
+main{min-width:0;padding-top:26px;}
+.hero{padding:6px 0 22px;border-bottom:1px solid var(--line);margin-bottom:34px;}
+.hero h2{font:600 clamp(24px,4vw,32px)/1.15 var(--serif);margin:0 0 8px;text-wrap:balance;letter-spacing:-.01em;}
+.hero p{margin:0;max-width:62ch;color:var(--muted);font-size:15px;}
+.hero .meta{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap;}
+.hero .meta span{font:500 12px var(--mono);color:var(--accent2);background:color-mix(in srgb, var(--accent2) 14%, var(--panel));
+  padding:4px 10px;border-radius:99px;border:1px solid color-mix(in srgb, var(--accent2) 30%, var(--line));}
+
+.unit{scroll-margin-top:70px;margin-bottom:56px;}
+.unit-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;flex-wrap:wrap;}
+.unit-head .num{font:600 13px var(--mono);color:var(--accent-ink);background:var(--accent);border-radius:6px;
+  padding:3px 8px;letter-spacing:.02em;}
+.unit-head h3{font:600 clamp(20px,3vw,25px)/1.2 var(--serif);margin:0;letter-spacing:-.01em;}
+.unit-intro{margin:6px 0 22px;color:var(--muted);font-size:14.5px;max-width:70ch;}
+
+.subhead{display:flex;align-items:center;gap:10px;margin:26px 0 12px;}
+.subhead h4{font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.09em;color:var(--accent2);margin:0;}
+.subhead .line{flex:1;height:1px;background:var(--line);}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel);
+  box-shadow:var(--shadow);}
+table{border-collapse:collapse;width:100%;min-width:560px;}
+table.syntax{min-width:680px;}
+th{text-align:left;font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+  background:var(--panel2);padding:9px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14px;line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tr.row-hidden{display:none;}
+td.sym{white-space:nowrap;width:1%;}
+td.sym code{display:inline-block;}
+td.mean{max-width:34ch;}
+td.ex{min-width:220px;}
+td.concept{width:1%;white-space:nowrap;font-weight:600;color:var(--accent);}
+td.def{max-width:58ch;color:var(--ink);}
+
+code{font-family:var(--mono);font-size:.86em;background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+  border-radius:4px;padding:.08em .32em;}
+pre.codecell{margin:0;font:12.5px/1.55 var(--mono);background:var(--code-bg);color:var(--code-text);
+  border-radius:8px;padding:8px 11px;white-space:pre-wrap;word-break:break-word;border:1px solid var(--code-line);}
+pre.codecell code{background:transparent;border:0;padding:0;font-size:1em;color:inherit;}
+.tk-k{color:var(--k);} .tk-t{color:var(--t);} .tk-s{color:var(--s);} .tk-c{color:var(--c);font-style:italic;}
+
+mark{background:color-mix(in srgb, var(--accent) 35%, transparent);color:inherit;border-radius:3px;padding:0 1px;}
+
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+footer a{color:var(--accent2);}
+
+.empty-note{display:none;padding:26px 4px;color:var(--muted);font-size:14px;font-style:italic;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brandmark">
+    <span class="idx">AyED</span>
+    <div>
+      <h1>Glosario</h1>
+      <small>Sintaxis C++ &amp; conceptos, por unidad</small>
+    </div>
+  </div>
+  <div class="searchwrap">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input id="q" type="text" placeholder="Buscar: puntero, nodo, virtual, LIFO…" autocomplete="off">
+  </div>
+  <span class="counthint" id="counthint"></span>
+</div>
+
+<div class="shell">
+  <nav class="units" id="sidenav" aria-label="Unidades">
+    <div class="lbl">Unidades</div>
+  </nav>
+
+  <main>
+    <div class="mobtabs" id="mobtabs"></div>
+
+    <div class="hero">
+      <h2>Diccionario de referencia rápida</h2>
+      <p>Sintaxis de C++ (qué significa cada símbolo, con ejemplo) y conceptos clave, ordenados por unidad — sacado del Manual AyED. Pensado para repasar antes de un parcial: buscá un término y aparece en todas las unidades donde figura.</p>
+      <div class="meta" id="herometa"></div>
+    </div>
+
+    <div id="units"></div>
+
+    <p class="empty-note" id="emptynote">Ningún término coincide con la búsqueda.</p>
+
+    <footer>
+      <span>Fuente: Manual AyED — Módulos 1 a 5 (el Módulo 6 es repaso/simulacro, sin teoría nueva).</span>
+      <span id="totalcount"></span>
+    </footer>
+  </main>
+</div>
+
+<script>
+const DATA = [
+{
+  id:"u1", tag:"U1", title:"Memoria y Punteros",
+  intro:"La base de todo lo que sigue: direcciones, punteros, stack vs. heap, y los siete errores clásicos de memoria.",
+  syntax:[
+    ["int* p;","Declara p como puntero a int. El * en una declaración dice \"esto es un puntero\" (distinto del * en una expresión).","int* p = &x;"],
+    ["&x","La dirección de x. Obtiene la dirección de memoria de una variable.","int* p = &x;"],
+    ["*p (expresión)","Lo que hay en la dirección p — desreferenciar. Sirve para leer y para escribir.","*p = 7;\nint y = *p;"],
+    ["nullptr","Puntero que no apunta a nada. Siempre inicializar un puntero con esto si todavía no tiene destino.","int* p = nullptr;"],
+    ["a[i]  ≡  *(a + i)","Indexado de arreglo, equivalente a aritmética de punteros.","int a[4]={10,20,30,40};\na[2] == *(a + 2);"],
+    ["p + 1  /  p++","Avanza el puntero un elemento (no un byte): salta sizeof(tipo) bytes.","int* p = a;\np = p + 2;"],
+    ["q - p","Resta de punteros: cantidad de elementos entre dos direcciones.","p - a"],
+    ["struct Nodo{...};","Agrupa variables relacionadas; puede tener un puntero a otro struct del mismo tipo (base de las listas).","struct Nodo {\n  int valor;\n  Nodo* next;\n};"],
+    ["p->campo","Accede a un campo de un struct/clase a través de un puntero. Equivale a (*p).campo.","a->valor"],
+    ["new T(args) / delete p","Reserva un objeto en el heap / lo libera. Cada new necesita exactamente un delete.","int* p = new int(42);\ndelete p;"],
+    ["new T[n] / delete[] p","Reserva un arreglo dinámico / lo libera. new[] siempre con delete[] (nunca delete a secas).","int* a = new int[10];\ndelete[] a;"],
+    ["void f(int n)  — por valor","Copia el argumento; la función no modifica la variable original.","void swapValor(int a,int b){\n  int t=a; a=b; b=t;\n}"],
+    ["void f(int* p)  — por puntero","Recibe una dirección; puede modificar el original vía *p. Puede ser nullptr y reapuntarse.","void swapPuntero(int* a,int* b){\n  int t=*a;*a=*b;*b=t;\n}"],
+    ["void f(int& r)  — por referencia","Alias de la variable original; se usa como variable normal. Nunca nula, no se puede reapuntar.","void swapRef(int& a,int& b){\n  int t=a;a=b;b=t;\n}"],
+    ["const T&","Referencia constante: pasa sin copiar y promete no modificar. Patrón típico del curso.","void enqueue(const TData& value)"],
+    ["const int* p","Puntero a int constante: se puede reapuntar p, pero no escribir *p. Truco: leé de derecha a izquierda — \"p es un puntero a un int const\". Lo constante es el dato, no el puntero.","const int* p = &x;\np = &y;   // ok: p ahora apunta a y\n*p = 5;   // NO: error de compilación"],
+    ["int* const p","Puntero constante a int: se puede escribir *p, pero no reapuntar p. Derecha a izquierda: \"p es un puntero const a int\". Lo constante es el puntero.","int* const p = &x;\n*p = 3;   // ok: x pasa a valer 3\np = &y;   // NO: error de compilación"],
+    ["const int* const p","Puntero constante a int constante: ninguna de las dos operaciones permitida.","const int* const p = &x;"],
+    ["metodo() const","Promete no modificar el objeto; se puede llamar sobre objetos const.","int size() const { return n; }"],
+  ],
+  concepts:[
+    ["Stack (pila)","Zona de memoria automática: el compilador reserva y libera variables locales al entrar/salir de cada bloque { }. Chica, rápida."],
+    ["Heap (montón)","Zona de memoria manual: se reserva con new y solo se libera con delete. Sobrevive a la función que la creó."],
+    ["Dirección de memoria","Número que identifica una \"caja\" de memoria. En C++ se manejan explícitamente con punteros."],
+    ["Puntero nulo (nullptr)","Puntero que no apunta a ninguna dirección válida. Desreferenciarlo causa un crash (segmentation fault)."],
+    ["Puntero salvaje","Puntero declarado sin inicializar: contiene una dirección \"basura\" y apunta a cualquier lado."],
+    ["Puntero colgante (dangling)","Puntero que apunta a memoria que ya dejó de existir: una local que murió, o un bloque del heap ya liberado."],
+    ["Use-after-free","Usar un puntero después de hacer delete sobre él: la memoria ya fue devuelta pero el puntero sigue con la vieja dirección."],
+    ["Doble delete","Liberar el mismo bloque dos veces; corrompe el heap. Se evita poniendo p = nullptr después de cada delete."],
+    ["Fuga de memoria (memory leak)","Memoria reservada con new cuya dirección se pierde sin haber hecho delete: nadie puede liberarla ya."],
+    ["Buffer overflow","Acceder a un índice fuera del rango válido de un arreglo; C++ no revisa límites automáticamente."],
+    ["Aritmética de punteros","Sumar/restar a un puntero avanza en unidades del tipo apuntado, no en bytes."],
+    ["Arreglo vs. puntero","Un arreglo conserva su tamaño real; al pasarlo a una función se \"degrada\" a puntero y lo pierde — por eso se pasa (arr, n)."],
+    ["Paso por valor","Copia el argumento; modificar el parámetro no afecta la variable original."],
+    ["Paso por puntero","Se pasa una dirección; permite modificar el original, puede ser nulo y reapuntarse."],
+    ["Paso por referencia","Se pasa un alias de la variable; permite modificar el original, nunca es nulo ni se reapunta."],
+    ["Nodo","Bloque de memoria con un dato y un puntero (next) al siguiente nodo; unidad básica de una lista enlazada."],
+  ]
+},
+{
+  id:"u2", tag:"U2", title:"Clases y POO",
+  intro:"Constructores, destructores, la Regla de 3/5, herencia con virtual, clases abstractas y templates.",
+  syntax:[
+    ["class Cuenta { ... };","Declara una clase. Miembros privados por defecto (en struct son públicos por defecto).","class Cuenta {\n  int saldo;\npublic:\n  void depositar(int m);\n};"],
+    ["public: / private:","Marca la visibilidad de los miembros que siguen.","class Cuenta {\n  int saldo;\npublic:\n  ...\n};"],
+    ["Cuenta(int i) : saldo(i) {}","Constructor con lista de inicialización: inicializa atributos antes de entrar al cuerpo. Obligatoria para const, referencias y bases sin constructor por defecto.","Cuenta(int inicial) : saldo(inicial) {}"],
+    ["~Clase()","Destructor: se ejecuta al destruir el objeto. Uno solo, sin parámetros. Ahí se libera lo reservado con new.","~Buf() { delete[] d; }"],
+    ["metodo() const","Promete no modificar los atributos. Sobre un objeto const solo se pueden llamar métodos const.","int getSaldo() const { return saldo; }"],
+    ["this","Puntero implícito al objeto actual. saldo += m; es en realidad this->saldo += m;.","return *this;   // para encadenar"],
+    ["-> vs .","-> accede a miembros por puntero; . accede directamente sobre un objeto/referencia.","Animal* a=&p; a->hablar();\np.hablar();"],
+    [": public Base","Herencia pública: la derivada es un tipo de la base, hereda sus atributos y métodos.","class Perro : public Animal { ... };"],
+    ["virtual","Enlace dinámico: en ejecución se llama a la versión del tipo real del objeto, no del tipo del puntero.","virtual void hablar() const { ... }"],
+    ["override","Le pide al compilador que verifique que el método sobrescribe uno virtual de la base.","void hablar() const override { ... }"],
+    ["virtual ~Base() {}","Obligatorio si la clase tiene métodos virtuales: si no, delete sobre un puntero a base filtra los recursos del derivado.","virtual ~Base() {}"],
+    ["= 0  (virtual puro)","Sin implementación en la base → clase abstracta: no se puede instanciar, las derivadas deben implementarlo.","virtual int area() const = 0;"],
+    ["new / delete con objetos","new Clase(args) reserva en el heap y llama al constructor; delete p llama al destructor y libera.","Animal* a = new Perro();\ndelete a;"],
+    ["Constructor de copia","Clase(const Clase& o) se llama al inicializar un objeto a partir de otro. Sin definirlo, C++ copia atributo por atributo (shallow copy).","Buf(const Buf& o)\n : d(new int[o.n]), n(o.n) {\n  for(int i=0;i<n;i++) d[i]=o.d[i];\n}"],
+    ["Operador de asignación","Clase& operator=(const Clase& o) se llama cuando el objeto de la izquierda ya existe.","Buf& operator=(const Buf& o){\n  if(this!=&o){...}\n  return *this;\n}"],
+    ["Constructor/asignación por movimiento","Clase(Clase&& o) \"roba\" el puntero del origen en vez de copiar (Regla de 5). El origen queda vacío pero válido.","Buf(Buf&& o) noexcept\n : d(o.d), n(o.n) { o.d=nullptr; o.n=0; }"],
+    ["std::move(x)","Convierte x en una referencia rvalue: \"ya no lo necesito\", habilita mover en vez de copiar.","Buf b = move(a);"],
+    ["= default / = delete","= default pide la versión por defecto al compilador; = delete la prohíbe explícitamente.","Clase(const Clase&) = delete;"],
+    ["template <typename T>","Plantilla genérica; el compilador genera una versión por cada tipo usado. Va completa en el .h.","template <typename T>\nT mayor(T a, T b){ return a>b?a:b; }"],
+    ["Clase<Tipo>","Instanciación de una clase template con un tipo concreto. Clase sola no es un tipo usable.","Caja<int> a(5);\nArreglo<int> arr(3);"],
+    ["operator[]","Sobrecarga del indexado. Devolver T& permite leer y escribir.","T& operator[](int i){ return d[i]; }"],
+  ],
+  concepts:[
+    ["Encapsulamiento","Agrupar datos y funciones en una clase, exponiendo solo una interfaz pública y ocultando los detalles como privados."],
+    ["Orden de construcción/destrucción","Al crear: base → atributos (orden de declaración) → cuerpo. La destrucción es exactamente al revés."],
+    ["Copia superficial (shallow copy)","Copia por defecto que duplica cada atributo, incluyendo punteros: ambos objetos apuntan al mismo bloque → doble delete."],
+    ["Copia profunda (deep copy)","Copia que reserva memoria nueva y copia los datos, dejando cada objeto con su propio bloque independiente."],
+    ["Regla de 3","Si una clase necesita destructor, constructor de copia u operador de asignación, casi seguro necesita los tres."],
+    ["Regla de 5","Regla de 3 + constructor de movimiento + asignación por movimiento, para evitar copias costosas de temporales."],
+    ["Regla de 0","Si la clase usa tipos que ya se manejan solos (string, vector) en vez de punteros crudos, no hace falta escribir ninguna de las 5."],
+    ["RAII","El objeto adquiere un recurso en el constructor y lo libera en el destructor, garantizando la liberación siempre (return, fin de bloque o excepción)."],
+    ["Herencia","Una clase derivada (: public Base) reutiliza atributos y métodos de la base; relación \"es un\"."],
+    ["Polimorfismo","Una llamada a través de puntero/referencia a la base ejecuta la versión del tipo real del objeto en ejecución, gracias a virtual."],
+    ["Enlace estático vs. dinámico","Estático: se decide en compilación según el tipo del puntero (sin virtual). Dinámico: se decide en ejecución según el tipo real (con virtual)."],
+    ["Clase abstracta","Clase con al menos un método virtual puro (= 0). No puede instanciarse; sirve como interfaz."],
+    ["Slicing (rebanado)","Asignar un derivado por valor a una variable de tipo base copia solo la parte base y pierde el resto (y el polimorfismo)."],
+    ["Destructor virtual","Necesario en toda base con métodos virtuales: garantiza que delete sobre un puntero a base ejecute también el destructor derivado."],
+    ["Template (plantilla)","Código genérico parametrizado por un tipo T; base de las estructuras genéricas del curso (Stack<T>, Queue<T>, listas)."],
+  ]
+},
+{
+  id:"u3", tag:"U3", title:"Recursión",
+  intro:"Caso base, caso recursivo, pila de llamadas, recursión a la cola y su versión iterativa (método d/s/h).",
+  syntax:[
+    ["if (caso_base) return valor;","Condición de corte: el caso más simple, se resuelve sin llamar de nuevo. Siempre va primero.","if (n == 0) return 1;"],
+    ["return combinar(x, f(reducido));","Caso recursivo: combina el dato actual con el resultado de la llamada sobre un problema más chico.","return n * factorial(n - 1);"],
+    ["Progreso hacia el caso base","El argumento debe acercarse al caso base (n-1, p+1, ini+1/fin-1); si no, stack overflow.","factorial(n - 1)"],
+    ["Código antes de la llamada","Se ejecuta \"yendo\", en orden de llamada (afuera hacia adentro).","cout << n;\nbajar(n - 1);"],
+    ["Código después de la llamada","Se ejecuta \"volviendo\", en orden inverso (adentro hacia afuera).","subir(n - 1);\ncout << n;"],
+    ["Recursión con acumulador","Parámetro extra que carga el resultado parcial, para que la llamada recursiva sea lo último (cola).","factAcum(n-1, acc*n)\n// factorial(n){ return factAcum(n,1); }"],
+    ["Recursión a la cola (tail)","La llamada recursiva es lo último que hace la función y su valor se devuelve tal cual.","return g(n - 1, acc + n);"],
+    ["Método d / s / h (cátedra)","Transforma una recursiva a la cola en iterativa. d = corte, s = cómo cambian los parámetros, h = qué se devuelve.","while (!d(t1,t2)) { t1 = s(t1,t2); }\nreturn h(t1,t2);"],
+    ["Recursión sobre arreglos/punteros","Se reduce avanzando un índice o un puntero, sin copiar el arreglo.","int suma(int v[], int n){\n  if(n==0) return v[0];\n  return v[n]+suma(v,n-1);\n}"],
+    ["Recursión sobre dos extremos","El problema se achica por ambos lados a la vez con dos índices que se acercan.","esPalindromo(t, ini + 1, fin - 1)"],
+    ["Recursión sobre listas enlazadas","Caso base head == nullptr; caso recursivo actúa sobre head->next (\"el resto\").","int longitud(Nodo* h){\n  if(!h) return 0;\n  return 1 + longitud(h->next);\n}"],
+    ["Patrón \"reenganchar el resto\"","head->next = f(head->next); resuelve el resto y reconecta la cabeza antes de devolverla.","head->next = compress(head->next);\n...\nreturn head;"],
+    ["Recursión múltiple (árbol)","Una función que se llama más de una vez por ejecución (Fibonacci, Hanoi) genera un árbol de llamadas.","return fib(n-1) + fib(n-2);"],
+    ["Método virtual recursivo","Un método puede llamarse a sí mismo; cada llamada implícita es this->metodo(...).","int termino(int n){\n  if(n<=1) return 1;\n  return n*termino(n-1);\n}"],
+  ],
+  concepts:[
+    ["Función recursiva","Función que se llama a sí misma dentro de su cuerpo para resolver una versión más chica del mismo problema."],
+    ["Caso base","El caso más simple, que se resuelve directamente sin nueva llamada recursiva. Sin él, la recursión nunca termina."],
+    ["Caso recursivo","Resuelve el problema llamando a la misma función sobre una entrada reducida y combinando ese resultado."],
+    ["\"Fe recursiva\"","Confiar en que la llamada recursiva sobre el problema más chico ya funciona, y solo pensar cómo armar la respuesta del caso grande."],
+    ["Pila de llamadas (call stack)","Cada llamada activa ocupa un marco en el stack con sus propios parámetros y variables locales."],
+    ["Stack overflow","Ocurre cuando las llamadas nunca llegan al caso base: el stack se llena hasta agotar la memoria y el programa termina abruptamente."],
+    ["Recursión de cola (tail)","La llamada recursiva es la última operación y su resultado se devuelve directo; se convierte mecánicamente en un while."],
+    ["Recursión vs. iteración","Una recursión a la cola equivale a un bucle; la versión iterativa usa un solo marco de stack, sin riesgo de overflow."],
+    ["Recursión múltiple / árbol","Cuando una función se invoca más de una vez dentro de sí misma, las llamadas forman un árbol (puede haber recomputación, como en Fibonacci)."],
+    ["Torres de Hanoi","Mover n discos usando una torre auxiliar: primero n-1 discos, luego el más grande, luego los n-1 restantes. 2ⁿ−1 movimientos."],
+    ["Acumulador","Parámetro adicional que carga el resultado parcial, permitiendo convertir una recursión normal en recursión de cola."],
+    ["Recursión sobre listas","Aprovecha que una lista enlazada es recursiva por definición: vacía, o un nodo seguido de otra lista."],
+  ]
+},
+{
+  id:"u4", tag:"U4", title:"Listas Enlazadas",
+  intro:"Cirugía de punteros: insertar, eliminar, invertir, listas dobles y circulares, tortuga y liebre.",
+  syntax:[
+    ["struct Nodo{ T valor; Nodo* next; };","Nodo de lista simple: guarda un dato y un puntero al siguiente.","struct Nodo{\n  int valor; Nodo* next;\n  explicit Nodo(int v):valor(v),next(nullptr){}\n};"],
+    ["struct Node{ T data; Node* next,*prev; };","Nodo de lista doble: agrega un puntero prev al nodo anterior.","struct Node{ int data; Node* next; Node* prev; };"],
+    ["p->next / p->valor","Accede al campo del nodo apuntado por p.","for(Nodo* p=head;p;p=p->next) cout<<p->valor;"],
+    ["Recorrido con puntero auxiliar","Nunca se mueve head: se usa actual, avanzando con actual = actual->next.","while(actual != nullptr){ ...; actual=actual->next; }"],
+    ["pushFront — insertar al inicio","1) el nuevo apunta a la vieja cabeza; 2) recién después la cabeza pasa a ser el nuevo. Orden invertido pierde la lista.","n->next = head;\nhead = n;"],
+    ["pushBack con tail","Con un puntero tail, agregar al final es directo; sin él hay que recorrer hasta el último nodo.","if(!tail){head=tail=n;}\nelse {tail->next=n; tail=n;}"],
+    ["Insertar después de un nodo p","1) el nuevo apunta a lo que hoy sigue a p; 2) recién ahí p apunta al nuevo.","nuevo->next = p->next;\np->next = nuevo;"],
+    ["Eliminar (patrón anterior/actual)","Se recorre guardando el nodo anterior; se puentea y recién después se hace delete.","if(!anterior) head=actual->next;\nelse anterior->next=actual->next;\ndelete actual;"],
+    ["Guardar antes de liberar","Guardar el puntero al siguiente antes de delete, para no leer memoria ya liberada.","Nodo* t=head; head=head->next; delete t;"],
+    ["Nodo*& head  (referencia a puntero)","Parámetro que permite modificar el propio puntero head de quien llama (no una copia).","void borrarPrimero(Nodo*& head)"],
+    ["Borrado en lista doble","Cada extremo con un if: sin prev era la cabeza (mover head); sin next era la cola (mover tail).","if(n->prev) n->prev->next=n->next; else head=n->next;\nif(n->next) n->next->prev=n->prev; else tail=n->prev;\ndelete n;"],
+    ["Lista circular: cierre y recorrido","El último nodo apunta a la cabeza; se recorre con do/while (nunca while(actual!=nullptr), sería infinito).","c->next = a;\ndo{ ...; actual=actual->next; } while(actual != head);"],
+    ["Rotar lista circular","Mover la cabeza un paso es solo reasignar un puntero.","head = head->next;"],
+    ["Tortuga y liebre (Floyd)","slow avanza 1, fast avanza 2: detecta ciclos o halla el nodo del medio.","while(fast && fast->next){\n  slow=slow->next; fast=fast->next->next;\n  if(slow==fast) return true;\n}"],
+    ["Invertir lista (iterativo)","Tres punteros previo/actual/siguiente: se guarda el siguiente, se da vuelta la flecha, se avanza.","Nodo* sig=head->next;\nhead->next=previo;\nprevio=head; head=sig;"],
+    ["Invertir lista (recursivo, in place)","Desciende hasta el último nodo; al volver, el siguiente apunta hacia atrás y se corta el propio next.","n->next->next = n;\nn->next = nullptr;"],
+  ],
+  concepts:[
+    ["Lista simplemente enlazada","Cada nodo en un bloque separado del heap, apuntando al siguiente con next. El único acceso es head."],
+    ["Lista doblemente enlazada","Cada nodo tiene prev y next; se recorre en ambos sentidos y se elimina sin buscar \"el anterior\", a costa de más punteros que mantener."],
+    ["Lista circular","El último nodo apunta de vuelta a la cabeza en vez de a nullptr; útil para estructuras que \"dan vueltas\"."],
+    ["Nodo","Bloque de memoria con un dato y uno o más punteros a otros nodos; unidad básica de la lista."],
+    ["Cabeza (head)","Puntero al primer nodo; único punto de entrada a toda la estructura."],
+    ["Cola (tail)","Puntero al último nodo; permite insertar al final en tiempo constante sin recorrer la lista."],
+    ["Lista vs. arreglo","Arreglo: acceso directo a[i] pero insertar/borrar en el medio corre elementos. Lista: insertar/borrar es O(1) una vez ubicado el nodo, pero acceder por índice es O(n)."],
+    ["Invariantes de una lista doble","head==nullptr ⟺ tail==nullptr ⟺ size==0; head->prev==nullptr; tail->next==nullptr; n->next->prev==n para todo nodo."],
+    ["Ciclo (loop) en una lista","Un nodo apunta hacia atrás a uno anterior; un recorrido normal nunca termina. Se detecta con Floyd sin memoria extra."],
+    ["Punto medio (tortuga y liebre)","Con slow/fast: cuando fast llega al final, slow está en el nodo del medio."],
+    ["Inversión in place","Invertir una lista reconectando los punteros existentes, sin crear ni destruir nodos."],
+    ["\"Guardar antes de liberar\"","Regla de oro: antes de delete o de mover un puntero que desconecta un nodo, guardar en otra variable cualquier puntero que aún lo necesite."],
+  ]
+},
+{
+  id:"u5", tag:"U5", title:"Pilas y Colas",
+  intro:"LIFO vs. FIFO, Stack<T> y Queue<T> con nodos, cola circular sobre arreglo, y resolver con solo la interfaz pública.",
+  syntax:[
+    ["Stack<T> con nodos","push inserta al frente, pop borra el frente (mismo patrón que listas). Todo O(1).","void push(const T& v){\n  m_top=new Node(v,m_top); m_size++;\n}"],
+    ["push(x)","Apila x en el tope.","s.push(10);"],
+    ["pop()","Desapila el tope. Es void; sobre pila vacía lanza std::underflow_error.","if(isEmpty()) throw underflow_error(\"pop en pila vacia\");"],
+    ["top()","Mira el tope sin sacarlo, devuelve const T&; vacía → underflow_error.","const T& top() const { return m_top->data; }"],
+    ["Patrón leer + sacar","Para extraer un valor hacen falta dos llamadas: primero leer, después sacar. Al revés se pierde el dato.","x = s.top();\ns.pop();"],
+    ["Queue<T> con nodos","Guarda dos punteros m_front y m_back para que ambos extremos sean O(1).","void enqueue(const T& v){\n  Node* n=new Node(v);\n  if(m_back) m_back->next=n; else m_front=n;\n  m_back=n;\n}"],
+    ["enqueue(x)","Encola x al final (m_back). Si estaba vacía, m_front también apunta al nuevo.","q.enqueue('A');"],
+    ["dequeue()","Saca el primero; si queda vacía hay que poner también m_back = nullptr.","if(!m_front) m_back = nullptr;"],
+    ["front()","Mira el primer elemento sin sacarlo, devuelve const T&.","const T& front() const { return m_front->data; }"],
+    ["Cola circular sobre arreglo","Arreglo de capacidad fija; la próxima posición se calcula con módulo para \"dar la vuelta\".","d[(frente + cant) % cap] = v;"],
+    ["(frente + cant) % cap","Fórmula para la posición del próximo elemento en un buffer circular.","frente = (frente + 1) % cap;   // al desencolar"],
+    ["try/catch underflow_error","Manejo de la excepción que lanzan pop/top/dequeue/front sobre estructura vacía.","catch (const underflow_error& e) { cout << e.what(); }"],
+    ["Vaciar a auxiliar y rearmar","Técnica para resolver con solo la interfaz pública: mover todo a una auxiliar y reconstruir en el orden deseado.","while(!s.isEmpty()){ aux.push(s.top()); s.pop(); }"],
+    ["Notación postfija — evaluación","Los números se apilan; con un operador se desapilan dos (el primero es el operando derecho).","int b=st.top();st.pop();\nint a=st.top();st.pop();\nst.push(a - b);"],
+    ["Paréntesis balanceados","Cada apertura se apila; cada cierre debe coincidir con el tope; al final la pila debe quedar vacía.","if(st.isEmpty()) return false;\nchar o=st.top(); st.pop();"],
+  ],
+  concepts:[
+    ["LIFO","Last In, First Out: regla de acceso de la pila — el último elemento en entrar es el primero en salir."],
+    ["FIFO","First In, First Out: regla de acceso de la cola — el primer elemento en entrar es el primero en salir."],
+    ["TAD (Tipo Abstracto de Datos)","Definición de una estructura por qué operaciones ofrece, sin importar cómo está implementada por dentro."],
+    ["Pila (Stack)","Estructura LIFO: push agrega y pop quita, ambos por el mismo extremo (el tope)."],
+    ["Cola (Queue)","Estructura FIFO: enqueue agrega por atrás (back) y dequeue quita por adelante (front)."],
+    ["Tope (top)","El extremo activo de la pila, donde ocurren inserciones y extracciones."],
+    ["Frente / fondo (front/back)","Los dos extremos de la cola: front es por donde se saca, back por donde se agrega."],
+    ["Cola circular","Cola sobre un arreglo de tamaño fijo donde el índice \"da la vuelta\" con % al llegar al final."],
+    ["Pila → pila (transferencia)","Pasar todos los elementos de una pila a otra invierte el orden; repetirlo dos veces lo restaura."],
+    ["Cola → cola (transferencia)","Pasar todos los elementos de una cola a otra mantiene el orden original (FIFO)."],
+    ["Cola → pila → cola","Combinación que invierte el orden de una cola."],
+    ["Aplicaciones clásicas de pila","Verificación de paréntesis balanceados; evaluación de expresiones en notación postfija."],
+    ["Excepción underflow_error","La lanzan pop, top, dequeue y front cuando se invocan sobre una estructura vacía."],
+    ["Invariante estructural","Condición que siempre debe cumplirse (ej. m_back siempre apunta al último nodo); romperla al hacer cirugía manual corrompe la estructura."],
+  ]
+}
+];
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+const KW = new Set("if else while for do return break continue new delete class struct template typename public private protected virtual override const static this operator explicit nullptr true false sizeof throw try catch using namespace typedef noexcept".split(" "));
+const TY = new Set("int char bool double float long short unsigned void size_t string vector".split(" "));
+/* Tokenizador de una sola pasada: cada fragmento se clasifica una vez, así el HTML
+   generado nunca vuelve a pasar por otra regla (antes los comentarios salían rotos). */
+function hi(code){
+  const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|([A-Za-z_]\w*)/g;
+  let out = "", last = 0, m;
+  while((m = re.exec(code))){
+    out += esc(code.slice(last, m.index));
+    if(m[1]) out += '<span class="tk-c">'+esc(m[1])+'</span>';
+    else if(m[2]) out += '<span class="tk-s">'+esc(m[2])+'</span>';
+    else {
+      const w = m[3];
+      if(KW.has(w)) out += '<span class="tk-k">'+w+'</span>';
+      else if(TY.has(w) || /^[A-Z]/.test(w)) out += '<span class="tk-t">'+w+'</span>';
+      else out += w;
+    }
+    last = re.lastIndex;
+  }
+  return out + esc(code.slice(last));
+}
+
+const unitsEl = document.getElementById("units");
+const sidenav = document.getElementById("sidenav");
+const mobtabs = document.getElementById("mobtabs");
+const herometa = document.getElementById("herometa");
+
+let totalSyntax=0, totalConcepts=0;
+
+DATA.forEach(u=>{
+  totalSyntax += u.syntax.length;
+  totalConcepts += u.concepts.length;
+
+  const a = document.createElement("a");
+  a.href = "#"+u.id; a.innerHTML = '<span class="tag">'+u.tag+'</span> '+u.title;
+  sidenav.appendChild(a);
+
+  const mt = document.createElement("a");
+  mt.href = "#"+u.id; mt.textContent = u.tag;
+  mobtabs.appendChild(mt);
+
+  const sec = document.createElement("section");
+  sec.className = "unit"; sec.id = u.id;
+  sec.innerHTML = `
+    <div class="unit-head"><span class="num">${u.tag}</span><h3>${esc(u.title)}</h3></div>
+    <p class="unit-intro">${esc(u.intro)}</p>
+
+    <div class="subhead"><h4>Sintaxis</h4><div class="line"></div></div>
+    <div class="tablewrap">
+      <table class="syntax" data-kind="syntax">
+        <thead><tr><th>Símbolo / sintaxis</th><th>Significado</th><th>Ejemplo</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="subhead"><h4>Conceptos clave</h4><div class="line"></div></div>
+    <div class="tablewrap">
+      <table data-kind="concepts">
+        <thead><tr><th>Concepto</th><th>Definición</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  `;
+  const synBody = sec.querySelector('table[data-kind="syntax"] tbody');
+  u.syntax.forEach(([sym,mean,ex])=>{
+    const tr = document.createElement("tr");
+    tr.dataset.search = (sym+" "+mean+" "+ex).toLowerCase();
+    tr.innerHTML = `<td class="sym"><code>${esc(sym)}</code></td><td class="mean">${esc(mean)}</td><td class="ex"><pre class="codecell"><code>${hi(ex)}</code></pre></td>`;
+    synBody.appendChild(tr);
+  });
+  const conBody = sec.querySelector('table[data-kind="concepts"] tbody');
+  u.concepts.forEach(([term,def])=>{
+    const tr = document.createElement("tr");
+    tr.dataset.search = (term+" "+def).toLowerCase();
+    tr.innerHTML = `<td class="concept">${esc(term)}</td><td class="def">${esc(def)}</td>`;
+    conBody.appendChild(tr);
+  });
+  unitsEl.appendChild(sec);
+});
+
+herometa.innerHTML = `<span>${DATA.length} unidades</span><span>${totalSyntax} entradas de sintaxis</span><span>${totalConcepts} conceptos</span>`;
+document.getElementById("totalcount").textContent = (totalSyntax+totalConcepts)+" términos en total";
+
+/* ---- search filter ---- */
+const q = document.getElementById("q");
+const counthint = document.getElementById("counthint");
+const emptynote = document.getElementById("emptynote");
+const allRows = Array.from(document.querySelectorAll("tbody tr"));
+const allSections = Array.from(document.querySelectorAll(".unit"));
+
+function applyFilter(){
+  const term = q.value.trim().toLowerCase();
+  let visible = 0;
+  allRows.forEach(tr=>{
+    const match = !term || tr.dataset.search.includes(term);
+    tr.classList.toggle("row-hidden", !match);
+    if(match) visible++;
+  });
+  allSections.forEach(sec=>{
+    const anyVisible = sec.querySelectorAll("tr:not(.row-hidden)").length > 0;
+    sec.style.display = (!term || anyVisible) ? "" : "none";
+  });
+  counthint.textContent = term ? (visible+" resultado"+(visible===1?"":"s")) : "";
+  emptynote.style.display = (term && visible===0) ? "block" : "none";
+}
+q.addEventListener("input", applyFilter);
+
+/* ---- scrollspy ---- */
+const navLinks = Array.from(document.querySelectorAll("nav.units a, .mobtabs a"));
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      navLinks.forEach(l=>l.classList.toggle("active", l.getAttribute("href")==="#"+en.target.id));
+    }
+  });
+}, {rootMargin:"-15% 0px -70% 0px"});
+allSections.forEach(s=>io.observe(s));
+</script>
+</body></html>
+
+</body></html>

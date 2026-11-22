@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; GIT.exe — LAC</title>
+<style>
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:19px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(32px,5.4vw,54px); line-height:1.08; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .callout ul{margin:6px 0 0; padding-left:18px; color:var(--text); font-size:13.5px;}
+  .callout ul li{margin-bottom:4px;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .conflict{color:var(--red);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+
+  /* ---------- workflow flow (reused box/arrow pattern) ---------- */
+  .dispatch-flow{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:16px; font-family:var(--font-mono); font-size:12.5px;}
+  .dispatch-box{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 14px;}
+  .dispatch-box.result{border-color:var(--green); color:var(--green);}
+  .dispatch-arrow{color:var(--cyan); font-size:11.5px; white-space:nowrap;}
+
+  /* ---------- git commit graph ---------- */
+  .git-graph-wrap{margin-top:10px; overflow-x:auto;}
+  .git-graph{display:block; min-width:560px;}
+  .git-graph .gitem{opacity:0; transition:opacity .4s ease;}
+  .git-graph .gitem.visible{opacity:1;}
+  .git-graph .gline{stroke-width:2.5; fill:none;}
+  .git-graph .gline.main{stroke:var(--cyan);}
+  .git-graph .gline.feature{stroke:var(--violet);}
+  .git-graph .gdot{stroke:var(--bg-panel); stroke-width:3;}
+  .git-graph .gdot.main{fill:var(--cyan);}
+  .git-graph .gdot.feature{fill:var(--violet);}
+  .git-graph .gdot.merge{fill:var(--green);}
+  .git-graph text{font-family:var(--font-mono); font-size:11px; fill:var(--text-dim);}
+  .git-graph .glabel{fill:var(--text); font-size:12px;}
+
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:560px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // MÓDULO 4 DE 4</div>
+  <div class="nav-title">GIT.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a></li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a></li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a></li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a></li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a></li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a></li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a></li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br></div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">MÓDULO 4 · PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">Trabajar en equipo sin<br>pisarse: <span class="accent">Git y GitHub</span>.</h1>
+    <p class="cover-sub">Ya tenés las clases de DiagramaCba modeladas. Ahora sumás gente al equipo — y necesitás una forma de que todos trabajen en paralelo sin destruir el trabajo de nadie.</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> uso básico de la terminal</span>
+      <span><b>cierra:</b> el proyecto integrador Cyberpunk Córdoba 2077</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>DiagramaCba deja de ser un proyecto de una sola persona</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat notas_reunion.txt</p>
+        <p><span class="accent">maga_t:</span> Nodo y Conexión ya están modeladas. RRHH quiere sumar más gente al equipo para avanzar más rápido.</p>
+        <p><span class="ok">ema_v:</span> Pero si trabajamos dos personas en el mismo archivo al mismo tiempo, ¿no se pisan los cambios?</p>
+        <p><span class="accent">maga_t:</span> Para eso existe Git: un sistema de control de versiones. Guarda el historial completo de cambios y te deja trabajar en paralelo sin pisarte con nadie — siempre que sepas usarlo bien.</p>
+        <p><span class="ok">ema_v:</span> ¿Y GitHub qué es, entonces?</p>
+        <p><span class="accent">maga_t:</span> GitHub es donde alojamos ese historial en la nube para que todo el equipo lo comparta, y donde revisamos el código con Pull Requests antes de sumarlo al proyecto. Sentate — esto es lo último que necesitás para trabajar en equipo de verdad.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Explicar qué problema resuelve un sistema de control de versiones.</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Diferenciar repositorio local de remoto, y usar clone, add, commit, push y pull.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Trabajar con ramas para desarrollar en paralelo sin romper main.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Resolver un conflicto de merge sin entrar en pánico.</p></div>
+      <div class="obj-card"><div class="k">05</div><p>Usar Pull Requests como herramienta de revisión de código, no solo de "subir cambios".</p></div>
+      <div class="obj-card"><div class="k">06</div><p>Reconocer los errores de Git más comunes y cómo salir de ellos.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3>¿Qué problema resuelve un control de versiones?</h3>
+    <p>Sin Git, "versionar" un proyecto termina siendo una carpeta con <code>proyecto_final.zip</code>, <code>proyecto_final_v2.zip</code>, <code>proyecto_final_v2_DEFINITIVO.zip</code>. Git hace lo mismo pero de forma automática, estructurada y compartida: cada cambio queda registrado con quién lo hizo, cuándo, y por qué (el mensaje de commit) — y varias personas pueden tener su propia copia trabajando en paralelo sin pisarse.</p>
+
+    <h3>Repositorio local y remoto</h3>
+    <p>Un archivo modificado en tu compu pasa por tres etapas antes de llegar al equipo:</p>
+    <div class="dispatch-flow">
+      <div class="dispatch-box">Directorio de trabajo</div>
+      <span class="dispatch-arrow">git add →</span>
+      <div class="dispatch-box">Área de staging</div>
+      <span class="dispatch-arrow">git commit →</span>
+      <div class="dispatch-box">Repositorio local</div>
+      <span class="dispatch-arrow">git push →</span>
+      <div class="dispatch-box result">GitHub (remoto)</div>
+    </div>
+    <p style="margin-top:14px;"><code>git add</code> elige qué cambios entran al próximo commit. <code>git commit</code> los guarda en tu historial local, con un mensaje. <code>git push</code> recién ahí los sube al remoto, donde el resto del equipo los puede bajar con <code>git pull</code>.</p>
+
+    <h3>Ramas (branches)</h3>
+    <p>Trabajar siempre directo sobre <code>main</code> es la forma más rápida de romper el proyecto de todos. Una rama es una línea de desarrollo independiente: podés experimentar, romper cosas, hacer commits a medio terminar, y <code>main</code> ni se entera hasta que decidís unir (<code>merge</code>) esa rama de vuelta.</p>
+
+    <h3>Merge y conflictos</h3>
+    <p>Un conflicto de merge pasa cuando dos ramas modificaron la <strong>misma línea</strong> del mismo archivo de formas distintas — Git no puede adivinar cuál de las dos versiones querés, así que te lo deja resolver a mano. No es un error: es lo esperable cuando varias personas tocan el mismo código.</p>
+
+    <h3>Pull Requests y revisión de código</h3>
+    <p>Un Pull Request (PR) no es solo "avisar que subiste cambios" — es pedir que alguien del equipo revise ese código antes de que se una a <code>main</code>. Un buen checklist de PR, como el que usamos en el proyecto integrador, incluye:</p>
+    <div class="callout"><span class="k">CHECKLIST DE PR</span>
+      <ul>
+        <li>¿Compila sin warnings?</li>
+        <li>¿El mensaje de commit explica el <em>por qué</em>, no solo el <em>qué</em>?</li>
+        <li>¿Sigue las convenciones del proyecto (PascalCase, m_, override, etc.)?</li>
+        <li>¿Alguien más del equipo lo revisó antes del merge?</li>
+      </ul>
+    </div>
+
+    <h3>rebase vs merge</h3>
+    <p><code>git merge</code> une dos ramas creando un commit de merge que preserva ambas historias tal como pasaron. <code>git rebase</code> en cambio "reescribe" tu rama como si hubieras empezado a trabajar recién después de los últimos cambios de <code>main</code> — el resultado es un historial más lineal y prolijo, a costa de que los commits originales cambian de identidad (hash). Por eso el rebase es genial en tu propia rama, y peligroso en una rama compartida.</p>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+
+    <h3>Una rama, un commit paralelo, y un merge</h3>
+    <p>Seguí paso a paso cómo se ve el historial cuando Ema crea una rama para trabajar en <code>Nodo</code>, mientras Maga sigue commiteando en <code>main</code> al mismo tiempo.</p>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="gitStepNum">0</span> / <span id="gitStepTotal">6</span></span>
+        <div class="btn-row">
+          <button id="gitPrev">◀ anterior</button>
+          <button id="gitNext" class="primary">avanzar ▶</button>
+          <button id="gitReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="git-graph-wrap">
+        <svg class="git-graph" viewBox="0 0 600 260" width="600" height="260">
+          <line class="gline main gitem" data-step="2" id="seg-c1c2" x1="80" y1="140" x2="180" y2="140"></line>
+          <line class="gline main gitem" data-step="5" id="seg-c2c3" x1="180" y1="140" x2="380" y2="140"></line>
+          <line class="gline main gitem" data-step="6" id="seg-c3m1" x1="380" y1="140" x2="460" y2="140"></line>
+          <line class="gline feature gitem" data-step="3" id="seg-branch" x1="180" y1="140" x2="230" y2="200"></line>
+          <line class="gline feature gitem" data-step="4" id="seg-f1" x1="230" y1="200" x2="320" y2="200"></line>
+          <line class="gline feature gitem" data-step="6" id="seg-merge" x1="320" y1="200" x2="460" y2="140"></line>
+
+          <text class="glabel gitem" data-step="1" x="30" y="145">main</text>
+          <text class="glabel gitem" data-step="3" x="335" y="205">feature/nodo</text>
+
+          <circle class="gdot main gitem" data-step="1" cx="80" cy="140" r="7"></circle>
+          <text class="gitem" data-step="1" x="70" y="122">C1</text>
+          <circle class="gdot main gitem" data-step="2" cx="180" cy="140" r="7"></circle>
+          <text class="gitem" data-step="2" x="170" y="122">C2</text>
+          <circle class="gdot feature gitem" data-step="4" cx="320" cy="200" r="7"></circle>
+          <text class="gitem" data-step="4" x="310" y="225">F1</text>
+          <circle class="gdot main gitem" data-step="5" cx="380" cy="140" r="7"></circle>
+          <text class="gitem" data-step="5" x="370" y="122">C3</text>
+          <circle class="gdot merge gitem" data-step="6" cx="460" cy="140" r="8"></circle>
+          <text class="gitem" data-step="6" x="440" y="122">M1</text>
+        </svg>
+      </div>
+      <p class="step-caption" id="gitCaption">Tocá <span class="mono">avanzar</span> para arrancar el historial de <span class="mono">main</span>.</p>
+    </div>
+
+    <h3>Resolver un conflicto de merge</h3>
+    <p>Maga y Ema modificaron la misma línea de <code>Nodo.hpp</code> en ramas distintas. Así se ve el archivo cuando Git no puede decidir por vos:</p>
+    <div class="panel">
+      <div class="code"><span class="conflict">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD (main)</span>
+  int m_prioridad = 1;
+<span class="conflict">=======</span>
+  int m_prioridad = 2;
+<span class="conflict">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/nodo</span></div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button id="showResolved">ver archivo resuelto</button>
+        <button id="hideResolved" style="display:none;">ocultar</button>
+      </div>
+      <div class="fix-box" id="resolvedBox">
+        <div class="err-sec c3">RESUELTO</div>
+        <div class="code">  int m_prioridad = 2; <span class="cm">// se decidió mantener este valor,</span>
+                        <span class="cm">// se borraron los tres marcadores,</span>
+                        <span class="cm">// y se hizo git add + git commit</span></div>
+      </div>
+    </div>
+
+    <h3>Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Los errores de Git que más rompen equipos</h2>
+    <p class="lead">Ninguno de estos te avisa con un error claro — Git hace exactamente lo que le pediste, aunque no era lo que querías.</p>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> Ahora entiendo por qué siempre trabajamos en ramas y por qué insistís tanto con el checklist de PR.</p>
+        <p><span class="accent">maga_t:</span> Ese checklist es lo que evita que un cambio a medio terminar rompa el trabajo de todo el equipo. Con esto ya tenés las cuatro herramientas del proyecto integrador: punteros, recursividad, POO, y ahora, trabajo en equipo con Git.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">EN EL PROYECTO INTEGRADOR</span><p>Una rama por feature (<code>feature/nombre-descriptivo</code>), commits en modo imperativo y descriptivos, PR obligatorio antes de mergear a <code>main</code>, y <code>--force-with-lease</code> en vez de <code>--force</code> a secas — Clean Code también aplica al historial del repositorio.</p></div>
+  </section>
+
+  <footer><p>GIT.exe · módulo 4 · material de apoyo cátedra de Algoritmos y Estructuras de Datos, FCEFyN · Ing. Gabriel Valenzuela.</p></footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement;
+    var scrolled = doc.scrollTop;
+    var max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){
+      var rect = sections[i].getBoundingClientRect();
+      if (rect.top <= 120) activeId = sections[i].id;
+    }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  var navToggle = document.getElementById('navtoggle');
+  var sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  navLinks.forEach(function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  /* ================= git commit graph stepper ================= */
+  var gitItems = Array.prototype.slice.call(document.querySelectorAll('.gitem'));
+  var gitStepNumEl = document.getElementById('gitStepNum');
+  var gitCaption = document.getElementById('gitCaption');
+  var GIT_TOTAL = 6;
+  var gitStep = 0;
+  var gitCaptions = [
+    'Tocá <span class="mono">avanzar</span> para arrancar el historial de <span class="mono">main</span>.',
+    '<span class="mono">git commit -m "primer commit"</span> — nace <span class="mono">main</span> con su primer commit, C1.',
+    'Otro commit en <span class="mono">main</span>: C2. Hasta acá, una sola línea de historia.',
+    '<span class="mono">git checkout -b feature/nodo</span> — se crea una rama nueva desde C2. Todavía es idéntica a main.',
+    'Ema hace un commit en <span class="mono">feature/nodo</span>: F1. <span class="mono">main</span> no se entera de este cambio — vive solo en la rama.',
+    'Mientras tanto, Maga commitea directo en <span class="mono">main</span>: C3. Las dos ramas avanzaron en paralelo, sin pisarse.',
+    '<span class="mono">git checkout main &amp;&amp; git merge feature/nodo</span> — se crea M1, un commit de merge que une ambas historias en una sola línea otra vez.'
+  ];
+  function renderGit(){
+    gitStepNumEl.textContent = gitStep;
+    gitItems.forEach(function(el){
+      var s = parseInt(el.getAttribute('data-step'), 10);
+      el.classList.toggle('visible', s <= gitStep);
+    });
+    gitCaption.innerHTML = gitCaptions[gitStep];
+    document.getElementById('gitPrev').disabled = (gitStep === 0);
+    document.getElementById('gitNext').disabled = (gitStep === GIT_TOTAL);
+  }
+  document.getElementById('gitNext').addEventListener('click', function(){ if (gitStep < GIT_TOTAL){ gitStep++; renderGit(); } });
+  document.getElementById('gitPrev').addEventListener('click', function(){ if (gitStep > 0){ gitStep--; renderGit(); } });
+  document.getElementById('gitReset').addEventListener('click', function(){ gitStep = 0; renderGit(); });
+  renderGit();
+
+  /* ================= conflict resolution toggle ================= */
+  var showResolved = document.getElementById('showResolved');
+  var hideResolved = document.getElementById('hideResolved');
+  var resolvedBox = document.getElementById('resolvedBox');
+  showResolved.addEventListener('click', function(){
+    resolvedBox.classList.add('show');
+    showResolved.style.display = 'none';
+    hideResolved.style.display = 'inline-block';
+  });
+  hideResolved.addEventListener('click', function(){
+    resolvedBox.classList.remove('show');
+    hideResolved.style.display = 'none';
+    showResolved.style.display = 'inline-block';
+  });
+
+  /* ================= error gallery ================= */
+  var errors = [
+    { tag:'repo contaminado', title:'No usar .gitignore',
+      bad:'$ git status\nUntracked files:\n  build/\n  Nodo.o\n  .env\n\n$ git add .\n$ git commit -m "wip"',
+      cons:'Archivos generados por el compilador (o peor, credenciales en .env) terminan versionados. Incluso si después los borrás, quedan en el historial de Git para siempre — cualquiera puede recuperarlos.',
+      fix:'$ echo "build/\\n*.o\\n.env" &gt; .gitignore\n$ git add .gitignore\n$ git commit -m "Agrega .gitignore"\n// hacer esto ANTES del primer commit' },
+    { tag:'sin revisión', title:'Commitear directo en main',
+      bad:'$ git checkout main\n$ vim Nodo.hpp\n$ git commit -am "cambios"\n$ git push origin main',
+      cons:'Nadie revisó el cambio antes de que llegara a main. Si rompe algo, todo el equipo queda bloqueado por un cambio que nadie vio venir.',
+      fix:'$ git checkout -b feature/nodo-validacion\n$ vim Nodo.hpp\n$ git commit -m "Agrega validación de posición"\n$ git push origin feature/nodo-validacion\n// después: Pull Request + revisión' },
+    { tag:'historial inútil', title:'Mensajes de commit sin sentido',
+      bad:'$ git log --oneline\na1b2c3d fix\ne4f5g6h asdf\nh7i8j9k cambios\nk0l1m2n final v2 definitivo',
+      cons:'El historial de commits es la memoria del proyecto. Con mensajes así, nadie — ni vos mismo en tres meses — puede entender qué cambió ni por qué sin abrir cada diff a mano.',
+      fix:'$ git log --oneline\na1b2c3d Corrige desborde en aritmética de punteros\ne4f5g6h Agrega destructor virtual a ElementoDiagrama\nh7i8j9k Implementa Conexion::dibujar()' },
+    { tag:'pánico', title:'Borrar todo ante un conflicto de merge',
+      bad:'$ git merge feature/nodo\nCONFLICT (content): Merge conflict in Nodo.cpp\n\n$ git merge --abort\n$ rm -rf diagramacba/\n$ git clone ... # de nuevo, perdiendo\n                # todo el trabajo local',
+      cons:'Un conflicto de merge es normal y esperable en equipo — no significa que algo esté roto, solo que dos personas tocaron la misma línea. Borrar todo tira trabajo real a la basura por miedo a algo rutinario.',
+      fix:'// abrir Nodo.cpp, buscar los\n// marcadores &lt;&lt;&lt;&lt;&lt;&lt;&lt; ======= &gt;&gt;&gt;&gt;&gt;&gt;&gt;,\n// decidir qué versión queda,\n// borrar los marcadores\n$ git add Nodo.cpp\n$ git commit' },
+    { tag:'historial reescrito', title:'Force push sobre una rama compartida',
+      bad:'$ git rebase main\n$ git push --force origin main\n// sobre una rama que otros\n// ya bajaron y siguieron',
+      cons:'Sobrescribe el historial remoto. Cualquiera que ya tenía commits basados en la versión anterior pierde su punto de referencia — su próximo pull o push se llena de conflictos o commits duplicados.',
+      fix:'$ git push --force-with-lease origin main\n// aborta automáticamente si alguien\n// más subió cambios que vos no viste.\n// Y nunca forzar sobre ramas compartidas.' }
+  ];
+  var errGrid = document.getElementById('errGrid');
+  errors.forEach(function(e, i){
+    var card = document.createElement('div');
+    card.className = 'err-card';
+    card.innerHTML =
+      '<div class="tag">' + e.tag + '</div>' +
+      '<h4>' + e.title + '</h4>' +
+      '<div class="code">' + e.bad + '</div>' +
+      '<div class="err-sec c2">CONSECUENCIA</div>' +
+      '<p class="why">' + e.cons + '</p>' +
+      '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+      '<div class="fix-box" id="fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code">' + e.fix + '</div></div>';
+    errGrid.appendChild(card);
+  });
+  errGrid.addEventListener('click', function(ev){
+    if (!ev.target.classList.contains('err-toggle')) return;
+    var i = ev.target.getAttribute('data-i');
+    var box = document.getElementById('fix-' + i);
+    var showing = box.classList.toggle('show');
+    ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+  });
+
+  /* ================= quizzes ================= */
+  var quizzes = [
+    { code:'$ # modificaste 3 archivos pero\n$ # solo querés commitear 2 de ellos',
+      q:'¿Qué comando usás para elegir cuáles archivos entran al próximo commit?',
+      opts:['git commit -a', 'git add &lt;archivo&gt;', 'git push', 'git stash'], correct:1,
+      fb:'git add mueve archivos específicos a la staging area. Solo lo que está ahí entra en el próximo git commit — el resto queda modificado pero fuera de ese commit.' },
+    { code:'$ # querés ver qué cambió en el\n$ # remoto SIN mezclarlo todavía\n$ # con tu rama local',
+      q:'¿Qué comando usás?',
+      opts:['git pull', 'git fetch', 'git merge origin/main', 'git push'], correct:1,
+      fb:'git fetch descarga los cambios del remoto y actualiza las referencias (origin/main), pero no toca tu rama local. git pull haría fetch + merge en un solo paso.' },
+    { code:'$ git merge feature/nodo\nCONFLICT (content): Merge conflict in Nodo.cpp\nAutomatic merge failed; fix conflicts and\nthen commit the result.',
+      q:'¿Qué significa este mensaje?',
+      opts:['El repositorio está corrupto', 'Dos ramas modificaron la misma línea de forma distinta y Git necesita que elijas manualmente', 'Se perdió el archivo Nodo.cpp', 'La rama feature/nodo no existe'], correct:1,
+      fb:'Es un conflicto normal: ambas ramas tocaron la misma línea. Git no puede decidir por vos, así que marca el archivo con &lt;&lt;&lt;&lt;&lt;&lt;&lt; ======= &gt;&gt;&gt;&gt;&gt;&gt;&gt; y espera que lo resuelvas a mano.' },
+    { code:'$ git rebase main\n$ git push\n! [rejected] feature/nodo -> feature/nodo\n! (non-fast-forward)',
+      q:'Reescribiste tu rama con rebase y ahora el push es rechazado porque el remoto tiene un historial distinto. ¿Qué deberías hacer?',
+      opts:['git push --force sin más, siempre', 'Borrar la rama remota y crear otra desde cero', 'git push --force-with-lease, después de confirmar que nadie más subió cambios a esa rama', 'Repetir git pull --rebase hasta que funcione solo'], correct:2,
+      fb:'--force-with-lease sobrescribe el historial remoto pero aborta automáticamente si alguien más subió commits que vos no descargaste todavía — mucho más seguro que un --force a ciegas, sobre todo en ramas compartidas.' }
+  ];
+  var quizList = document.getElementById('quizList');
+  quizzes.forEach(function(qz, qi){
+    var wrap = document.createElement('div');
+    wrap.className = 'quiz';
+    var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+    wrap.innerHTML =
+      '<div class="badge violet">CHECKPOINT ' + (qi+1) + '</div>' +
+      '<div class="code" style="margin-top:8px;">' + qz.code + '</div>' +
+      '<p style="color:var(--text); margin:6px 0 10px;">' + qz.q + '</p>' +
+      '<div class="opt-row">' + optsHTML + '</div>' +
+      '<div class="quiz-fb" id="fb-' + qi + '"></div>' +
+      '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button>' +
+        '<button class="conf-btn" data-c="dude">dudé</button>' +
+        '<button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+    quizList.appendChild(wrap);
+  });
+  quizList.addEventListener('click', function(ev){
+    var t = ev.target;
+    if (t.classList.contains('opt')){
+      var qi = t.getAttribute('data-qi');
+      var oi = parseInt(t.getAttribute('data-oi'),10);
+      var qz = quizzes[qi];
+      var row = t.parentElement;
+      Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+      if (oi === qz.correct){ t.classList.add('correct'); }
+      else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+      var fb = document.getElementById('fb-' + qi);
+      fb.textContent = qz.fb;
+      fb.classList.add('show');
+    }
+    if (t.classList.contains('conf-btn')){
+      var siblings = t.parentElement.querySelectorAll('.conf-btn');
+      Array.prototype.forEach.call(siblings, function(b){ b.classList.remove('picked'); });
+      t.classList.add('picked');
+    }
+  });
+})();
+</script>
+</body>
+</html>

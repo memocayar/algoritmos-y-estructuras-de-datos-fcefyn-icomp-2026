@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt;   — LAC</title>
+<style>
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:19px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(32px,5.4vw,54px); line-height:1.08; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE;}
+  .code .ln{display:block; padding:1px 6px; border-radius:4px; border-left:3px solid transparent;}
+  .code .ln.active{background:rgba(0,212,255,0.09); border-left-color:var(--cyan); color:#fff;}
+  .code .cm{color:var(--text-faint);}
+  .code .tp{color:var(--cyan);}
+  .stack-trace{margin-top:8px;}
+  .frame-box{border-radius:7px; padding:11px 15px; margin-bottom:8px; border:1px solid var(--border-soft); background:var(--bg-raised); font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; opacity:0; transform:translateY(6px); animation:rise .35s ease forwards; transition:border-color .25s, box-shadow .25s, color .25s;}
+  @keyframes rise{to{opacity:1; transform:translateY(0);}}
+  .frame-box .fn{color:var(--text);}
+  .frame-box.active{border-color:var(--cyan); color:var(--text); box-shadow:0 0 14px rgba(0,212,255,0.22);}
+  .frame-box.active .fn{color:var(--cyan);}
+  .frame-box.done{border-color:var(--green);}
+  .frame-box .fret{color:var(--text-faint);}
+  .frame-box.done .fret{color:var(--green); font-weight:bold;}
+  .frame-empty{color:var(--text-faint); font-family:var(--font-mono); font-size:12px;}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+  .lab-readout{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px;}
+  .ro{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 12px;}
+  .ro .k{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.06em;}
+  .ro .v{font-family:var(--font-mono); font-size:14px; color:var(--cyan); margin-top:3px;}
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:520px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">MÓDULO 3 DE 3</div>
+  <div class="nav-title"> </div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a></li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a></li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a></li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a></li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a></li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a></li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a></li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>módulo 3/3 — requiere Punteros</div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">MÓDULO 3 DE 3 · PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">Resolver <span class="accent">repitiendo</span>: el arte<br>de llamarse a uno mismo.</h1>
+    <p class="cover-sub">Recorrer una cadena de conexiones sin saber de antemano cuántas hay, contando o acumulando algo en el camino — para eso está la recursividad.</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> módulo 1 — Punteros</span>
+      <span><b>siguiente módulo:</b> TBD</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>Contando nodos en DiagramaCba</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat notas_reunion.txt</p>
+        <p><span class="accent">maga_t:</span> Ya dominás punteros — podés conectar un Nodo con otro sin copiarlo. Ahora: si querés contar cuántos nodos hay conectados en cadena a partir de uno, sin saber de antemano cuántos son, ¿cómo lo recorrés?</p>
+        <p><span class="ok">ema_v:</span> Yendo de a uno... ¿repitiendo lo mismo en cada nodo hasta que no haya más conexiones?</p>
+        <p><span class="accent">maga_t:</span> Eso es recursividad: una función que se llama a sí misma para resolver una versión más chica del mismo problema. Sentate, esto te va a cambiar cómo pensás un problema que "se repite adentro de sí mismo".</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Escribir una función recursiva identificando su caso base y su caso recursivo.</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Predecir el resultado de una recursión visualizando su pila de llamadas.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Reconocer cuándo una recursión no va a terminar nunca.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Reconocer cuándo una recursión termina bien, pero repite trabajo innecesariamente.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3>¿Qué es la recursividad?</h3>
+    <p>Una función recursiva es una función que, para resolver un problema, se llama a sí misma para resolver una versión más chica del mismo problema. Es como esas muñecas rusas: para abrir la muñeca grande tenés que abrir la de adentro, y para esa, la de más adentro — hasta que llegás a la muñequita sólida que ya no se abre más. Esa muñequita sólida es el <strong>caso base</strong>.</p>
+
+    <h3>Caso base y caso recursivo</h3>
+    <p>Toda función recursiva necesita, sin excepción, dos partes:</p>
+    <ul class="plain">
+      <li><strong>Caso base:</strong> la condición más simple, que se resuelve directamente sin volver a llamarse. Sin esto, la función nunca para.</li>
+      <li><strong>Caso recursivo:</strong> la función se llama a sí misma con una versión más chica o más simple del problema, acercándose al caso base en cada llamada.</li>
+    </ul>
+    <div class="callout"><span class="k">REGLA PRÁCTICA</span><p>Si al escribir una recursión no podés señalar con el dedo "acá para" y "acá se achica el problema", todavía no está lista.</p></div>
+
+    <h3>La pila de llamadas, en teoría</h3>
+    <p>Cada vez que una función se llama a sí misma, el programa aparta un espacio nuevo — un <strong>marco de pila (stack frame)</strong> — para esa llamada puntual: sus parámetros, sus variables locales, y a dónde volver cuando termine. Esos marcos se apilan uno arriba del otro a medida que las llamadas se acumulan, y se sacan en orden inverso a medida que cada llamada termina y devuelve su resultado. Una recursión que nunca llega al caso base sigue apilando marcos hasta agotar la memoria disponible — eso es un <em>stack overflow</em>.</p>
+
+    <h3>Recursividad y eficiencia</h3>
+    <p>Una recursión puede tener caso base, terminar siempre, y aun así ser un problema: si dentro de cada llamada volvés a llamarte más de una vez con subproblemas que se superponen, terminás recalculando lo mismo una y otra vez. Eso no rompe el programa — lo hace exponencialmente más lento a medida que crece la entrada. Lo vas a ver en la galería de fallas.</p>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+
+    <h3>La pila de llamadas de una recursión</h3>
+    <p>Vamos a seguir <code>calcularFactorial(3)</code> paso a paso — mirá cómo la pila crece llamada tras llamada, y cómo se resuelve de atrás para adelante una vez que llega al caso base.</p>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="recStepNum">0</span> / <span id="recStepTotal">6</span></span>
+        <div class="btn-row">
+          <button id="recPrev">◀ anterior</button>
+          <button id="recNext" class="primary">avanzar ▶</button>
+          <button id="recReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="code" id="recCode">
+        <span class="ln" data-line="1">  <span class="tp">int</span> calcularFactorial(<span class="tp">int</span> n) {</span>
+        <span class="ln" data-line="1">    if (n &lt;= 1) return 1;   <span class="cm">// caso base</span></span>
+        <span class="ln" data-line="2">    return n * calcularFactorial(n - 1); <span class="cm">// caso recursivo</span></span>
+        <span class="ln" data-line="1">  }</span>
+      </div>
+      <div class="lab-readout" style="margin-bottom:6px;">
+        <div class="ro"><div class="k">llamada activa</div><div class="v" id="recActive">—</div></div>
+      </div>
+      <div class="stack-trace" id="recStack"><div class="frame-empty">— pila vacía —</div></div>
+      <p class="step-caption" id="recCaption">Tocá <span class="mono">avanzar</span> para llamar a calcularFactorial(3).</p>
+    </div>
+
+    <h3>Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla con el mouse en el código.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Lo que rompe (o hace lentos) los programas recursivos</h2>
+    <p class="lead">Las dos primeras crashean. La tercera no crashea — simplemente se vuelve inútilmente lenta.</p>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> Ahora puedo recorrer una cadena de nodos sin saber cuántos hay de antemano, y sé cuándo una recursión se me puede ir de las manos.</p>
+        <p><span class="accent">maga_t:</span> Perfecto. Ya tenés las dos herramientas de base — punteros y recursividad. Ahora sí: a modelar Nodo, Conexión, y todo lo que dibuje DiagramaCba, como clases de verdad.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">EN EL PROYECTO INTEGRADOR</span><p>Funciones recursivas con nombres descriptivos que dejan ver qué achican en cada llamada (ej. <code>contarNodosDesde(Nodo* p_actual)</code>, no <code>f(Nodo* n)</code>) — Clean Code aplica también acá.</p></div>
+  </section>
+
+  <footer><p> Módulo 3/3 · material de apoyo cátedra de Algoritmos y Estructuras de Datos, FCEFyN · Ing. Valenzuela Gabriel.</p></footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement;
+    var scrolled = doc.scrollTop;
+    var max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){
+      var rect = sections[i].getBoundingClientRect();
+      if (rect.top <= 120) activeId = sections[i].id;
+    }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  var navToggle = document.getElementById('navtoggle');
+  var sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  navLinks.forEach(function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  var recCode = Array.prototype.slice.call(document.querySelectorAll('#recCode .ln'));
+  var recStack = document.getElementById('recStack');
+  var recCaption = document.getElementById('recCaption');
+  var recStepNumEl = document.getElementById('recStepNum');
+  var recActive = document.getElementById('recActive');
+  var REC_TOTAL = 6;
+  var recStep = 0;
+
+  var recStates = [
+    { frames: [], active: '—', line: 0, cap: 'Tocá <span class="mono">avanzar</span> para llamar a calcularFactorial(3).' },
+    { frames: [{n:3,status:'active',ret:null}], active: 'calcularFactorial(3)', line: 2, cap: 'Se llama <span class="mono">calcularFactorial(3)</span>. Como 3 &gt; 1, entra al caso recursivo y necesita el resultado de calcularFactorial(2).' },
+    { frames: [{n:3,status:'waiting',ret:null},{n:2,status:'active',ret:null}], active: 'calcularFactorial(2)', line: 2, cap: '<span class="mono">calcularFactorial(3)</span> queda esperando. Se llama <span class="mono">calcularFactorial(2)</span>, que también necesita otro resultado antes de poder terminar.' },
+    { frames: [{n:3,status:'waiting',ret:null},{n:2,status:'waiting',ret:null},{n:1,status:'done',ret:1}], active: 'calcularFactorial(1)', line: 1, cap: '<span class="mono">calcularFactorial(1)</span> es el caso base: 1 ≤ 1, devuelve 1 directamente, sin llamar a nadie más.' },
+    { frames: [{n:3,status:'waiting',ret:null},{n:2,status:'done',ret:2},{n:1,status:'done',ret:1}], active: 'calcularFactorial(2)', line: 2, cap: '<span class="mono">calcularFactorial(1)</span> devuelve 1. <span class="mono">calcularFactorial(2)</span> lo recibe y calcula 2 × 1 = 2.' },
+    { frames: [{n:3,status:'done',ret:6},{n:2,status:'done',ret:2},{n:1,status:'done',ret:1}], active: 'calcularFactorial(3)', line: 2, cap: '<span class="mono">calcularFactorial(2)</span> devuelve 2. <span class="mono">calcularFactorial(3)</span> calcula 3 × 2 = 6.' },
+    { frames: [{n:3,status:'done',ret:6},{n:2,status:'done',ret:2},{n:1,status:'done',ret:1}], active: '—', line: 0, cap: '<span class="mono">calcularFactorial(3)</span> devuelve 6. Resultado final: <span class="mono">calcularFactorial(3) = 6</span>.' }
+  ];
+
+  function renderRec(){
+    recStepNumEl.textContent = recStep;
+    var s = recStates[recStep];
+    recCode.forEach(function(l){ l.classList.toggle('active', parseInt(l.getAttribute('data-line'),10) === s.line && s.line !== 0); });
+    recCaption.innerHTML = s.cap;
+    recActive.textContent = s.active;
+    if (s.frames.length === 0){
+      recStack.innerHTML = '<div class="frame-empty">— pila vacía —</div>';
+    } else {
+      recStack.innerHTML = s.frames.map(function(f){
+        var cls = 'frame-box' + (f.status === 'active' ? ' active' : '') + (f.status === 'done' ? ' done' : '');
+        var retTxt = f.status === 'done' ? ('devuelve ' + f.ret) : (f.status === 'active' ? 'ejecutando…' : 'esperando…');
+        return '<div class="' + cls + '"><span class="fn">calcularFactorial(n=' + f.n + ')</span><span class="fret">' + retTxt + '</span></div>';
+      }).join('');
+    }
+    document.getElementById('recPrev').disabled = (recStep === 0);
+    document.getElementById('recNext').disabled = (recStep === REC_TOTAL);
+  }
+  document.getElementById('recNext').addEventListener('click', function(){ if (recStep < REC_TOTAL){ recStep++; renderRec(); } });
+  document.getElementById('recPrev').addEventListener('click', function(){ if (recStep > 0){ recStep--; renderRec(); } });
+  document.getElementById('recReset').addEventListener('click', function(){ recStep = 0; renderRec(); });
+  renderRec();
+
+  var errors = [
+    { tag:'stack overflow', title:'Recursión sin caso base',
+      bad:'int contarDesde(int n){\n  return n + contarDesde(n - 1);\n  // nunca hay un "if" que\n  // corte la recursión\n}',
+      cons:'Cada llamada apila un marco nuevo, y nunca hay un caso que devuelva sin volver a llamarse. La pila crece hasta agotar la memoria disponible — el programa crashea con un desborde de pila.',
+      fix:'int contarDesde(int n){\n  if (n &lt;= 0) return 0; // caso base\n  return n + contarDesde(n - 1);\n}' },
+    { tag:'stack overflow', title:'Recursión que nunca llega al caso base',
+      bad:'int contarDesde(int n){\n  if (n == 0) return 0;\n  return n + contarDesde(n + 1);\n  // n crece, nunca decrece:\n  // jamás toca el 0 exacto\n}',
+      cons:'El caso base existe, pero el caso recursivo se aleja de él en vez de acercarse. Si n arranca en un valor mayor a 0, nunca va a valer exactamente 0 — el resultado es el mismo desborde de pila.',
+      fix:'int contarDesde(int n){\n  if (n &lt;= 0) return 0;\n  return n + contarDesde(n - 1);\n  // ahora sí se acerca al\n  // caso base en cada llamada\n}' },
+    { tag:'lentitud exponencial', title:'Recursión redundante (sin memoización)',
+      bad:'int fibonacci(int n){\n  if (n &lt;= 1) return n;\n  return fibonacci(n - 1)\n       + fibonacci(n - 2);\n  // recalcula los mismos\n  // subproblemas miles de veces\n}',
+      cons:'fibonacci(2) se termina calculando cientos de veces solo para llegar a fibonacci(30). El programa nunca crashea ni da un resultado incorrecto — simplemente tarda una eternidad a medida que n crece, porque hace un trabajo que se duplica exponencialmente.',
+      fix:'int fibonacci(int n, std::vector&lt;int&gt;&amp; cache){\n  if (n &lt;= 1) return n;\n  if (cache[n] != -1) return cache[n];\n  cache[n] = fibonacci(n-1, cache)\n           + fibonacci(n-2, cache);\n  return cache[n]; // memoización:\n}                    // cada subproblema, una sola vez' }
+  ];
+  var errGrid = document.getElementById('errGrid');
+  errors.forEach(function(e, i){
+    var card = document.createElement('div');
+    card.className = 'err-card';
+    card.innerHTML =
+      '<div class="tag">' + e.tag + '</div>' +
+      '<h4>' + e.title + '</h4>' +
+      '<div class="code">' + e.bad + '</div>' +
+      '<div class="err-sec c2">CONSECUENCIA</div>' +
+      '<p class="why">' + e.cons + '</p>' +
+      '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+      '<div class="fix-box" id="fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code">' + e.fix + '</div></div>';
+    errGrid.appendChild(card);
+  });
+  errGrid.addEventListener('click', function(ev){
+    if (!ev.target.classList.contains('err-toggle')) return;
+    var i = ev.target.getAttribute('data-i');
+    var box = document.getElementById('fix-' + i);
+    var showing = box.classList.toggle('show');
+    ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+  });
+
+  var quizzes = [
+    { code:'int sumarHasta(int n){\n  if (n == 0) return 0;\n  return n + sumarHasta(n - 1);\n}\nstd::cout &lt;&lt; sumarHasta(3);',
+      q:'¿Qué imprime sumarHasta(3)?', opts:['3', '6', '0', 'Stack overflow'], correct:1,
+      fb:'sumarHasta(3) = 3 + sumarHasta(2) = 3 + (2 + sumarHasta(1)) = 3 + 2 + (1 + sumarHasta(0)) = 3 + 2 + 1 + 0 = 6. El caso base corta correctamente en n == 0.' },
+    { code:'int f(int n){\n  return n + f(n - 1);\n}\nstd::cout &lt;&lt; f(3);',
+      q:'¿Qué pasa al ejecutar esto?', opts:['Imprime 6', 'Imprime 3', 'Compila pero crashea (stack overflow)', 'Error de compilación'], correct:2,
+      fb:'No hay ningún caso base — f siempre se vuelve a llamar, con n cada vez más chico (y eventualmente negativo), sin parar nunca. La pila de llamadas crece hasta agotar la memoria disponible.' },
+    { code:'int fibonacci(int n){\n  if (n &lt;= 1) return n;\n  return fibonacci(n-1) + fibonacci(n-2);\n}\nfibonacci(5);',
+      q:'¿Cuántas veces se termina llamando a fibonacci(2) durante fibonacci(5)?', opts:['Una sola vez', 'Dos veces', 'Tres veces', 'Nunca — se calcula directo'], correct:2,
+      fb:'fibonacci(5) llama a fibonacci(4) y fibonacci(3); cada uno de esos vuelve a ramificarse. fibonacci(2) termina apareciendo en varias ramas distintas del árbol de llamadas — exactamente el problema de la recursión sin memoización.' }
+  ];
+  var quizList = document.getElementById('quizList');
+  quizzes.forEach(function(qz, qi){
+    var wrap = document.createElement('div');
+    wrap.className = 'quiz';
+    var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+    wrap.innerHTML =
+      '<div class="badge violet">CHECKPOINT ' + (qi+1) + '</div>' +
+      '<div class="code" style="margin-top:8px;">' + qz.code + '</div>' +
+      '<p style="color:var(--text); margin:6px 0 10px;">' + qz.q + '</p>' +
+      '<div class="opt-row">' + optsHTML + '</div>' +
+      '<div class="quiz-fb" id="fb-' + qi + '"></div>' +
+      '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button>' +
+        '<button class="conf-btn" data-c="dude">dudé</button>' +
+        '<button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+    quizList.appendChild(wrap);
+  });
+  quizList.addEventListener('click', function(ev){
+    var t = ev.target;
+    if (t.classList.contains('opt')){
+      var qi = t.getAttribute('data-qi');
+      var oi = parseInt(t.getAttribute('data-oi'),10);
+      var qz = quizzes[qi];
+      var row = t.parentElement;
+      Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+      if (oi === qz.correct){ t.classList.add('correct'); }
+      else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+      var fb = document.getElementById('fb-' + qi);
+      fb.textContent = qz.fb;
+      fb.classList.add('show');
+    }
+    if (t.classList.contains('conf-btn')){
+      var siblings = t.parentElement.querySelectorAll('.conf-btn');
+      Array.prototype.forEach.call(siblings, function(b){ b.classList.remove('picked'); });
+      t.classList.add('picked');
+    }
+  });
+})();
+</script>
+</body>
+</html>

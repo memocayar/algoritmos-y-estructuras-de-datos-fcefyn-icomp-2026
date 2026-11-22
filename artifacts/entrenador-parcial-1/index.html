@@ -1,0 +1,1516 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Entrenador AyED Parcial I</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<style>
+/* Layout: una consola de estudio — barra de modos arriba, una tarjeta de trabajo por vez, código siempre en mono sobre papel frío */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --sunk:#E9EDF3; --line:#D5DCE6;
+  --ink:#16202E; --muted:#5A6678; --accent:#2B54D6; --accent-ink:#FFFFFF; --accent-soft:#E3EAFD;
+  --ok:#1D7A4C; --ok-soft:#DDF2E6; --bad:#B4322A; --bad-soft:#F9E1DE; --warn:#9A6200; --warn-soft:#FBEFD5;
+  --code-bg:#F7F8FB; --kw:#7A2EB8; --str:#1D7A4C; --num:#B4532A; --com:#7C8798; --typ:#2B54D6;
+  --display:"Bricolage Grotesque", "IBM Plex Sans", system-ui, sans-serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F141C; --surface:#161D28; --sunk:#1D2633; --line:#2A3546;
+  --ink:#E6EBF2; --muted:#94A0B3; --accent:#7D9BFF; --accent-ink:#0F141C; --accent-soft:#1F2B4A;
+  --ok:#5BD093; --ok-soft:#163327; --bad:#FF8A80; --bad-soft:#3A1D1C; --warn:#F2C26B; --warn-soft:#3A2E14;
+  --code-bg:#121821; --kw:#D19BFF; --str:#7FD8A6; --num:#FFAE80; --com:#6F7C90; --typ:#8FB0FF; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F141C; --surface:#161D28; --sunk:#1D2633; --line:#2A3546;
+  --ink:#E6EBF2; --muted:#94A0B3; --accent:#7D9BFF; --accent-ink:#0F141C; --accent-soft:#1F2B4A;
+  --ok:#5BD093; --ok-soft:#163327; --bad:#FF8A80; --bad-soft:#3A1D1C; --warn:#F2C26B; --warn-soft:#3A2E14;
+  --code-bg:#121821; --kw:#D19BFF; --str:#7FD8A6; --num:#FFAE80; --com:#6F7C90; --typ:#8FB0FF; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;padding-block:12px}
+.brand{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:8px}
+.brand small{font-family:var(--mono);font-weight:500;font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap}
+nav.tabs a{font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;padding:6px 11px;border-radius:7px}
+nav.tabs a:hover{background:var(--sunk);color:var(--ink)}
+nav.tabs a[aria-current="page"]{background:var(--ink);color:var(--surface)}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;letter-spacing:-.01em;margin:0}
+h1{font-size:30px;font-weight:800;line-height:1.15}
+h2{font-size:22px;font-weight:800}
+h3{font-size:16px;font-weight:600;font-family:var(--body)}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.view{padding-top:28px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.92em}
+:not(pre)>code{background:var(--sunk);padding:1px 5px;border-radius:4px;color:var(--kw)}
+pre.code{font-family:var(--mono);font-size:13px;line-height:1.55;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:0;overflow-x:auto;white-space:pre;tab-size:4}
+.tk-kw{color:var(--kw);font-weight:500}.tk-str{color:var(--str)}.tk-num{color:var(--num)}.tk-com{color:var(--com);font-style:italic}.tk-typ{color:var(--typ)}
+button,.btn{font:inherit;font-size:14px;font-weight:500;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:8px;cursor:pointer;line-height:1.2}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.primary:hover{filter:brightness(1.07)}
+button.ghost{border-color:transparent;background:transparent;color:var(--accent);padding-inline:6px}
+button:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip{font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:5px;background:var(--sunk);color:var(--muted);letter-spacing:.02em}
+.tag.src{background:var(--warn-soft);color:var(--warn)}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}.tag.bad{background:var(--bad-soft);color:var(--bad)}
+/* opciones */
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-weight:400;line-height:1.45}
+.opt .l{font-family:var(--mono);font-weight:600;color:var(--muted);flex:none}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.opt.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{opacity:1;cursor:default}
+.feedback{border-radius:8px;padding:14px 16px;border-left:4px solid}
+.feedback.ok{background:var(--ok-soft);border-color:var(--ok)}
+.feedback.bad{background:var(--bad-soft);border-color:var(--bad)}
+.feedback.info{background:var(--accent-soft);border-color:var(--accent)}
+.feedback h3{margin-bottom:4px}
+/* home */
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr))}
+.mode{display:flex;flex-direction:column;gap:6px;text-align:left;padding:16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;text-decoration:none;color:var(--ink)}
+.mode:hover{border-color:var(--accent)}
+.mode b{font-family:var(--display);font-size:17px;font-weight:600}
+.mode span{color:var(--muted);font-size:13.5px}
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar{display:grid;grid-template-columns:150px 1fr 70px;gap:12px;align-items:center;font-size:14px}
+.bar .track{height:8px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.bar .fill{height:100%;background:var(--accent);border-radius:99px}
+.bar .num{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+@media (max-width:520px){.bar{grid-template-columns:1fr 60px}.bar .track{grid-column:1 / -1;grid-row:2}}
+.plan{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+/* código */
+.split{display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:start}
+@media (max-width:800px){.split{grid-template-columns:1fr}}
+.split>*{min-width:0}
+.list{display:flex;flex-direction:column;gap:4px}
+.list button{text-align:left;display:flex;flex-direction:column;gap:2px;border-color:transparent;background:transparent;padding:8px 10px}
+.list button:hover{background:var(--sunk)}
+.list button[aria-current="true"]{background:var(--surface);border-color:var(--line)}
+.list .t{font-weight:500;font-size:14px}
+.list .s{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line);display:inline-block;flex:none}
+.dot.ok{background:var(--ok)}.dot.part{background:var(--warn)}.dot.bad{background:var(--bad)}
+textarea.editor{width:100%;min-height:380px;font-family:var(--mono);font-size:13px;line-height:1.55;background:var(--code-bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:12px 14px;resize:vertical;tab-size:4;white-space:pre;overflow:auto}
+textarea.editor:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.tests{width:100%;border-collapse:collapse;font-size:13px}
+.tests th{text-align:left;font-weight:600;font-size:12px;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+.tests td{font-family:var(--mono);font-size:12.5px;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top;white-space:pre-wrap;word-break:break-word}
+.scroll{overflow-x:auto}
+.statement p+p{margin-top:8px}
+details{border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+details>summary{cursor:pointer;padding:10px 14px;font-weight:500}
+details>div{padding:0 14px 14px}
+input[type=text],select{font:inherit;font-family:var(--mono);font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.timer{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;padding:6px 12px;border:1px solid var(--bad);color:var(--bad);border-radius:6px;background:var(--surface)}
+.sim-q{display:grid;grid-template-columns:130px 1fr;gap:14px}
+@media (max-width:640px){.sim-q{grid-template-columns:1fr}}
+.sim-q>*{min-width:0}
+.qinfo{background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:10px;font-size:12.5px;align-self:start}
+.qinfo b{font-size:14px}
+.qbody{background:var(--accent-soft);border-radius:10px;padding:18px}
+.score-big{font-family:var(--display);font-size:46px;font-weight:800;line-height:1}
+table.cheat{width:100%;border-collapse:collapse;font-size:13.5px}
+table.cheat th,table.cheat td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+table.cheat th{font-size:12px;color:var(--muted);font-weight:600}
+table.cheat td.c{font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+.hl-bad{color:var(--bad);font-weight:600}.hl-ok{color:var(--ok);font-weight:600}
+.ai-out{white-space:pre-wrap}
+.edwrap{position:relative;background:var(--code-bg);border-radius:8px}
+.edwrap pre.ed-hl{position:absolute;inset:0;margin:0;overflow:hidden;pointer-events:none;font-family:var(--mono);font-size:13px;line-height:1.55;padding:13px 15px;white-space:pre;tab-size:4;color:var(--ink)}
+.edwrap textarea.editor{position:relative;display:block;background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:var(--ink)}
+.edwrap textarea.editor::selection{background:var(--accent-soft)}
+.tk-fn{color:#0E7C86}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tk-fn{color:#5FD4DC}}
+:root[data-theme="dark"] .tk-fn{color:#5FD4DC}
+a.btn{text-decoration:none;display:inline-block}
+.counter{font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:no-preference){.fade{animation:f .18s ease-out}@keyframes f{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand">AyED · Parcial I <small>entrenador</small></div>
+  <nav class="tabs" id="tabs">
+    <a href="#inicio">Inicio</a><a href="#estructuras">Estructuras</a><a href="#teoria">Teoría</a><a href="#rastreo">Rastreo</a><a href="#codigo">Código</a><a href="#simulacro">Simulacro</a><a href="#resumen">Resumen</a>
+  </nav>
+</div></header>
+<main class="wrap" id="app"></main>
+
+<script>
+/* ============ DATOS ============ */
+const TOPICS = {
+  cpp:{n:"Fundamentos de C++"},
+  bigo:{n:"Complejidad (Big O)"},
+  arr:{n:"Arreglo dinámico"},
+  listas:{n:"Listas (SLL / DLL)"},
+  pc:{n:"Pilas y colas"}
+};
+
+const MCQ = [
+// ---- de los exámenes ----
+{id:"r1",t:"listas",src:"Simulacro recup",q:"La lista de solicitudes pendientes de HubFlow es una <b>SLL con referencias <code>head</code> y <code>tail</code></b>. ¿Qué par de operaciones se puede implementar en <b>O(1) en el peor caso</b>, sin recorrer la lista?",
+ ok:"Insertar al final y eliminar el primer nodo.",bad:["Eliminar el último nodo y eliminar el primer nodo.","Insertar antes del último nodo y eliminar el último.","Eliminar el último nodo e insertar al final."],
+ why:"Insertar al final: <code>tail->next = nuevo; tail = nuevo;</code>. Eliminar el primero: <code>head = head->next;</code>. Todo lo que toca al <b>penúltimo</b> (eliminar el último, insertar antes del último) obliga a recorrer desde head porque una SLL no tiene <code>prev</code>. Es exactamente cómo se implementa una cola."},
+{id:"r2",t:"arr",src:"Simulacro recup",q:"Un arreglo dinámico inicialmente vacío crece cuando <code>size == capacity</code>. Estrategia 1: +1 posición. Estrategia 2: duplicar (desde capacidad 1). Tras N inserciones, ¿qué es correcto?",
+ ok:"Estrategia 1: copias 1+2+…+(N−1) = O(N²). Estrategia 2: menos de 2N copias, O(N) total y O(1) amortizado por inserción.",bad:["Ambas tienen el mismo costo total porque cada elemento se copia una sola vez.","La estrategia 1 es O(1) amortizado y la estrategia 2 es O(N) amortizado.","La estrategia 2 siempre es más lenta porque reservar memoria extra obliga a copiar más en cada inserción."],
+ why:"Con +1 se llena en cada inserción y copiás todo cada vez → suma aritmética → O(N²). Duplicando solo copiás en 1, 2, 4, 8… → suma geométrica &lt; 2N → O(N) total, O(1) amortizado."},
+{id:"r3",t:"listas",src:"Simulacro recup",q:"DLL con <code>m_head</code>, <code>m_tail</code> y <code>m_size</code>: <code>A ⇄ B ⇄ C</code>. Se elimina la cabeza A. ¿Qué actualizaciones son necesarias, incluyendo el caso de lista con un único nodo?",
+ ok:"m_head pasa a B, B->prev = nullptr, liberar A y decrementar m_size; si era el único nodo, m_tail = nullptr también.",bad:["Decrementar m_size sin cambiar enlaces; los punteros se actualizan solos.","Actualizar m_tail a B, poner B->prev en nullptr y liberar A.","m_head pasa a B y se libera A; B->prev puede seguir apuntando a A porque se libera igual."],
+ why:"Si B->prev sigue apuntando a A después del <code>delete</code>, queda un <b>puntero colgante</b>. Y si la lista tenía un solo nodo, m_head queda en nullptr y m_tail también tiene que quedar en nullptr."},
+{id:"p4",t:"listas",src:"Parcial 2026",q:"Una SLL guarda <code>head</code> y <code>tail</code>. Un desarrollador dice que, como existe <code>tail</code>, eliminar el último debería ser siempre O(1). ¿Qué explicación es correcta?",
+ ok:"tail da acceso directo al último, pero para eliminarlo hay que encontrar su anterior, y una SLL no tiene enlaces hacia atrás.",bad:["Acceder al nodo apuntado por tail requiere recorrer toda la lista.","La operación delete tiene siempre complejidad O(N).","Toda eliminación sobre una SLL es O(N)."],
+ why:"Llegar a tail es O(1). El problema es que después de borrarlo, el nuevo tail es el penúltimo, y para llegar a él hay que recorrer desde head: O(N). Eliminar el primero sí es O(1), por eso la D es falsa."},
+{id:"p5",t:"arr",src:"Parcial 2026",q:"Un vector dinámico tiene <code>size 4, capacity 4</code>. Al insertar E reserva un bloque más grande, mueve todo y sigue. ¿Qué describe mejor la idea de <b>amortización</b>?",
+ ok:"Algunas inserciones requieren una expansión costosa, pero ese costo se reparte entre muchas inserciones que no necesitan reservar memoria.",bad:["Una vez que el vector alcanza su capacidad, ya no puede almacenar nuevos elementos.","Cada inserción requiere reservar un bloque nuevo y copiar todos los elementos.","Amortizar significa reservar exactamente una posición adicional cada vez que se llena."],
+ why:"Amortizado = costo total / cantidad de operaciones. Una inserción cara (O(n)) cada tanto, muchas baratas (O(1)) en el medio → promedio O(1). Reservar de a 1 es justamente lo que <b>rompe</b> la amortización."},
+// ---- C++ ----
+{id:"c1",t:"cpp",q:"¿Qué pasa con este código?",code:"int* p = nullptr;\n*p = 3;",
+ ok:"Comportamiento indefinido: se desreferencia un puntero nulo (típicamente segmentation fault).",bad:["Guarda 3 en una variable nueva y p pasa a apuntarla.","No compila porque nullptr no se puede asignar a int*.","p pasa a valer 3."],
+ why:"<code>*p</code> accede a la memoria apuntada; nullptr no apunta a nada válido. Siempre chequeá <code>if (p != nullptr)</code> antes de usar <code>p-&gt;</code> o <code>*p</code>."},
+{id:"c2",t:"cpp",q:"¿Cuál es una diferencia correcta entre <b>puntero</b> y <b>referencia</b>?",
+ ok:"Una referencia debe inicializarse y no puede volver a referir a otro objeto; un puntero puede ser nullptr y cambiar a dónde apunta.",bad:["Una referencia guarda una copia del objeto; el puntero guarda la dirección.","Los punteros solo sirven para memoria dinámica; las referencias solo para variables locales.","Son idénticos, solo cambia la sintaxis."],
+ why:"<code>int&amp; r = a;</code> es un <b>alias</b> de a para siempre. <code>int* p = &amp;a;</code> guarda la dirección y después podés hacer <code>p = &amp;b;</code> o <code>p = nullptr;</code>."},
+{id:"c3",t:"cpp",q:"Reservaste <code>int* v = new int[10];</code>. ¿Cómo se libera correctamente?",
+ ok:"delete[] v;",bad:["delete v;","free(v);","No hace falta, se libera al salir de la función."],
+ why:"Lo que se reserva con <code>new[]</code> se libera con <code>delete[]</code>; lo de <code>new</code> con <code>delete</code>. Mezclarlos es comportamiento indefinido. La memoria del heap <b>no</b> se libera sola."},
+{id:"c4",t:"cpp",q:"¿Qué es una <b>fuga de memoria</b> (memory leak)?",
+ ok:"Perder el último puntero a memoria reservada con new sin haber hecho delete.",bad:["Acceder a una posición fuera del arreglo.","Hacer delete dos veces sobre el mismo puntero.","Usar una variable local después de que terminó la función."],
+ why:"Ejemplo clásico: en un <code>pop()</code> hacer <code>m_top = m_top-&gt;next;</code> sin guardar el nodo viejo y borrarlo. El nodo queda reservado y nadie lo puede liberar. Las otras opciones son otros errores (fuera de rango, doble delete, puntero colgante)."},
+{id:"c5",t:"cpp",q:"¿Por qué los métodos reciben <code>const TData&amp; valor</code> en lugar de <code>TData valor</code>?",
+ ok:"Para evitar copiar el objeto y a la vez garantizar que el método no lo modifique.",bad:["Para poder modificar el valor original desde el método.","Porque los templates no aceptan parámetros por valor.","Para que el parámetro se guarde en el heap."],
+ why:"Por referencia = no hay copia (importa si TData es grande). El <code>const</code> prohíbe modificarlo. Por valor también funcionaría, pero copia."},
+{id:"c6",t:"cpp",q:"En <code>int rachaMaxima(const TData&amp; valor) const</code>, ¿qué implica el <code>const</code> del final?",
+ ok:"El método no puede modificar el objeto: no puede llamar a pop()/push() sobre *this ni cambiar atributos; por eso se trabaja sobre una copia.",bad:["Que el valor devuelto no se puede modificar.","Que el método solo puede llamarse una vez.","Que valor se pasa por copia."],
+ why:"Dentro de un método const, <code>this</code> es <code>const Stack*</code>: solo podés llamar a otros métodos const (top, size, isEmpty). Para recorrer la pila hacés <code>Stack copia(*this);</code> y desarmás la copia."},
+{id:"c7",t:"cpp",q:"Una clase con nodos dinámicos <b>no</b> define constructor de copia. ¿Qué pasa al hacer <code>Stack b = a;</code>?",
+ ok:"Copia superficial: b copia el puntero m_top, ambos comparten los mismos nodos y al destruirse se hace doble delete.",bad:["Se copian todos los nodos automáticamente (copia profunda).","No compila: toda clase con punteros exige constructor de copia.","b queda vacía."],
+ why:"El constructor de copia por defecto copia miembro a miembro: copia la <b>dirección</b>, no los nodos. Por eso las clases del parcial definen <code>Stack(const Stack&amp; other)</code> copiando nodo por nodo, o lo borran con <code>= delete</code>."},
+{id:"c8",t:"cpp",q:"Después de <code>delete p;</code>, ¿en qué estado queda <code>p</code>?",
+ ok:"Sigue guardando la misma dirección, pero ya no es válida (puntero colgante). Conviene ponerlo en nullptr si se sigue usando.",bad:["Pasa a valer nullptr automáticamente.","Apunta a una copia del valor borrado.","Ya no existe como variable."],
+ why:"delete libera la memoria apuntada, no toca la variable p. Si después hacés <code>p-&gt;data</code>, es comportamiento indefinido."},
+{id:"c9",t:"cpp",q:"¿Qué requiere un <code>template &lt;typename TData&gt;</code> sobre el tipo TData en <code>contar(valor)</code> que compara con <code>==</code>?",
+ ok:"Que TData soporte operator==; el compilador genera una versión de la clase por cada tipo usado y falla si la operación no existe.",bad:["Nada: los templates funcionan con cualquier tipo sin restricciones.","Que TData sea un tipo numérico.","Que TData herede de una clase base Comparable."],
+ why:"Los templates se instancian en compilación. <code>Queue&lt;int&gt;</code> genera código con int. Si usás <code>&lt;</code> o <code>==</code>, el tipo tiene que tenerlos."},
+{id:"c10",t:"cpp",q:"Diferencia entre una variable local <code>Node n(5);</code> y <code>Node* n = new Node(5);</code>:",
+ ok:"La local vive en el stack y se destruye al salir del bloque; la de new vive en el heap hasta que se haga delete.",bad:["Las dos viven en el heap.","La local vive hasta que termina el programa.","La de new se libera sola al salir de la función."],
+ why:"Por eso los nodos de una lista se crean con new: tienen que sobrevivir a la función que los creó. Y por eso el destructor tiene que recorrerlos y hacer delete."},
+{id:"c11",t:"cpp",q:"Dado <code>int a[] = {10,20,30}; int* p = a;</code>, ¿qué vale <code>*(p+2)</code>?",
+ ok:"30",bad:["12","20","La dirección de a[2]"],
+ why:"Aritmética de punteros: p+2 avanza 2 <b>elementos</b> (no 2 bytes). *(p+2) es lo mismo que p[2] y a[2]."},
+// ---- Big O ----
+{id:"b1",t:"bigo",q:"Complejidad de:",code:"for (int i = 0; i < n; i++)\n    for (int j = 0; j < n; j++)\n        suma++;",
+ ok:"O(n²)",bad:["O(n)","O(2n)","O(n log n)"],why:"n iteraciones de afuera × n de adentro = n². Bucles anidados que dependen de n se multiplican."},
+{id:"b2",t:"bigo",q:"Complejidad de:",code:"for (int i = 1; i < n; i *= 2)\n    suma++;",
+ ok:"O(log n)",bad:["O(n)","O(n/2)","O(√n)"],why:"i vale 1, 2, 4, 8… hasta n: se duplica cada vez, así que da log₂(n) vueltas."},
+{id:"b3",t:"bigo",q:"Complejidad de:",code:"for (int i = 0; i < n; i++)\n    for (int j = 0; j < 10; j++)\n        suma++;",
+ ok:"O(n)",bad:["O(n²)","O(10)","O(n log n)"],why:"El bucle interno es constante (10 vueltas), no depende de n. 10n → O(n): las constantes se descartan."},
+{id:"b4",t:"bigo",q:"Complejidad de:",code:"for (int i = 0; i < n; i++)\n    for (int j = i; j < n; j++)\n        suma++;",
+ ok:"O(n²)",bad:["O(n)","O(n log n)","O(n²/2), que es más chico que O(n²)"],why:"n + (n−1) + … + 1 = n(n+1)/2. Descartando la constante ½ queda O(n²)."},
+{id:"b5",t:"bigo",q:"Una función recorre un arreglo de tamaño n y después recorre otro de tamaño m (uno después del otro). Complejidad:",
+ ok:"O(n + m)",bad:["O(n · m)","O(max) = O(n) siempre","O(1)"],why:"Bucles <b>secuenciales</b> se suman; bucles <b>anidados</b> se multiplican."},
+{id:"b6",t:"bigo",q:"¿Qué significa que un algoritmo sea O(n)?",
+ ok:"Que para n grande su costo crece como mucho proporcional a n (cota superior), ignorando constantes.",bad:["Que tarda exactamente n operaciones.","Que tarda n segundos.","Que es el algoritmo más rápido posible para el problema."],
+ why:"Big O es una cota superior del crecimiento. 3n+7 y n/2 son ambas O(n)."},
+{id:"b7",t:"bigo",q:"Orden correcto de menor a mayor crecimiento:",
+ ok:"O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ)",bad:["O(1) < O(n) < O(log n) < O(n²) < O(n log n) < O(2ⁿ)","O(log n) < O(1) < O(n) < O(n log n) < O(2ⁿ) < O(n²)","O(1) < O(log n) < O(n log n) < O(n) < O(n²) < O(2ⁿ)"],
+ why:"Para n=1024: 1, 10, 1024, ~10 000, ~1 000 000, número gigante."},
+{id:"b8",t:"bigo",q:"Buscar un valor en una lista enlazada no ordenada de n nodos, en el peor caso:",
+ ok:"O(n)",bad:["O(1)","O(log n)","O(n²)"],why:"Peor caso: el valor está al final o no está → visitás los n nodos. No hay acceso por índice ni búsqueda binaria en listas."},
+{id:"b9",t:"bigo",q:"Acceder al elemento i-ésimo:",
+ ok:"Arreglo O(1); lista enlazada O(n).",bad:["Arreglo O(n); lista O(1).","Ambos O(1).","Ambos O(log n)."],
+ why:"El arreglo es contiguo: dirección = inicio + i·tamaño. En la lista hay que seguir i punteros next."},
+{id:"b10",t:"bigo",q:"<code>contar(valor)</code> en una Queue usando solo la interfaz pública (dequeue + enqueue size() veces). Complejidad:",
+ ok:"O(n)",bad:["O(1)","O(n²)","O(log n)"],why:"Cada elemento se saca y se vuelve a meter una vez; enqueue y dequeue son O(1). n vueltas × O(1) = O(n)."},
+// ---- Arreglo dinámico ----
+{id:"a1",t:"arr",q:"En un arreglo dinámico, ¿qué diferencia hay entre <code>size</code> y <code>capacity</code>?",
+ ok:"size = elementos guardados; capacity = espacio reservado. Siempre size ≤ capacity.",bad:["Son lo mismo con distinto nombre.","capacity es la cantidad de elementos; size el espacio en bytes.","size ≥ capacity siempre."],
+ why:"Se reserva de más para que la mayoría de las inserciones no necesiten pedir memoria. Cuando size == capacity, hay que crecer."},
+{id:"a2",t:"arr",q:"Insertar un elemento al <b>inicio</b> de un arreglo dinámico con n elementos cuesta:",
+ ok:"O(n), porque hay que correr todos los elementos una posición.",bad:["O(1) siempre.","O(1) amortizado.","O(log n)."],
+ why:"Para hacer lugar en la posición 0, cada elemento se mueve a i+1. Insertar al final sí es O(1) amortizado."},
+{id:"a3",t:"arr",q:"Al crecer, el arreglo reserva un bloque nuevo y copia. ¿Qué hay que hacer con el bloque viejo?",
+ ok:"Liberarlo con delete[] y actualizar el puntero interno al nuevo bloque.",bad:["Nada, se libera solo.","Liberarlo con delete (sin corchetes).","Mantenerlo por si se achica el arreglo."],
+ why:"Patrón: <code>TData* nuevo = new TData[nc]; copiar; delete[] m_data; m_data = nuevo; m_capacity = nc;</code>. Cualquier puntero que apuntaba al bloque viejo queda inválido."},
+{id:"a4",t:"arr",q:"¿Por qué duplicar la capacidad da O(1) amortizado y sumar una constante k (ej. +10) no?",
+ ok:"Con +k se crece cada k inserciones copiando todo: ~n²/k copias → O(n) amortizado. Duplicando, las copias suman menos de 2n.",bad:["Con +k es O(1) amortizado si k es grande.","Las dos estrategias son O(1) amortizado.","Duplicar es O(log n) amortizado."],
+ why:"Sumar una constante solo divide el costo por k; sigue siendo cuadrático en total. El crecimiento tiene que ser <b>proporcional</b> (×2, ×1.5)."},
+// ---- Listas ----
+{id:"l1",t:"listas",q:"En una DLL, si ya tenés un puntero al nodo a eliminar, ¿cuánto cuesta eliminarlo?",
+ ok:"O(1): tenés prev y next, así que reenganchás los vecinos directamente.",bad:["O(n): siempre hay que recorrer desde head.","O(log n).","O(1) solo si es la cabeza."],
+ why:"<code>a-&gt;prev-&gt;next = a-&gt;next; a-&gt;next-&gt;prev = a-&gt;prev;</code> (cuidando los casos head/tail). Lo O(n) es <b>buscar</b> el nodo."},
+{id:"l2",t:"listas",q:"Insertar al inicio de una SLL que solo tiene <code>head</code>:",
+ ok:"O(1)",bad:["O(n)","O(log n)","O(n) si la lista está ordenada"],why:"<code>nuevo-&gt;next = head; head = nuevo;</code> No hay que recorrer nada."},
+{id:"l3",t:"listas",q:"¿Cuál es la ventaja principal de una DLL frente a una SLL?",
+ ok:"Se puede recorrer en ambos sentidos y eliminar el último (o un nodo dado) en O(1), a costa de un puntero extra por nodo.",bad:["Usa menos memoria por nodo.","Tiene acceso por índice en O(1).","La búsqueda es O(log n)."],
+ why:"El puntero prev es memoria extra, pero te evita buscar el anterior."},
+{id:"l4",t:"listas",q:"Insertás B entre A y C en una DLL (<code>A ⇄ C</code>). ¿Cuántos punteros hay que actualizar?",
+ ok:"4: B->prev, B->next, A->next y C->prev.",bad:["2: A->next y C->prev.","3: A->next, B->next y C->prev.","1: A->next."],
+ why:"El nuevo nodo apunta a sus dos vecinos, y los dos vecinos apuntan al nuevo. Si te falta uno, la lista queda rota en un sentido."},
+{id:"l5",t:"listas",q:"En una SLL con tail, eliminás el último nodo y te olvidás de actualizar <code>m_tail</code>. ¿Qué pasa?",
+ ok:"m_tail queda apuntando a memoria liberada; el próximo pushBack escribe sobre un nodo borrado (comportamiento indefinido).",bad:["Nada, tail se actualiza solo.","Solo se desperdicia memoria.","No compila."],
+ why:"Siempre que borrás, preguntate: ¿era head? ¿era tail? ¿era el único? Los tres casos se manejan aparte."},
+{id:"l6",t:"listas",q:"¿Qué ventaja tiene una lista enlazada frente a un arreglo?",
+ ok:"No necesita memoria contigua ni realocar: insertar o borrar al inicio es O(1).",bad:["Acceso por índice en O(1).","Usa menos memoria por elemento.","Búsqueda binaria en O(log n)."],
+ why:"Cada nodo se reserva por separado. Contra: punteros extra por nodo y acceso secuencial."},
+{id:"l7",t:"listas",q:"Para eliminar el primer nodo con valor x en una SLL (sin prev), ¿qué necesitás durante el recorrido?",
+ ok:"Un puntero al nodo anterior, para hacer anterior->next = actual->next (o mover head si es el primero).",bad:["Nada: alcanza con hacer delete del nodo encontrado.","Un arreglo auxiliar con todos los nodos.","Recorrer la lista desde el final."],
+ why:"Patrón: <code>Node* ant = nullptr; Node* act = head;</code> avanzando los dos juntos. Si <code>ant == nullptr</code>, borrás la cabeza."},
+// ---- Pilas y colas ----
+{id:"s1",t:"pc",q:"¿Qué estructura usarías para un historial de <b>Deshacer</b> (Ctrl+Z)?",
+ ok:"Pila (LIFO): lo último que hiciste es lo primero que se deshace.",bad:["Cola (FIFO).","Arreglo ordenado.","Lista doblemente enlazada ordenada."],
+ why:"LIFO = Last In, First Out. Otros usos: llamadas a funciones, paréntesis balanceados, recorrer algo al revés."},
+{id:"s2",t:"pc",q:"Una pila vacía recibe: push(1), push(2), push(3), pop(), push(4), pop(), pop(). ¿Qué queda en el tope?",
+ ok:"1",bad:["4","2","3"],why:"[1] → [1,2] → [1,2,3] → pop → [1,2] → [1,2,4] → pop → [1,2] → pop → [1]."},
+{id:"s3",t:"pc",q:"Una cola vacía recibe: enqueue(1), enqueue(2), enqueue(3), dequeue(), enqueue(4), dequeue(). ¿Qué hay en el frente?",
+ ok:"3",bad:["1","2","4"],why:"[1] → [1,2] → [1,2,3] → [2,3] → [2,3,4] → [3,4]. Frente = 3."},
+{id:"s4",t:"pc",q:"Implementás una Queue con una SLL (head + tail). ¿Dónde hacés enqueue y dequeue?",
+ ok:"enqueue en tail, dequeue en head: ambos O(1).",bad:["enqueue en head, dequeue en tail: ambos O(1).","Los dos en head.","Es indistinto, ambos lados son O(1)."],
+ why:"Sacar del final de una SLL es O(n) (falta el anterior). Por eso se saca por head (O(1)) y se mete por tail (O(1))."},
+{id:"s5",t:"pc",q:"Implementás una Stack con una SLL. ¿Dónde conviene hacer push y pop?",
+ ok:"Ambos en la cabeza (m_top = head): O(1).",bad:["Ambos en la cola de la lista.","push en la cabeza, pop en la cola.","push en la cola, pop en la cabeza."],
+ why:"<code>m_top = new Node(v, m_top);</code> para push y mover m_top a next para pop. Solo se toca un extremo."},
+{id:"s6",t:"pc",q:"Solo con enqueue/dequeue/front/size, ¿cómo recorrés una Queue sin alterarla?",
+ ok:"Repetir size() veces: x = front(); dequeue(); procesar x; enqueue(x). Al final queda igual.",bad:["Hacer dequeue hasta vaciarla; se vuelve a llenar sola.","Acceder a m_front->next directamente.","No se puede sin una pila auxiliar."],
+ why:"Es una <b>rotación completa</b>. Guardá <code>int n = size();</code> antes del bucle. Si usás size() en la condición mientras borrás, el bucle cambia de largo."},
+{id:"s7",t:"pc",q:"Querés el elemento del <b>fondo</b> de una Stack usando solo push/pop/top. ¿Qué es correcto?",
+ ok:"Hay que desapilar todo (en una copia o pasándolo a un auxiliar y devolviéndolo): O(n).",bad:["top() devuelve el fondo.","Es O(1) con pop() una sola vez.","No se puede de ninguna forma."],
+ why:"Una pila solo deja ver el tope. Si el método es const, usás <code>Stack copia(*this)</code>; si no, pasás a un aux y después devolvés todo para no invertir el orden."},
+{id:"s8",t:"pc",q:"Pasás todos los elementos de una pila A a una pila B con pop/push. ¿Cómo queda B?",
+ ok:"Con el orden invertido: el fondo de A queda en el tope de B.",bad:["Igual que A.","Vacía.","Ordenada de menor a mayor."],
+ why:"Por eso para «mover el tope al fondo» se vacía en un aux, se mete el elemento, y se vuelve a pasar todo: dos inversiones = orden original."},
+{id:"s9",t:"pc",q:"Cola circular sobre arreglo de capacidad C. ¿Cómo avanza el índice rear al encolar?",
+ ok:"rear = (rear + 1) % C",bad:["rear = rear + 1","rear = (rear − 1) % C","rear = C − rear"],
+ why:"El módulo hace que después de la última posición se vuelva a 0 y se reutilice el espacio liberado por los dequeue."},
+{id:"s10",t:"pc",q:"En el <code>dequeue()</code> de una Queue enlazada, después de sacar el único elemento, ¿qué falta?",
+ ok:"Poner m_rear = nullptr, porque si no queda apuntando al nodo borrado.",bad:["Nada, m_front = nullptr alcanza.","Hacer delete m_rear también.","Poner m_size = 1."],
+ why:"Error clásico. El código del parcial lo hace: <code>if (m_size == 0) m_rear = nullptr;</code>"},
+{id:"s11",t:"pc",q:"¿Qué estructura modela mejor la fila de impresión de una impresora compartida?",
+ ok:"Cola (FIFO)",bad:["Pila (LIFO)","Arreglo ordenado por tamaño","Lista circular sin orden"],
+ why:"Se imprime en el orden de llegada: el primero que entra es el primero que sale."}
+];
+
+/* ---- rastreo: adivinar la salida ---- */
+const TRACE = [
+{id:"t1",t:"cpp",code:"int x = 5;\nint* p = &x;\n*p = 10;\ncout << x;",ans:"10",why:"p apunta a x; *p = 10 modifica x."},
+{id:"t2",t:"cpp",code:"int a = 3;\nint& r = a;\nr++;\ncout << a << \" \" << r;",ans:"4 4",why:"r es un alias de a: son la misma variable."},
+{id:"t3",t:"cpp",code:"void f(int v)  { v = 9; }\nvoid g(int& v) { v = 9; }\n\nint a = 1, b = 1;\nf(a);\ng(b);\ncout << a << b;",ans:"19",why:"f recibe una copia (a no cambia); g recibe una referencia (b pasa a 9)."},
+{id:"t4",t:"cpp",code:"int arr[] = {1, 2, 3, 4};\nint* p = arr;\np += 2;\ncout << *p << \" \" << p[1];",ans:"3 4",why:"p apunta a arr[2] = 3; p[1] es arr[3] = 4."},
+{id:"t5",t:"cpp",code:"int* p = new int(7);\nint* q = p;\n*q = 8;\ncout << *p;\ndelete p;",ans:"8",why:"p y q apuntan al mismo int del heap."},
+{id:"t6",t:"cpp",code:"struct P { int x; };\nP a{1};\nP b = a;\nb.x = 5;\nP* q = &a;\nq->x = 7;\ncout << a.x << b.x;",ans:"75",why:"b es una copia (independiente). q apunta a a, así que q->x = 7 cambia a."},
+{id:"t7",t:"pc",code:"Stack<int> s;\ns.push(1); s.push(2); s.push(3);\ns.pop();\ns.push(4);\ncout << s.top() << \" \" << s.size();",ans:"4 3",why:"[1,2,3] → [1,2] → [1,2,4]. Tope 4, tamaño 3."},
+{id:"t8",t:"pc",code:"Queue<int> q;\nq.enqueue(1); q.enqueue(2); q.enqueue(3);\nq.dequeue();\nq.enqueue(4);\ncout << q.front() << \" \" << q.size();",ans:"2 3",why:"[1,2,3] → [2,3] → [2,3,4]."},
+{id:"t9",t:"pc",code:"Stack<int> s;\nfor (int i = 1; i <= 5; i++) s.push(i);\nwhile (s.size() > 2) s.pop();\ncout << s.top();",ans:"2",why:"Quedan [1,2]; el tope es 2."},
+{id:"t10",t:"pc",code:"Queue<int> q;\nfor (int i = 1; i <= 4; i++) q.enqueue(i);\nfor (int k = 0; k < 2; k++) {\n    q.enqueue(q.front());\n    q.dequeue();\n}\nwhile (!q.isEmpty()) { cout << q.front(); q.dequeue(); }",ans:"3412",why:"Rotar 2 veces: [1,2,3,4] → [2,3,4,1] → [3,4,1,2]."},
+{id:"t11",t:"pc",code:"Stack<int> a, b;\nfor (int i = 1; i <= 3; i++) a.push(i);\nwhile (!a.isEmpty()) { b.push(a.top()); a.pop(); }\nwhile (!b.isEmpty()) { cout << b.top(); b.pop(); }",ans:"123",why:"a tiene tope 3. Pasarlo a b lo invierte: tope de b = 1. Se imprime 1,2,3."},
+{id:"t12",t:"bigo",code:"int c = 0;\nfor (int i = 1; i < 16; i *= 2) c++;\ncout << c;",ans:"4",why:"i = 1, 2, 4, 8 (16 ya no entra) → 4 vueltas. Es log₂(16)."},
+{id:"t13",t:"bigo",code:"int c = 0;\nfor (int i = 0; i < 4; i++)\n    for (int j = 0; j < i; j++)\n        c++;\ncout << c;",ans:"6",why:"0 + 1 + 2 + 3 = 6 = n(n−1)/2 con n = 4."},
+{id:"t14",t:"listas",code:"// SLL: pushBack agrega al final, pushFront al inicio\nSLL<int> l;\nl.pushBack(2);\nl.pushFront(1);\nl.pushBack(3);\nl.pushFront(0);\nl.imprimir();   // imprime los datos sin espacios",ans:"0123",why:"[2] → [1,2] → [1,2,3] → [0,1,2,3]."},
+{id:"t15",t:"arr",code:"// capacidad inicial 1, se duplica al llenarse\nDynArray<int> v;\nfor (int i = 0; i < 5; i++) v.pushBack(i);\ncout << v.size() << \" \" << v.capacity();",ans:"5 8",why:"Capacidades: 1 → 2 → 4 → 8. Con 5 elementos la capacidad es 8."},
+{id:"t16",t:"listas",code:"// DLL [3, 8, 5, 8, 2]\nd.eliminarUltimo(8);\nd.eliminarPrimero(3);\nd.imprimir();   // sin espacios",ans:"852",why:"Quitar el último 8 → [3,8,5,2]; quitar el primer 3 → [8,5,2]."}
+];
+
+/* ---- clases base (como en el parcial) ---- */
+const STACK_BASE = `template <typename TData>
+class Stack {
+private:
+    struct Node {
+        TData data;
+        Node* next;
+        Node(const TData& value, Node* following = nullptr)
+            : data(value), next(following) {}
+    };
+    Node* m_top;
+    int m_size;
+    static Node* copyNodes(const Node* source) {
+        if (source == nullptr) return nullptr;
+        return new Node(source->data, copyNodes(source->next));
+    }
+public:
+    Stack() : m_top(nullptr), m_size(0) {}
+    Stack(const Stack& other)
+        : m_top(copyNodes(other.m_top)), m_size(other.m_size) {}
+    Stack& operator=(const Stack&) = delete;
+    ~Stack() { while (!isEmpty()) pop(); }
+    void push(const TData& value) {
+        m_top = new Node(value, m_top);
+        ++m_size;
+    }
+    void pop() {
+        if (isEmpty()) return;
+        Node* removed = m_top;
+        m_top = m_top->next;
+        delete removed;
+        --m_size;
+    }
+    TData top() const { return isEmpty() ? TData() : m_top->data; }
+    bool isEmpty() const { return m_size == 0; }
+    int size() const { return m_size; }
+
+@@
+};`;
+const QUEUE_BASE = `template <typename TData>
+class Queue {
+private:
+    struct Node {
+        TData data;
+        Node* next;
+        Node(const TData& value) : data(value), next(nullptr) {}
+    };
+    Node* m_front;
+    Node* m_rear;
+    int m_size;
+public:
+    Queue() : m_front(nullptr), m_rear(nullptr), m_size(0) {}
+    Queue(const Queue&) = delete;
+    Queue& operator=(const Queue&) = delete;
+    ~Queue() { while (!isEmpty()) dequeue(); }
+    void enqueue(const TData& value) {
+        Node* nuevo = new Node(value);
+        if (isEmpty()) {
+            m_front = nuevo;
+            m_rear = nuevo;
+        } else {
+            m_rear->next = nuevo;
+            m_rear = nuevo;
+        }
+        ++m_size;
+    }
+    void dequeue() {
+        if (isEmpty()) return;
+        Node* borrar = m_front;
+        m_front = m_front->next;
+        delete borrar;
+        --m_size;
+        if (m_size == 0) m_rear = nullptr;
+    }
+    TData front() const { return isEmpty() ? TData() : m_front->data; }
+    bool isEmpty() const { return m_size == 0; }
+    int size() const { return m_size; }
+
+@@
+};`;
+const DLL_BASE = `template <typename TData>
+class DLL {
+private:
+    struct Node {
+        TData data;
+        Node* prev;
+        Node* next;
+        Node(const TData& value)
+            : data(value), prev(nullptr), next(nullptr) {}
+    };
+    Node* m_head;
+    Node* m_tail;
+    int m_size;
+public:
+    DLL() : m_head(nullptr), m_tail(nullptr), m_size(0) {}
+    ~DLL() {
+        Node* actual = m_head;
+        while (actual != nullptr) {
+            Node* siguiente = actual->next;
+            delete actual;
+            actual = siguiente;
+        }
+    }
+    void pushBack(const TData& value) {
+        Node* nuevo = new Node(value);
+        if (m_tail == nullptr) {
+            m_head = nuevo;
+            m_tail = nuevo;
+        } else {
+            nuevo->prev = m_tail;
+            m_tail->next = nuevo;
+            m_tail = nuevo;
+        }
+        m_size++;
+    }
+    bool isEmpty() const { return m_size == 0; }
+    int size() const { return m_size; }
+
+@@
+};`;
+const SLL_BASE = `template <typename TData>
+class SLL {
+private:
+    struct Node {
+        TData data;
+        Node* next;
+        Node(const TData& value, Node* following = nullptr)
+            : data(value), next(following) {}
+    };
+    Node* m_head;
+    Node* m_tail;
+    int m_size;
+public:
+    SLL() : m_head(nullptr), m_tail(nullptr), m_size(0) {}
+    ~SLL() {
+        while (m_head != nullptr) {
+            Node* sig = m_head->next;
+            delete m_head;
+            m_head = sig;
+        }
+    }
+    void pushBack(const TData& value) {
+        Node* nuevo = new Node(value);
+        if (m_tail == nullptr) { m_head = m_tail = nuevo; }
+        else { m_tail->next = nuevo; m_tail = nuevo; }
+        m_size++;
+    }
+    void pushFront(const TData& value) {
+        m_head = new Node(value, m_head);
+        if (m_tail == nullptr) m_tail = m_head;
+        m_size++;
+    }
+    bool isEmpty() const { return m_size == 0; }
+    int size() const { return m_size; }
+
+@@
+};`;
+const DYN_BASE = `template <typename TData>
+class DynArray {
+private:
+    TData* m_data;
+    int m_size;
+    int m_capacity;
+public:
+    DynArray() : m_data(nullptr), m_size(0), m_capacity(0) {}
+    ~DynArray() { delete[] m_data; }
+    int size() const { return m_size; }
+    int capacity() const { return m_capacity; }
+    TData get(int i) const { return m_data[i]; }
+
+@@
+};`;
+const stub = (sig, ret) => `    ${sig} {\n        // IMPLEMENTAR\n${ret ? "        " + ret + "\n" : ""}    }`;
+const mk = (base, stubs) => base.replace("@@", stubs.join("\n\n"));
+
+const CODE = [
+{id:"e1",t:"pc",src:"Parcial 2026",title:"Queue: contar y eliminarPrimera",
+ st:`Las solicitudes de <b>Universe-8</b> esperan en una <code>Queue&lt;TData&gt;</code>.<p><code>contar(valor)</code> devuelve cuántas veces aparece <code>valor</code> <b>sin alterar</b> la cola (mismos elementos, mismo orden).</p><p><code>eliminarPrimera(valor)</code> retira <b>solo la primera aparición</b> y devuelve <code>true</code> si borró algo. El resto queda en el mismo orden.</p><p>Solo con la interfaz pública: <code>enqueue</code>, <code>dequeue</code>, <code>front</code>, <code>isEmpty</code>, <code>size</code>. Podés usar una Queue auxiliar. Sin arrays ni STL.</p>`,
+ sk:mk(QUEUE_BASE,[stub("int contar(const TData& valor)","return 0;"),stub("bool eliminarPrimera(const TData& valor)","return false;")]),
+ tests:[["Queue<int> q; int a[]={4,2,4,7,4}; for(int x:a) q.enqueue(x);\ncout<<q.contar(4)<<\" \"<<q.size()<<\" \"<<q.front();","3 5 4"],["Queue<int> q; int a[]={4,2,4,7,4}; for(int x:a) q.enqueue(x);\ncout<<q.eliminarPrimera(4)<<\" \"; while(!q.isEmpty()){cout<<q.front(); q.dequeue();}","1 2474"],["Queue<int> q; q.enqueue(1);\ncout<<q.eliminarPrimera(9)<<\" \"<<q.size();","0 1"],["Queue<int> q;\ncout<<q.contar(3)<<\" \"<<q.eliminarPrimera(3);","0 0"]],
+ hint:"Guardá <code>int n = size();</code> y hacé n vueltas de: <code>x = front(); dequeue(); … enqueue(x);</code>. Para eliminarPrimera, usá un <code>bool borrado</code>: la primera vez que coincide, <b>no</b> lo volvés a encolar.",
+ sol:`    int contar(const TData& valor) {
+        int c = 0;
+        int n = size();
+        for (int i = 0; i < n; i++) {
+            TData x = front();
+            dequeue();
+            if (x == valor) c++;
+            enqueue(x);          // vuelve al final: rotación completa
+        }
+        return c;
+    }
+
+    bool eliminarPrimera(const TData& valor) {
+        bool borrado = false;
+        int n = size();
+        for (int i = 0; i < n; i++) {
+            TData x = front();
+            dequeue();
+            if (!borrado && x == valor) {
+                borrado = true;  // no lo re-encolo
+            } else {
+                enqueue(x);
+            }
+        }
+        return borrado;
+    }`},
+{id:"e2",t:"pc",src:"Parcial 2026",title:"Stack: fondo y moverTopeAlFondo",
+ st:`Las acciones pendientes están en una <code>Stack&lt;TData&gt;</code> (tope = más reciente).<p><code>fondo() const</code> devuelve el elemento del fondo sin alterar la pila. Si está vacía, devuelve <code>TData()</code>.</p><p><code>moverTopeAlFondo()</code>: el tope pasa al fondo y los demás suben una posición. <code>top→[5,4,3,2,1]</code> queda <code>top→[4,3,2,1,5]</code>.</p><p>Solo <code>push</code>, <code>pop</code>, <code>top</code>, <code>isEmpty</code>, <code>size</code> y una Stack auxiliar (el constructor de copia existe).</p>`,
+ sk:mk(STACK_BASE,[stub("TData fondo() const","return TData();"),stub("void moverTopeAlFondo()","")]),
+ tests:[["Stack<int> s; for(int i=1;i<=5;i++) s.push(i);\ncout<<s.fondo()<<\" \"<<s.size()<<\" \"<<s.top();","1 5 5"],["Stack<int> s; for(int i=1;i<=5;i++) s.push(i);\ns.moverTopeAlFondo(); while(!s.isEmpty()){cout<<s.top(); s.pop();}","43215"],["Stack<int> s;\ncout<<s.fondo(); s.moverTopeAlFondo(); cout<<\" \"<<s.size();","0 0"],["Stack<int> s; s.push(7);\ns.moverTopeAlFondo(); cout<<s.top()<<\" \"<<s.size();","7 1"]],
+ hint:"fondo es <code>const</code>: no podés hacer pop sobre *this. Hacé <code>Stack copia(*this);</code> y desapilá hasta que quede uno. Para mover: guardá el tope, pasá el resto a un aux (se invierte), push del tope, y devolvé el aux (se vuelve a invertir).",
+ sol:`    TData fondo() const {
+        if (isEmpty()) return TData();
+        Stack copia(*this);
+        while (copia.size() > 1) copia.pop();
+        return copia.top();
+    }
+
+    void moverTopeAlFondo() {
+        if (size() < 2) return;
+        TData t = top();
+        pop();
+        Stack aux;
+        while (!isEmpty()) { aux.push(top()); pop(); }   // invierte
+        push(t);                                          // queda en el fondo
+        while (!aux.isEmpty()) { push(aux.top()); aux.pop(); } // re-invierte
+    }`},
+{id:"e3",t:"listas",src:"Parcial 2026",title:"DLL: eliminarPrimero y eliminarUltimo",
+ st:`El historial de eventos está en una <code>DLL&lt;TData&gt;</code>. Un valor puede repetirse.<p><code>eliminarPrimero(valor)</code> borra la <b>primera</b> aparición (buscando desde <code>m_head</code>). <code>eliminarUltimo(valor)</code> borra la <b>última</b> (buscando desde <code>m_tail</code>).</p><p><code>[3,8,5,8,2]</code>: eliminarPrimero(8) → <code>[3,5,8,2]</code>; eliminarUltimo(8) → <code>[3,8,5,2]</code>.</p><p>Trabajá sobre los nodos. Liberá memoria y mantené consistentes <code>m_head</code>, <code>m_tail</code>, <code>m_size</code>, <code>prev</code> y <code>next</code>. Sin estructuras auxiliares. Si no existe, no cambia nada.</p>`,
+ sk:mk(DLL_BASE,[stub("void eliminarPrimero(const TData& valor)",""),stub("void eliminarUltimo(const TData& valor)","")]),
+ tests:[["DLL<int> d; int a[]={3,8,5,8,2}; for(int x:a) d.pushBack(x);\nd.eliminarPrimero(8); d.imprimir();","3582"],["DLL<int> d; int a[]={3,8,5,8,2}; for(int x:a) d.pushBack(x);\nd.eliminarUltimo(8); d.imprimir(); d.imprimirReves();","3852 2583"],["DLL<int> d; d.pushBack(4);\nd.eliminarPrimero(4); cout<<d.size()<<\" \"<<d.isEmpty();","0 1"],["DLL<int> d; int a[]={1,2,3}; for(int x:a) d.pushBack(x);\nd.eliminarUltimo(3); d.eliminarPrimero(1); d.eliminarPrimero(9); d.imprimir(); cout<<\" \"<<d.size();","2 1"]],
+ hint:"Buscá el nodo <code>a</code>. Después desenganchalo con 2 if: <code>if (a->prev) a->prev->next = a->next; else m_head = a->next;</code> y <code>if (a->next) a->next->prev = a->prev; else m_tail = a->prev;</code>. Al final <code>delete a; m_size--;</code>. (Las pruebas asumen métodos <code>imprimir()</code>/<code>imprimirReves()</code> de prueba.)",
+ sol:`    void eliminarPrimero(const TData& valor) {
+        Node* a = m_head;
+        while (a != nullptr && !(a->data == valor)) a = a->next;
+        if (a == nullptr) return;
+        if (a->prev != nullptr) a->prev->next = a->next;
+        else m_head = a->next;
+        if (a->next != nullptr) a->next->prev = a->prev;
+        else m_tail = a->prev;
+        delete a;
+        m_size--;
+    }
+
+    void eliminarUltimo(const TData& valor) {
+        Node* a = m_tail;
+        while (a != nullptr && !(a->data == valor)) a = a->prev;
+        if (a == nullptr) return;
+        if (a->prev != nullptr) a->prev->next = a->next;
+        else m_head = a->next;
+        if (a->next != nullptr) a->next->prev = a->prev;
+        else m_tail = a->prev;
+        delete a;
+        m_size--;
+    }`},
+{id:"e4",t:"pc",src:"Simulacro recup",title:"Stack: rachaMaxima",
+ st:`La carga del vehículo es una <code>Stack&lt;TData&gt;</code>. Devolvé la <b>racha consecutiva más larga</b> de <code>valor</code> recorriendo del tope al fondo, sin alterar la pila. Si está vacía o no aparece, 0.<p><code>top→[7,7,3,7,7,7]</code>: rachaMaxima(7) → 3, rachaMaxima(3) → 1, rachaMaxima(9) → 0.</p><p>Podés recorrer una copia (el constructor de copia existe). Sin arreglos ni STL.</p>`,
+ sk:mk(STACK_BASE,[stub("int rachaMaxima(const TData& valor) const","return 0;")]),
+ tests:[["Stack<int> s;\ncout<<s.rachaMaxima(1)<<\" \"<<s.size();","0 0"],["Stack<int> s; int a[]={7,7,7,3,7,7}; for(int x:a) s.push(x);\ncout<<s.rachaMaxima(7)<<\" \"<<s.size()<<\" \"<<s.top();","3 6 7"],["Stack<int> s; int a[]={1,2,1,2,1}; for(int x:a) s.push(x);\ncout<<s.rachaMaxima(1)<<\" \"<<s.rachaMaxima(2);","1 1"],["Stack<int> s; int a[]={2,2,5,2,2,2,2,5,2}; for(int x:a) s.push(x);\ncout<<s.rachaMaxima(2)<<\" \"<<s.rachaMaxima(5)<<\" \"<<s.size();","4 1 9"],["Stack<int> s; int a[]={1,1,2,1}; for(int x:a) s.push(x);\ncout<<s.rachaMaxima(1)<<\" \"; while(!s.isEmpty()){cout<<s.top(); s.pop();}","2 1211"]],
+ hint:"Dos contadores: <code>actual</code> (racha en curso) y <code>mejor</code>. Si coincide, <code>actual++</code> y actualizás mejor; si no, <code>actual = 0</code>.",
+ sol:`    int rachaMaxima(const TData& valor) const {
+        Stack copia(*this);
+        int actual = 0, mejor = 0;
+        while (!copia.isEmpty()) {
+            if (copia.top() == valor) {
+                actual++;
+                if (actual > mejor) mejor = actual;
+            } else {
+                actual = 0;
+            }
+            copia.pop();
+        }
+        return mejor;
+    }`},
+{id:"e5",t:"pc",src:"Simulacro recup",title:"Queue: eliminarDuplicados",
+ st:`Las lecturas de etiquetas están en una cola FIFO. Conservá solo la <b>primera aparición</b> de cada ID, sin alterar el orden relativo. Devolvé cuántas lecturas se eliminaron.<p><code>[4,8,4,2,8,4]</code> → devuelve 3 y queda <code>[4,8,2]</code>.</p><p>Podés usar una o varias Queue auxiliares. Solo <code>enqueue</code>, <code>dequeue</code>, <code>front</code>, <code>isEmpty</code>, <code>size</code>. Sin arreglos ni STL.</p>`,
+ sk:mk(QUEUE_BASE,[stub("int eliminarDuplicados()","return 0;")]),
+ tests:[["Queue<int> q;\ncout<<q.eliminarDuplicados()<<\" \"<<q.size();","0 0"],["Queue<int> q; int a[]={4,8,4,2,8,4}; for(int x:a) q.enqueue(x);\ncout<<q.eliminarDuplicados()<<\" \"; while(!q.isEmpty()){cout<<q.front(); q.dequeue();}","3 482"],["Queue<int> q; int a[]={7,7,7}; for(int x:a) q.enqueue(x);\ncout<<q.eliminarDuplicados()<<\" \"<<q.size()<<\" \"<<q.front();","2 1 7"],["Queue<int> q; int a[]={5,5,6,6,5,7}; for(int x:a) q.enqueue(x);\ncout<<q.eliminarDuplicados()<<\" \"; while(!q.isEmpty()){cout<<q.front(); q.dequeue();}","3 567"]],
+ hint:"Usá una Queue <code>vistos</code>. Por cada x de la original (n vueltas): rotá <code>vistos</code> completa para ver si x ya está. Si está, lo descartás (contador++); si no, lo agregás a vistos y lo re-encolás en la original.",
+ sol:`    int eliminarDuplicados() {
+        int eliminados = 0;
+        Queue<TData> vistos;
+        int n = size();
+        for (int i = 0; i < n; i++) {
+            TData x = front();
+            dequeue();
+            bool esta = false;
+            int m = vistos.size();
+            for (int j = 0; j < m; j++) {      // rotación completa de vistos
+                TData y = vistos.front();
+                vistos.dequeue();
+                if (y == x) esta = true;
+                vistos.enqueue(y);
+            }
+            if (esta) {
+                eliminados++;
+            } else {
+                vistos.enqueue(x);
+                enqueue(x);                    // mantiene el orden
+            }
+        }
+        return eliminados;
+    }`},
+{id:"e6",t:"listas",title:"SLL: popBack con head y tail",
+ st:`Implementá <code>popBack()</code> en una SLL que tiene <code>m_head</code>, <code>m_tail</code> y <code>m_size</code>. Si está vacía, no hace nada. Liberá el nodo y dejá <code>m_tail</code> apuntando al nuevo último.<p>¿Por qué esto es O(n) aunque exista tail? Pensalo mientras lo escribís.</p>`,
+ sk:mk(SLL_BASE,[stub("void popBack()","")]),
+ tests:[["SLL<int> l; l.pushBack(1); l.pushBack(2); l.pushBack(3);\nl.popBack(); l.imprimir(); cout<<\" \"<<l.size();","12 2"],["SLL<int> l; l.pushBack(5);\nl.popBack(); cout<<l.size()<<\" \"<<l.isEmpty(); l.pushBack(9); l.imprimir();","0 19"],["SLL<int> l;\nl.popBack(); cout<<l.size();","0"]],
+ hint:"Tres casos: vacía (return), un solo nodo (head == tail: borrás y ambos a nullptr), general (avanzás <code>a</code> hasta que <code>a->next == m_tail</code>).",
+ sol:`    void popBack() {
+        if (m_head == nullptr) return;
+        if (m_head == m_tail) {
+            delete m_head;
+            m_head = m_tail = nullptr;
+            m_size--;
+            return;
+        }
+        Node* a = m_head;
+        while (a->next != m_tail) a = a->next;   // O(n): busco el penúltimo
+        delete m_tail;
+        m_tail = a;
+        m_tail->next = nullptr;
+        m_size--;
+    }`},
+{id:"e7",t:"listas",title:"SLL: invertir en el lugar",
+ st:`Implementá <code>invertir()</code>: da vuelta la SLL <b>sin crear nodos nuevos</b>, solo cambiando los <code>next</code>. Actualizá <code>m_head</code> y <code>m_tail</code>.<p><code>[1,2,3,4]</code> → <code>[4,3,2,1]</code>. Debe ser O(n).</p>`,
+ sk:mk(SLL_BASE,[stub("void invertir()","")]),
+ tests:[["SLL<int> l; for(int i=1;i<=4;i++) l.pushBack(i);\nl.invertir(); l.imprimir();","4321"],["SLL<int> l; for(int i=1;i<=3;i++) l.pushBack(i);\nl.invertir(); l.pushBack(0); l.imprimir();","3210"],["SLL<int> l;\nl.invertir(); cout<<l.size();","0"]],
+ hint:"Tres punteros: <code>ant = nullptr</code>, <code>act = m_head</code>, <code>sig</code>. En cada paso: guardás sig, <code>act->next = ant</code>, avanzás ant y act. Antes de empezar, el viejo head va a ser el nuevo tail.",
+ sol:`    void invertir() {
+        Node* ant = nullptr;
+        Node* act = m_head;
+        m_tail = m_head;
+        while (act != nullptr) {
+            Node* sig = act->next;
+            act->next = ant;
+            ant = act;
+            act = sig;
+        }
+        m_head = ant;
+    }`},
+{id:"e8",t:"listas",title:"SLL: insertarOrdenado",
+ st:`La SLL está ordenada de menor a mayor. Implementá <code>insertarOrdenado(valor)</code> para que siga ordenada. Si hay iguales, el nuevo va después de ellos. Mantené <code>m_tail</code>.`,
+ sk:mk(SLL_BASE,[stub("void insertarOrdenado(const TData& valor)","")]),
+ tests:[["SLL<int> l; int a[]={5,1,3,9,7}; for(int x:a) l.insertarOrdenado(x);\nl.imprimir();","13579"],["SLL<int> l; l.insertarOrdenado(2); l.insertarOrdenado(8);\nl.pushBack(10); l.imprimir();","2810"],["SLL<int> l; int a[]={4,4,1}; for(int x:a) l.insertarOrdenado(x);\nl.imprimir(); cout<<\" \"<<l.size();","144 3"]],
+ hint:"Caso 1: lista vacía o valor &lt; head → va al inicio. Caso 2: avanzás <code>a</code> mientras <code>a->next != nullptr && !(valor &lt; a->next->data)</code> e insertás después de a. Si quedó último, actualizá tail.",
+ sol:`    void insertarOrdenado(const TData& valor) {
+        Node* nuevo = new Node(valor);
+        if (m_head == nullptr || valor < m_head->data) {
+            nuevo->next = m_head;
+            m_head = nuevo;
+            if (m_tail == nullptr) m_tail = nuevo;
+            m_size++;
+            return;
+        }
+        Node* a = m_head;
+        while (a->next != nullptr && !(valor < a->next->data)) a = a->next;
+        nuevo->next = a->next;
+        a->next = nuevo;
+        if (nuevo->next == nullptr) m_tail = nuevo;
+        m_size++;
+    }`},
+{id:"e9",t:"listas",title:"DLL: insertarDespues",
+ st:`Implementá <code>bool insertarDespues(const TData&amp; ref, const TData&amp; valor)</code>: inserta <code>valor</code> justo después de la <b>primera</b> aparición de <code>ref</code>. Devuelve false si ref no está. Actualizá los 4 punteros y, si corresponde, <code>m_tail</code>.`,
+ sk:mk(DLL_BASE,[stub("bool insertarDespues(const TData& ref, const TData& valor)","return false;")]),
+ tests:[["DLL<int> d; int a[]={1,2,3}; for(int x:a) d.pushBack(x);\ncout<<d.insertarDespues(2,9)<<\" \"; d.imprimir(); d.imprimirReves();","1 1293 3921"],["DLL<int> d; d.pushBack(1);\nd.insertarDespues(1,5); d.pushBack(7); d.imprimir();","157"],["DLL<int> d; d.pushBack(1);\ncout<<d.insertarDespues(4,5)<<\" \"<<d.size();","0 1"]],
+ hint:"Buscá a. Después: <code>n->prev = a; n->next = a->next;</code> Si <code>a->next</code> existe, <code>a->next->prev = n</code>; si no, <code>m_tail = n</code>. Por último <code>a->next = n</code>.",
+ sol:`    bool insertarDespues(const TData& ref, const TData& valor) {
+        Node* a = m_head;
+        while (a != nullptr && !(a->data == ref)) a = a->next;
+        if (a == nullptr) return false;
+        Node* n = new Node(valor);
+        n->prev = a;
+        n->next = a->next;
+        if (a->next != nullptr) a->next->prev = n;
+        else m_tail = n;
+        a->next = n;
+        m_size++;
+        return true;
+    }`},
+{id:"e10",t:"pc",title:"Queue: invertir con una Stack",
+ st:`Implementá <code>void invertir()</code> en la Queue: el frente pasa a ser el último. Podés usar una <code>Stack&lt;TData&gt;</code> auxiliar (con push/pop/top/isEmpty). Solo la interfaz pública de la cola.<p><code>[1,2,3,4]</code> → <code>[4,3,2,1]</code>.</p>`,
+ sk:mk(QUEUE_BASE,[stub("void invertir()","")]),
+ tests:[["Queue<int> q; for(int i=1;i<=4;i++) q.enqueue(i);\nq.invertir(); while(!q.isEmpty()){cout<<q.front(); q.dequeue();}","4321"],["Queue<int> q;\nq.invertir(); cout<<q.size();","0"]],
+ hint:"Vaciá la cola en la pila (el frente queda abajo) y después vaciá la pila en la cola.",
+ sol:`    void invertir() {
+        Stack<TData> s;
+        while (!isEmpty()) { s.push(front()); dequeue(); }
+        while (!s.isEmpty()) { enqueue(s.top()); s.pop(); }
+    }`},
+{id:"e11",t:"pc",title:"Stack: paréntesis balanceados",
+ st:`Escribí la función libre <code>bool balanceado(const string&amp; s)</code> usando una <code>Stack&lt;char&gt;</code>. Considerá <code>()</code>, <code>[]</code> y <code>{}</code>; ignorá cualquier otro carácter.<p><code>"{a[(b)]}"</code> → true; <code>"(]"</code> → false; <code>"(("</code> → false.</p>`,
+ sk:STACK_BASE.replace("@@","    // (la clase Stack no se modifica)")+`\n\nbool balanceado(const string& s) {\n    // IMPLEMENTAR\n    return false;\n}`,
+ tests:[["cout<<balanceado(\"{a[(b)]}\")<<balanceado(\"\")<<balanceado(\"(]\")<<balanceado(\"((\")<<balanceado(\"())\");","11000"]],
+ hint:"Si es apertura, push. Si es cierre: si la pila está vacía o el tope no es la apertura que corresponde → false; si no, pop. Al final, balanceado si la pila quedó vacía.",
+ sol:`bool balanceado(const string& s) {
+    Stack<char> p;
+    for (char c : s) {
+        if (c == '(' || c == '[' || c == '{') {
+            p.push(c);
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (p.isEmpty()) return false;
+            char t = p.top();
+            if ((c == ')' && t != '(') || (c == ']' && t != '[') || (c == '}' && t != '{'))
+                return false;
+            p.pop();
+        }
+    }
+    return p.isEmpty();
+}`},
+{id:"e12",t:"pc",title:"Stack: eliminarTodas",
+ st:`Implementá <code>int eliminarTodas(const TData&amp; valor)</code> en la Stack: borra <b>todas</b> las apariciones de valor, conserva el orden de los demás y devuelve cuántas borró. Solo interfaz pública y una Stack auxiliar.`,
+ sk:mk(STACK_BASE,[stub("int eliminarTodas(const TData& valor)","return 0;")]),
+ tests:[["Stack<int> s; int a[]={1,2,1,3,1}; for(int x:a) s.push(x);\ncout<<s.eliminarTodas(1)<<\" \"; while(!s.isEmpty()){cout<<s.top(); s.pop();}","3 32"],["Stack<int> s; s.push(4);\ncout<<s.eliminarTodas(9)<<\" \"<<s.top();","0 4"]],
+ hint:"Pasá todo al aux salteando los que coinciden (contando). Después devolvé del aux a la original: la doble inversión conserva el orden.",
+ sol:`    int eliminarTodas(const TData& valor) {
+        int c = 0;
+        Stack aux;
+        while (!isEmpty()) {
+            TData x = top();
+            pop();
+            if (x == valor) c++;
+            else aux.push(x);
+        }
+        while (!aux.isEmpty()) { push(aux.top()); aux.pop(); }
+        return c;
+    }`},
+{id:"e13",t:"pc",title:"Queue: rotar k posiciones",
+ st:`Implementá <code>void rotar(int k)</code>: pasa los primeros k elementos al final, en orden. Si k es mayor que size(), usá <code>k % size()</code>. Cola vacía: no hace nada.<p><code>[1,2,3,4,5]</code>, rotar(2) → <code>[3,4,5,1,2]</code>.</p>`,
+ sk:mk(QUEUE_BASE,[stub("void rotar(int k)","")]),
+ tests:[["Queue<int> q; for(int i=1;i<=5;i++) q.enqueue(i);\nq.rotar(2); while(!q.isEmpty()){cout<<q.front(); q.dequeue();}","34512"],["Queue<int> q; for(int i=1;i<=3;i++) q.enqueue(i);\nq.rotar(7); while(!q.isEmpty()){cout<<q.front(); q.dequeue();}","231"],["Queue<int> q;\nq.rotar(3); cout<<q.size();","0"]],
+ hint:"Chequeá vacía antes del módulo (dividir por 0). Después k veces: <code>enqueue(front()); dequeue();</code>",
+ sol:`    void rotar(int k) {
+        if (isEmpty()) return;
+        k = k % size();
+        for (int i = 0; i < k; i++) {
+            enqueue(front());
+            dequeue();
+        }
+    }`},
+{id:"e14",t:"arr",title:"DynArray: pushBack duplicando",
+ st:`Implementá <code>pushBack(valor)</code> en un arreglo dinámico. Si <code>m_size == m_capacity</code>, la capacidad se duplica (si era 0, pasa a 1): reservá un bloque nuevo, copiá, liberá el viejo con <code>delete[]</code>. Sin STL.`,
+ sk:mk(DYN_BASE,[stub("void pushBack(const TData& valor)","")]),
+ tests:[["DynArray<int> v; for(int i=0;i<5;i++) v.pushBack(i*10);\ncout<<v.size()<<\" \"<<v.capacity()<<\" \"<<v.get(4);","5 8 40"],["DynArray<int> v; v.pushBack(7);\ncout<<v.size()<<\" \"<<v.capacity()<<\" \"<<v.get(0);","1 1 7"]],
+ hint:"<code>int nc = (m_capacity == 0) ? 1 : m_capacity * 2;</code> → <code>new TData[nc]</code> → for copiando → <code>delete[] m_data</code> → reasignar. Después <code>m_data[m_size++] = valor;</code>",
+ sol:`    void pushBack(const TData& valor) {
+        if (m_size == m_capacity) {
+            int nc = (m_capacity == 0) ? 1 : m_capacity * 2;
+            TData* nuevo = new TData[nc];
+            for (int i = 0; i < m_size; i++) nuevo[i] = m_data[i];
+            delete[] m_data;
+            m_data = nuevo;
+            m_capacity = nc;
+        }
+        m_data[m_size] = valor;
+        m_size++;
+    }`},
+{id:"e15",t:"cpp",title:"Punteros: intercambiar y duplicar arreglo",
+ st:`Funciones libres:<p><code>void intercambiar(int* a, int* b)</code>: intercambia los valores apuntados.</p><p><code>int* duplicados(const int* v, int n)</code>: devuelve un arreglo <b>nuevo</b> en el heap con cada elemento multiplicado por 2. Quien llama lo libera con <code>delete[]</code>.</p>`,
+ sk:`void intercambiar(int* a, int* b) {\n    // IMPLEMENTAR\n}\n\nint* duplicados(const int* v, int n) {\n    // IMPLEMENTAR\n    return nullptr;\n}`,
+ tests:[["int x=1, y=2; intercambiar(&x,&y);\ncout<<x<<y;","21"],["int a[]={1,2,3}; int* d=duplicados(a,3);\ncout<<d[0]<<d[1]<<d[2]<<a[0]; delete[] d;","2461"]],
+ hint:"Para intercambiar necesitás una variable temporal con <code>*a</code>. Para duplicar: <code>int* r = new int[n];</code> y un for.",
+ sol:`void intercambiar(int* a, int* b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+int* duplicados(const int* v, int n) {
+    int* r = new int[n];
+    for (int i = 0; i < n; i++) r[i] = v[i] * 2;
+    return r;
+}`}
+];
+
+/* ============ ESTADO ============ */
+const KEY = "ayed1-trainer-v1";
+let S = {mcq:{}, tr:{}, code:{}, drafts:{}, gen:{mcq:[], code:[]}};
+try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }
+const allMCQ = () => MCQ.concat(S.gen.mcq || []);
+const allCODE = () => CODE.concat(S.gen.code || []);
+
+let sample = null;
+(async () => { try { if (window.claude && claude.use) sample = await claude.use("sample"); } catch(e) { sample = null; } render(); })();
+
+/* ============ UTILIDADES ============ */
+const $ = (s, r=document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const md = s => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/\n/g, "<br>");
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const KW = /\b(template|typename|class|struct|private|public|const|return|if|else|while|for|new|delete|void|bool|int|char|static|nullptr|true|false|operator|auto|string|cout|this)\b/;
+function hl(code){
+  const re = /(\/\/[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(\d+)\b|\b(template|typename|class|struct|private|public|const|return|if|else|while|for|new|delete|static|operator|auto|this)\b|\b(void|bool|int|char|nullptr|true|false|TData|Node|Stack|Queue|DLL|SLL|DynArray|string|cout)\b|\b([A-Za-z_]\w*)(?=\s*\()/g;
+  let out = "", last = 0, m;
+  while ((m = re.exec(code))) {
+    out += esc(code.slice(last, m.index));
+    const cls = m[1] ? "com" : m[2] ? "str" : m[3] ? "num" : m[4] ? "kw" : m[5] ? "typ" : "fn";
+    out += `<span class="tk-${cls}">${esc(m[0])}</span>`;
+    last = re.lastIndex;
+  }
+  return out + esc(code.slice(last));
+}
+const pre = c => `<pre class="code">${hl(c)}</pre>`;
+function attachHL(ta){
+  const w = document.createElement("div"); w.className = "edwrap";
+  ta.parentNode.insertBefore(w, ta);
+  const p = document.createElement("pre"); p.className = "ed-hl"; p.setAttribute("aria-hidden", "true");
+  w.appendChild(p); w.appendChild(ta);
+  const sync = () => { p.scrollTop = ta.scrollTop; p.scrollLeft = ta.scrollLeft; };
+  const up = () => { p.innerHTML = hl(ta.value) + "\n "; sync(); };
+  ta.addEventListener("input", up); ta.addEventListener("keyup", up); ta.addEventListener("scroll", sync);
+  ta._hl = up; up();
+}
+const norm = s => String(s).trim().replace(/\s+/g, " ");
+function aiErr(e){
+  const c = e && e.code;
+  if (c === "not_granted" || c === "sampling_disabled" || c === "capability_disabled" || c === "not_declared") { sample = null; return "Claude no está disponible en esta vista. Usá las pruebas y la solución para autocorregirte."; }
+  if (c === "rate_limited") return "Demasiados pedidos seguidos. Esperá un minuto y probá otra vez.";
+  if (c === "invalid_json") return "La respuesta vino mal formada. Probá otra vez.";
+  if (c === "cancelled") return "Cancelado.";
+  return "No se pudo contactar a Claude. Probá otra vez.";
+}
+
+/* ============ ROUTER ============ */
+const VIEWS = ["inicio","estructuras","teoria","rastreo","codigo","simulacro","resumen"];
+function route(){ const h = (location.hash || "#inicio").slice(1); return VIEWS.includes(h) ? h : "inicio"; }
+window.addEventListener("hashchange", () => { render(); window.scrollTo(0,0); });
+function render(){
+  const v = route();
+  document.querySelectorAll("#tabs a").forEach(a => a.setAttribute("aria-current", a.getAttribute("href") === "#" + v ? "page" : "false"));
+  ({inicio:vInicio, estructuras:vEstructuras, teoria:vTeoria, rastreo:vRastreo, codigo:vCodigo, simulacro:vSim, resumen:vResumen})[v]();
+}
+
+/* ============ INICIO ============ */
+function topicStats(){
+  const r = {}; Object.keys(TOPICS).forEach(k => r[k] = {a:0,c:0,total:0});
+  allMCQ().forEach(q => { const st = S.mcq[q.id]; r[q.t].total++; if (st) { r[q.t].a++; if (st.last) r[q.t].c++; } });
+  TRACE.forEach(q => { const st = S.tr[q.id]; r[q.t].total++; if (st) { r[q.t].a++; if (st.last) r[q.t].c++; } });
+  return r;
+}
+function vInicio(){
+  const ts = topicStats();
+  const wrong = allMCQ().filter(q => S.mcq[q.id] && !S.mcq[q.id].last).length + TRACE.filter(q => S.tr[q.id] && !S.tr[q.id].last).length;
+  const codeDone = allCODE().filter(e => S.code[e.id] === "ok").length;
+  const weakest = Object.entries(ts).map(([k,v]) => [k, v.a ? v.c / v.total : 0]).sort((a,b) => a[1]-b[1])[0][0];
+  $("#app").innerHTML = `<div class="view stack fade">
+    <div class="stack" style="gap:8px">
+      <span class="eyebrow">Evaluación I · Fundamentos de C++ → Big O → Listas → Pilas y Colas</span>
+      <h1>Entrenamiento para el Parcial I</h1>
+      <p class="muted" style="max-width:62ch">Preguntas y ejercicios armados a partir del <b>Primer Parcial 2026</b> y del <b>simulacro del recuperatorio</b>, más variantes nuevas. El formato es el mismo: opción múltiple y completar métodos de <code>Stack</code>, <code>Queue</code>, <code>SLL</code>/<code>DLL</code> con la sección IMPLEMENTAR.</p>
+    </div>
+    <div class="card stack">
+      <div class="row" style="justify-content:space-between"><h2>Tu dominio por tema</h2><span class="counter">correctas / total de preguntas</span></div>
+      <div class="bars">${Object.entries(TOPICS).map(([k,t]) => { const s = ts[k]; const pct = s.total ? Math.round(100*s.c/s.total) : 0; return `<div class="bar"><span>${t.n}</span><div class="track"><div class="fill" style="width:${pct}%"></div></div><span class="num">${s.c}/${s.total}</span></div>`; }).join("")}
+        <div class="bar"><span>Ejercicios de código</span><div class="track"><div class="fill" style="width:${Math.round(100*codeDone/allCODE().length)}%;background:var(--ok)"></div></div><span class="num">${codeDone}/${allCODE().length}</span></div>
+      </div>
+    </div>
+    <div class="grid">
+      <a class="mode" href="#estructuras"><b>Estructuras</b><span>Qué operaciones tiene cada una (pila, cola, SLL, DLL, arreglo), su lógica paso a paso y el código.</span></a>
+      <a class="mode" href="#teoria"><b>Teoría</b><span>${allMCQ().length} preguntas de opción múltiple con explicación. Las que errás vuelven más seguido.</span></a>
+      <a class="mode" href="#rastreo"><b>Rastreo</b><span>${TRACE.length} fragmentos: escribí qué imprime. Punteros, pilas, colas, bucles.</span></a>
+      <a class="mode" href="#codigo"><b>Código</b><span>${allCODE().length} ejercicios estilo parcial con pruebas, pista y solución${sample ? ". Claude te corrige." : "."}</span></a>
+      <a class="mode" href="#simulacro"><b>Simulacro</b><span>5 preguntas con tiempo, como en el aula virtual.</span></a>
+    </div>
+    <div class="card stack">
+      <h2>Plan sugerido</h2>
+      <ol class="plan">
+        <li>Leé el <a href="#resumen">resumen</a> (5 min): tabla de complejidades y los 5 patrones de código.</li>
+        <li>Teoría hasta acertar 10 seguidas. Tu tema más flojo ahora: <b>${TOPICS[weakest].n}</b>.</li>
+        <li>Código: rehacé <b>sin mirar</b> los 5 ejercicios de los exámenes (los que tienen etiqueta de origen).</li>
+        <li>Un simulacro de 60 min. Lo que falles, a teoría o código de nuevo.</li>
+      </ol>
+      ${wrong ? `<div class="row"><button class="primary" onclick="T.onlyWrong=true;location.hash='#teoria'">Repasar mis ${wrong} errores</button></div>` : ""}
+    </div>
+    <div class="row"><button class="ghost" id="reset">Borrar mi progreso</button><span class="muted" id="resetMsg" style="font-size:13px"></span></div>
+  </div>`;
+  let armed = false;
+  $("#reset").onclick = () => {
+    if (!armed) { armed = true; $("#resetMsg").textContent = "Tocá de nuevo para confirmar. Se borra el progreso y los borradores."; return; }
+    S = {mcq:{}, tr:{}, code:{}, drafts:{}, gen:S.gen}; save(); render();
+  };
+}
+
+/* ============ TEORÍA ============ */
+const T = {topic:"all", onlyWrong:false, cur:null, opts:null, answered:false, streak:0, seen:[]};
+function pickMCQ(){
+  let pool = allMCQ().filter(q => T.topic === "all" || q.t === T.topic);
+  if (T.onlyWrong) { const w = pool.filter(q => S.mcq[q.id] && !S.mcq[q.id].last); if (w.length) pool = w; else T.onlyWrong = false; }
+  const recent = T.seen.slice(-Math.min(6, Math.floor(pool.length / 2)));
+  const cands = pool.filter(q => !recent.includes(q.id));
+  const list = cands.length ? cands : pool;
+  const weight = q => { const st = S.mcq[q.id]; if (!st) return 4; return st.last ? 1 : 6; };
+  let total = list.reduce((s,q) => s + weight(q), 0), r = Math.random() * total;
+  for (const q of list) { r -= weight(q); if (r <= 0) return q; }
+  return list[0];
+}
+function nextMCQ(){
+  T.cur = pickMCQ(); T.seen.push(T.cur.id); T.answered = false;
+  T.opts = shuffle([{txt:T.cur.ok, ok:true}].concat(T.cur.bad.map(b => ({txt:b, ok:false}))));
+}
+function vTeoria(){
+  if (!T.cur || (T.topic !== "all" && T.cur.t !== T.topic)) nextMCQ();
+  const q = T.cur;
+  const st = S.mcq[q.id];
+  $("#app").innerHTML = `<div class="view stack fade">
+    <div class="row" style="justify-content:space-between"><h1>Teoría</h1><span class="counter">racha: ${T.streak} ${T.onlyWrong ? "· modo errores" : ""}</span></div>
+    <div class="row" id="topics">${[["all","Todo"]].concat(Object.entries(TOPICS).map(([k,t]) => [k,t.n])).map(([k,n]) => `<button class="chip" aria-pressed="${T.topic===k}" data-t="${k}">${n}</button>`).join("")}</div>
+    <div class="card stack" id="qcard">
+      <div class="row"><span class="tag">${TOPICS[q.t].n}</span>${q.src ? `<span class="tag src">${esc(q.src)}</span>` : ""}${q.gen ? `<span class="tag">generada por Claude</span>` : ""}${st ? `<span class="tag ${st.last ? "ok" : "bad"}">${st.last ? "la última vez: bien" : "la última vez: mal"}</span>` : ""}</div>
+      <div style="font-size:16px">${q.gen ? md(q.q) : q.q}</div>
+      ${q.code ? pre(q.code) : ""}
+      <div class="opts">${T.opts.map((o,i) => `<button class="opt" data-i="${i}"><span class="l">${"ABCD"[i]}.</span><span>${q.gen ? md(o.txt) : esc(o.txt)}</span></button>`).join("")}</div>
+      <div id="fb"></div>
+    </div>
+    <div class="card stack">
+      <div class="row" style="justify-content:space-between"><h3>Preguntas nuevas</h3><span class="counter">${(S.gen.mcq||[]).length} generadas</span></div>
+      ${sample ? `<p class="muted">Pedile a Claude 5 preguntas nuevas del tema elegido, con el estilo del parcial. Se suman al banco.</p><div class="row"><button id="gen">Generar 5 preguntas${T.topic==="all" ? "" : " de " + TOPICS[T.topic].n}</button><span id="genMsg" class="muted" style="font-size:13px"></span></div>` : `<p class="muted">Para generar preguntas nuevas con Claude, abrí esta página en claude.ai.</p>`}
+    </div>
+  </div>`;
+  document.querySelectorAll("#topics .chip").forEach(b => b.onclick = () => { T.topic = b.dataset.t; T.onlyWrong = false; nextMCQ(); vTeoria(); });
+  document.querySelectorAll(".opt").forEach(b => b.onclick = () => answerMCQ(+b.dataset.i));
+  const g = $("#gen"); if (g) g.onclick = genMCQ;
+}
+function answerMCQ(i){
+  if (T.answered) return; T.answered = true;
+  const q = T.cur, o = T.opts[i];
+  const st = S.mcq[q.id] || {a:0,c:0}; st.a++; if (o.ok) st.c++; st.last = o.ok; S.mcq[q.id] = st; save();
+  T.streak = o.ok ? T.streak + 1 : 0;
+  document.querySelectorAll(".opt").forEach((b,j) => { b.disabled = true; if (T.opts[j].ok) b.classList.add("right"); else if (j === i) b.classList.add("wrong"); });
+  $("#fb").innerHTML = `<div class="feedback ${o.ok ? "ok" : "bad"} stack" style="gap:8px">
+    <h3>${o.ok ? "Correcto" : "Incorrecto"}</h3><div>${q.gen ? md(q.why) : q.why}</div>
+    <div class="row"><button class="primary" id="next">Siguiente</button>${sample ? `<button class="ghost" id="explain">No me queda claro, explicámelo</button>` : ""}</div>
+    <div id="exp" class="ai-out"></div></div>`;
+  $("#next").onclick = () => { nextMCQ(); vTeoria(); };
+  const ex = $("#explain");
+  if (ex) ex.onclick = async () => {
+    ex.disabled = true; $("#exp").textContent = "Pensando…";
+    const tmp = document.createElement("div"); tmp.innerHTML = q.q;
+    try {
+      await sample(`Sos tutor de Algoritmos y Estructuras de Datos (C++, FCEFyN UNC). Un estudiante está preparando el parcial. Explicale esta pregunta de forma simple y corta (máximo 8 líneas), en español rioplatense, con un mini ejemplo o dibujo en texto si ayuda. Sin markdown pesado.\n\nPregunta: ${tmp.textContent}\n${q.code ? "Código:\n" + q.code + "\n" : ""}Respuesta correcta: ${q.ok}\nElla eligió: ${o.txt}\nExplicación breve existente: ${q.why.replace(/<[^>]+>/g,"")}`,
+        {onText: ({text}) => { $("#exp").textContent = text; }});
+    } catch(e) { $("#exp").textContent = e.text || aiErr(e); }
+  };
+}
+async function genMCQ(){
+  const btn = $("#gen"), msg = $("#genMsg"); btn.disabled = true; msg.textContent = "Generando… (puede tardar un poco)";
+  const topic = T.topic === "all" ? Object.keys(TOPICS)[Math.floor(Math.random()*5)] : T.topic;
+  const existing = allMCQ().filter(q => q.t === topic).map(q => "- " + q.q.replace(/<[^>]+>/g,"").slice(0,90)).join("\n");
+  try {
+    const arr = await sample.json(`Sos docente de Algoritmos y Estructuras de Datos (C++, FCEFyN UNC). Generá 5 preguntas NUEVAS de opción múltiple para el Primer Parcial sobre el tema "${TOPICS[topic].n}". Temas del parcial: fundamentos de C++ (punteros, referencias, new/delete, const, templates, constructor de copia), Big O, arreglo dinámico y amortización, listas SLL/DLL con head/tail, pilas y colas (implementación enlazada e interfaz pública).
+Estilo del parcial: un escenario breve de una empresa ficticia, 4 opciones, UNA sola correcta, distractores plausibles que reflejen errores comunes. Podés incluir un fragmento corto de C++ en "code" (o "" si no hace falta). Español rioplatense. Usá backticks para código en línea.
+Evitá repetir estas preguntas que ya existen:
+${existing}
+
+Respondé SOLO un array JSON de 5 objetos: [{"q":"enunciado","code":"","ok":"opción correcta","bad":["incorrecta 1","incorrecta 2","incorrecta 3"],"why":"explicación breve de por qué es la correcta y por qué fallan las otras"}]`, {modelTier:"default", cache:false});
+    const valid = (Array.isArray(arr) ? arr : []).filter(x => x && x.q && x.ok && Array.isArray(x.bad) && x.bad.length >= 3).slice(0,5);
+    const stamp = Date.now();
+    valid.forEach((x,i) => S.gen.mcq.push({id:"g"+stamp+"_"+i, t:topic, gen:true, q:String(x.q), code:x.code ? String(x.code) : "", ok:String(x.ok), bad:x.bad.slice(0,3).map(String), why:String(x.why || "")}));
+    save();
+    msg.textContent = valid.length ? `Listo: ${valid.length} preguntas nuevas de ${TOPICS[topic].n}.` : "No llegaron preguntas válidas. Probá otra vez.";
+    if (valid.length) { T.topic = topic; T.cur = allMCQ().find(q => q.id === "g"+stamp+"_0"); T.answered=false; T.opts = shuffle([{txt:T.cur.ok, ok:true}].concat(T.cur.bad.map(b => ({txt:b, ok:false})))); vTeoria(); $("#genMsg") && ($("#genMsg").textContent = `Agregadas ${valid.length}. Esta es la primera.`); }
+  } catch(e) { msg.textContent = aiErr(e); btn.disabled = false; }
+}
+
+/* ============ RASTREO ============ */
+const R = {i:0, order:null};
+function vRastreo(){
+  if (!R.order) R.order = shuffle(TRACE.map((_,i) => i));
+  const q = TRACE[R.order[R.i % TRACE.length]];
+  const st = S.tr[q.id];
+  const done = TRACE.filter(x => S.tr[x.id] && S.tr[x.id].last).length;
+  $("#app").innerHTML = `<div class="view stack fade">
+    <div class="row" style="justify-content:space-between"><h1>Rastreo</h1><span class="counter">${done}/${TRACE.length} acertados · ${R.i % TRACE.length + 1} de ${TRACE.length}</span></div>
+    <p class="muted">¿Qué imprime? Escribilo exacto (los espacios múltiples no importan). Suponé <code>using namespace std;</code> y las clases del parcial.</p>
+    <div class="card stack">
+      <div class="row"><span class="tag">${TOPICS[q.t].n}</span>${st ? `<span class="tag ${st.last ? "ok" : "bad"}">${st.last ? "la última vez: bien" : "la última vez: mal"}</span>` : ""}</div>
+      ${pre(q.code)}
+      <form id="trf" class="row" style="flex-wrap:nowrap"><label for="tra" class="eyebrow" style="flex:none">Salida</label><input id="tra" type="text" autocomplete="off" spellcheck="false" placeholder="ej: 4 3"><button class="primary" type="submit">Comprobar</button></form>
+      <div id="trfb"></div>
+    </div>
+  </div>`;
+  $("#tra").focus();
+  $("#trf").onsubmit = ev => {
+    ev.preventDefault();
+    const val = $("#tra").value; if (!val.trim() && !$("#trfb").innerHTML) return;
+    if ($("#trfb").innerHTML) { R.i++; vRastreo(); return; }
+    const ok = norm(val) === norm(q.ans);
+    const s2 = S.tr[q.id] || {a:0,c:0}; s2.a++; if (ok) s2.c++; s2.last = ok; S.tr[q.id] = s2; save();
+    $("#trfb").innerHTML = `<div class="feedback ${ok ? "ok" : "bad"} stack" style="gap:6px"><h3>${ok ? "Correcto" : "Era: <span class='mono'>" + esc(q.ans) + "</span>"}</h3><p>${esc(q.why)}</p><div class="row"><button class="primary" type="button" id="trn">Siguiente</button></div></div>`;
+    $("#trn").onclick = () => { R.i++; vRastreo(); };
+  };
+}
+
+/* ============ CÓDIGO ============ */
+const C = {id:null};
+function vCodigo(){
+  const list = allCODE();
+  if (!C.id || !list.find(e => e.id === C.id)) C.id = list[0].id;
+  const e = list.find(x => x.id === C.id);
+  const draft = S.drafts[e.id] ?? e.sk;
+  const stc = S.code[e.id];
+  $("#app").innerHTML = `<div class="view stack fade">
+    <div class="row" style="justify-content:space-between"><h1>Código</h1><span class="counter">${list.filter(x => S.code[x.id]==="ok").length}/${list.length} resueltos</span></div>
+    <div class="split">
+      <aside class="stack" style="gap:10px">
+        <div class="list" id="elist">${list.map(x => `<button data-id="${x.id}" aria-current="${x.id===e.id}"><span class="t">${esc(x.title)}</span><span class="s"><span class="dot ${S.code[x.id]||""}"></span>${TOPICS[x.t].n}${x.src ? " · " + esc(x.src) : ""}${x.gen ? " · nuevo" : ""}</span></button>`).join("")}</div>
+        ${sample ? `<button id="genE">Generar ejercicio nuevo</button><span id="genEMsg" class="muted" style="font-size:12.5px"></span>` : ""}
+      </aside>
+      <section class="stack">
+        <div class="card stack statement">
+          <div class="row"><span class="tag">${TOPICS[e.t].n}</span>${e.src ? `<span class="tag src">${esc(e.src)}</span>` : ""}</div>
+          <h2>${esc(e.title)}</h2>
+          <div>${e.gen ? md(e.st) : e.st}</div>
+          <p class="muted" style="font-size:13px"><b>Completá solo la sección IMPLEMENTAR.</b> Sin arrays ni STL salvo que se indique.</p>
+        </div>
+        <details open><summary>Pruebas (como en CodeRunner)</summary><div class="scroll"><table class="tests"><thead><tr><th>Prueba</th><th>Resultado</th></tr></thead><tbody>${e.tests.map(t => `<tr><td>${hl(t[0])}</td><td>${esc(t[1])}</td></tr>`).join("")}</tbody></table></div></details>
+        <div class="stack" style="gap:8px">
+          <label for="ed" class="eyebrow">Respuesta</label>
+          <textarea id="ed" class="editor" spellcheck="false" autocapitalize="off" autocomplete="off">${esc(draft)}</textarea>
+          <div class="row">
+            ${sample ? `<button class="primary" id="grade">Corregir con Claude</button>` : ""}
+            <button id="hint">Pista</button>
+            <button id="sol">Ver solución</button>
+            <button class="ghost" id="resetEd">Reiniciar respuesta</button>
+          </div>
+          <div class="row" style="gap:6px"><span class="muted" style="font-size:13px">Me autoevalúo:</span>
+            <button class="chip" data-m="ok" aria-pressed="${stc==="ok"}">Lo resolví</button>
+            <button class="chip" data-m="part" aria-pressed="${stc==="part"}">A medias</button>
+            <button class="chip" data-m="bad" aria-pressed="${stc==="bad"}">No me salió</button>
+          </div>
+        </div>
+        <div id="cout" class="stack"></div>
+      </section>
+    </div>
+  </div>`;
+  document.querySelectorAll("#elist button").forEach(b => b.onclick = () => { C.id = b.dataset.id; vCodigo(); });
+  const ed = $("#ed");
+  attachHL(ed);
+  ed.addEventListener("keydown", ev => {
+    if (ev.key === "Tab") { ev.preventDefault(); const s = ed.selectionStart, en = ed.selectionEnd; ed.value = ed.value.slice(0,s) + "    " + ed.value.slice(en); ed.selectionStart = ed.selectionEnd = s + 4; ed.dispatchEvent(new Event("input")); }
+  });
+  ed.addEventListener("input", () => { S.drafts[e.id] = ed.value; save(); });
+  $("#resetEd").onclick = () => { delete S.drafts[e.id]; save(); ed.value = e.sk; ed._hl(); };
+  $("#hint").onclick = () => { $("#cout").innerHTML = `<div class="feedback info"><h3>Pista</h3><div>${e.gen ? md(e.hint) : e.hint}</div></div>`; };
+  $("#sol").onclick = () => { $("#cout").innerHTML = `<div class="stack" style="gap:8px"><span class="eyebrow">Solución modelo</span>${pre(e.sol)}<p class="muted" style="font-size:13px">Comparala con la tuya: casos borde (vacía, un elemento, cabeza, cola, no existe), memoria liberada y punteros actualizados.</p></div>`; };
+  document.querySelectorAll("[data-m]").forEach(b => b.onclick = () => { S.code[e.id] = b.dataset.m; save(); vCodigo(); });
+  const gb = $("#grade"); if (gb) gb.onclick = () => gradeCode(e, ed.value, $("#cout"), gb, r => { S.code[e.id] = r.puntaje >= 90 ? "ok" : r.puntaje >= 40 ? "part" : "bad"; save(); document.querySelectorAll("#elist .dot")[allCODE().indexOf(e)].className = "dot " + S.code[e.id]; });
+  const ge = $("#genE"); if (ge) ge.onclick = genCode;
+}
+async function gradeCode(e, code, out, btn, onDone){
+  btn.disabled = true;
+  out.innerHTML = `<div class="feedback info"><h3>Corrigiendo…</h3><p class="muted">Claude simula cada prueba con tu código. Puede tardar entre 20 y 60 segundos.</p></div>`;
+  const plain = (e.gen ? e.st : e.st.replace(/<[^>]+>/g," ")).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&");
+  try {
+    const r = await sample.json(`Sos un corrector estricto de un parcial de C++ de Algoritmos y Estructuras de Datos (estilo CodeRunner de Moodle).
+
+ENUNCIADO:
+${plain}
+
+PRUEBAS (cada una se compila junto con la clase del alumno; se compara la salida exacta). Si una prueba usa métodos de impresión como imprimir() o imprimirReves(), asumí que existen e imprimen los datos de head a tail (o de tail a head) sin espacios.
+${e.tests.map((t,i) => `${i+1}) ${t[0]}\n   esperado: ${t[1]}`).join("\n")}
+
+CÓDIGO DEL ALUMNO:
+${code}
+
+Tarea:
+1. Decidí si compila (errores de sintaxis, métodos inexistentes, llamar a pop() dentro de un método const, etc.).
+2. Simulá A MANO cada prueba con el código del alumno, paso a paso, y escribí la salida exacta que produciría.
+3. Revisá restricciones del enunciado: STL o arreglos prohibidos, solo interfaz pública cuando se pide, liberar memoria con delete, mantener head/tail/size/prev/next consistentes, no modificar el resto de la clase.
+4. puntaje = porcentaje de pruebas que pasan (0 si no compila); restá hasta 30 puntos por violar restricciones o pérdidas de memoria.
+
+Respondé SOLO JSON:
+{"compila":true,"tests":[{"n":1,"obtenido":"...","ok":true}],"puntaje":0,"errores":["error concreto con la línea o el caso que falla"],"consejo":"una o dos frases en español rioplatense sobre qué corregir"}`, {modelTier:"complex", cache:false});
+    const tests = Array.isArray(r.tests) ? r.tests : [];
+    const p = Math.max(0, Math.min(100, Math.round(Number(r.puntaje) || 0)));
+    out.innerHTML = `<div class="feedback ${p >= 90 ? "ok" : "bad"} stack" style="gap:10px">
+      <div class="row" style="justify-content:space-between"><h3>${r.compila === false ? "No compila" : p >= 90 ? "Aprobado" : "Hay que corregir"}</h3><span class="mono" style="font-size:18px;font-weight:600">${p}/100</span></div>
+      ${tests.length ? `<div class="scroll"><table class="tests"><thead><tr><th>#</th><th>Esperado</th><th>Tu código</th><th></th></tr></thead><tbody>${tests.map((t,i) => `<tr><td>${esc(t.n ?? i+1)}</td><td>${esc((e.tests[(t.n||i+1)-1]||[])[1] ?? "")}</td><td>${esc(t.obtenido)}</td><td>${t.ok ? '<span class="hl-ok">✓</span>' : '<span class="hl-bad">✗</span>'}</td></tr>`).join("")}</tbody></table></div>` : ""}
+      ${Array.isArray(r.errores) && r.errores.length ? `<ul style="margin:0;padding-left:18px">${r.errores.map(x => `<li>${md(String(x))}</li>`).join("")}</ul>` : ""}
+      ${r.consejo ? `<p>${md(String(r.consejo))}</p>` : ""}
+      <p class="muted" style="font-size:12.5px">La corrección es una simulación de Claude, no una compilación real. Si dudás, compará con la solución.</p>
+    </div>`;
+    onDone && onDone({puntaje:p});
+  } catch(err) { out.innerHTML = `<div class="feedback bad"><h3>No se pudo corregir</h3><p>${esc(aiErr(err))}</p></div>`; }
+  btn.disabled = false;
+}
+async function genCode(){
+  const btn = $("#genE"), msg = $("#genEMsg"); btn.disabled = true; msg.textContent = "Generando… (hasta un minuto)";
+  const bases = {pc:["Stack", STACK_BASE], listas:["DLL", DLL_BASE], arr:["DynArray", DYN_BASE]};
+  const pickT = ["pc","pc","listas","listas","arr"][Math.floor(Math.random()*5)];
+  const useQueue = pickT === "pc" && Math.random() < .5;
+  const [cls, base] = useQueue ? ["Queue", QUEUE_BASE] : (pickT === "listas" && Math.random() < .5 ? ["SLL", SLL_BASE] : bases[pickT]);
+  try {
+    const r = await sample.json(`Sos docente de Algoritmos y Estructuras de Datos (C++, FCEFyN UNC). Creá UN ejercicio NUEVO de programación estilo Primer Parcial sobre la clase ${cls} que te paso. Ya existen estos ejercicios (no los repitas): ${allCODE().map(x => x.title).join("; ")}.
+
+Clase base (el marcador @@ es donde va el o los métodos a implementar):
+${base}
+
+Requisitos: un escenario breve de una empresa ficticia; uno o dos métodos a implementar; aclarar restricciones (solo interfaz pública o trabajar sobre nodos; sin STL); 3 o 4 pruebas estilo CodeRunner con la salida exacta; una pista; una solución correcta y verificada mentalmente contra las pruebas. Las pruebas solo pueden usar métodos públicos de la clase (para listas podés asumir imprimir() que imprime los datos sin espacios). Español rioplatense.
+
+Respondé SOLO JSON:
+{"title":"Clase: nombreMetodo","statement":"enunciado (usá backticks para código)","stubs":"el o los métodos con cuerpo // IMPLEMENTAR y un return por defecto, indentados con 4 espacios","tests":[["código de la prueba","salida esperada"]],"hint":"pista","solution":"solo los métodos resueltos"}`, {modelTier:"complex", cache:false});
+    if (!r || !r.title || !r.stubs || !Array.isArray(r.tests) || !r.solution) throw {code:"invalid_json"};
+    const id = "gc" + Date.now();
+    S.gen.code.push({id, t:pickT, gen:true, title:String(r.title), st:String(r.statement||""), sk:base.replace("@@", String(r.stubs)), tests:r.tests.filter(t => Array.isArray(t) && t.length >= 2).map(t => [String(t[0]), String(t[1])]), hint:String(r.hint||""), sol:String(r.solution)});
+    save(); C.id = id; vCodigo();
+  } catch(e) { msg.textContent = aiErr(e); btn.disabled = false; }
+}
+
+/* ============ SIMULACRO ============ */
+let SIM = null, simTimer = null;
+function vSim(){
+  if (!SIM) return simSetup();
+  if (SIM.done) return simResults();
+  simRun();
+}
+function simSetup(){
+  $("#app").innerHTML = `<div class="view stack fade">
+    <h1>Simulacro</h1>
+    <div class="card stack">
+      <p>Como en el aula virtual: <b>3 preguntas de opción múltiple</b> (10 puntos c/u) y <b>2 ejercicios de código</b> (35 puntos c/u). El temporizador corre y, al terminar, ves la corrección.</p>
+      <div class="row"><label for="mins" class="eyebrow">Tiempo</label>
+        <select id="mins" style="width:auto"><option value="45">45 minutos</option><option value="60" selected>60 minutos</option><option value="90">90 minutos</option><option value="120">2 horas (como el parcial)</option></select>
+      </div>
+      <div class="row"><button class="primary" id="go">Comenzar intento</button></div>
+    </div>
+  </div>`;
+  $("#go").onclick = () => {
+    const topics = shuffle(Object.keys(TOPICS));
+    const mcqs = []; const used = new Set();
+    for (const t of topics) { if (mcqs.length >= 3) break; const c = shuffle(allMCQ().filter(q => q.t === t && !used.has(q.id))); if (c[0]) { mcqs.push(c[0]); used.add(c[0].id); } }
+    const exam = CODE.filter(e => e.t !== "cpp");
+    const lists = shuffle(exam.filter(e => e.t === "listas")), pcs = shuffle(exam.filter(e => e.t === "pc"));
+    const codes = [pcs[0], lists[0]];
+    SIM = {end: Date.now() + (+$("#mins").value) * 60000, mins:+$("#mins").value,
+      qs: shuffle(mcqs.map(q => ({k:"m", q, opts: shuffle([{txt:q.ok, ok:true}].concat(q.bad.map(b => ({txt:b, ok:false})))), sel:null}))).concat(codes.map(e => ({k:"c", e, code:e.sk, score:null}))),
+      done:false};
+    simRun();
+  };
+}
+function simRun(){
+  $("#app").innerHTML = `<div class="view stack fade">
+    <div class="row" style="justify-content:space-between">
+      <h1>Simulacro · Parcial I</h1><button id="fin" class="primary">Terminar intento</button>
+    </div>
+    <span class="timer" id="tm" style="position:fixed;z-index:6;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 2px 10px rgba(0,0,0,.12)">--:--</span>
+    ${SIM.qs.map((it, n) => `<div class="sim-q">
+      <div class="qinfo"><div>Pregunta <b>${n+1}</b></div><div class="muted">Se puntúa sobre ${it.k==="m" ? 10 : 35}</div></div>
+      <div class="qbody stack">${it.k === "m"
+        ? `<div>${it.q.gen ? md(it.q.q) : it.q.q}</div>${it.q.code ? pre(it.q.code) : ""}<div class="opts">${it.opts.map((o,i) => `<button class="opt ${it.sel===i ? "sel" : ""}" data-q="${n}" data-i="${i}"><span class="l">${"abcd"[i]}.</span><span>${it.q.gen ? md(o.txt) : esc(o.txt)}</span></button>`).join("")}</div>`
+        : `<div class="statement">${it.e.st}</div><details><summary>Pruebas</summary><div class="scroll"><table class="tests"><tbody>${it.e.tests.map(t => `<tr><td>${hl(t[0])}</td><td>${esc(t[1])}</td></tr>`).join("")}</tbody></table></div></details><label class="eyebrow" for="sc${n}">Respuesta</label><textarea class="editor" id="sc${n}" data-q="${n}" spellcheck="false" autocapitalize="off">${esc(it.code)}</textarea>`}
+      </div></div>`).join("")}
+  </div>`;
+  document.querySelectorAll(".opt[data-q]").forEach(b => b.onclick = () => { const it = SIM.qs[+b.dataset.q]; it.sel = +b.dataset.i; document.querySelectorAll(`.opt[data-q="${b.dataset.q}"]`).forEach(x => x.classList.toggle("sel", x === b)); });
+  document.querySelectorAll("textarea[data-q]").forEach(t => {
+    attachHL(t);
+    t.addEventListener("input", () => { SIM.qs[+t.dataset.q].code = t.value; });
+    t.addEventListener("keydown", ev => { if (ev.key === "Tab") { ev.preventDefault(); const s = t.selectionStart; t.value = t.value.slice(0,s) + "    " + t.value.slice(t.selectionEnd); t.selectionStart = t.selectionEnd = s + 4; SIM.qs[+t.dataset.q].code = t.value; } });
+  });
+  $("#fin").onclick = simFinish;
+  clearInterval(simTimer);
+  const tick = () => { const ms = SIM.end - Date.now(); if (ms <= 0) { simFinish(); return; } const s = Math.floor(ms/1000); const el = $("#tm"); if (el) el.textContent = `Tiempo restante ${Math.floor(s/3600)}:${String(Math.floor(s/60)%60).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`; };
+  tick(); simTimer = setInterval(tick, 1000);
+}
+function simFinish(){
+  clearInterval(simTimer); SIM.done = true; SIM.usedMin = Math.min(SIM.mins, Math.round((Date.now() - (SIM.end - SIM.mins*60000)) / 60000));
+  SIM.qs.forEach(it => { if (it.k === "m") { const ok = it.sel != null && it.opts[it.sel].ok; const st = S.mcq[it.q.id] || {a:0,c:0}; st.a++; if (ok) st.c++; st.last = ok; S.mcq[it.q.id] = st; } });
+  save(); simResults();
+}
+function simResults(){
+  const mPts = SIM.qs.filter(i => i.k==="m").reduce((s,i) => s + (i.sel != null && i.opts[i.sel].ok ? 10 : 0), 0);
+  const cPts = SIM.qs.filter(i => i.k==="c").reduce((s,i) => s + (i.score != null ? Math.round(i.score * 0.35) : 0), 0);
+  const pending = SIM.qs.filter(i => i.k==="c" && i.score == null).length;
+  $("#app").innerHTML = `<div class="view stack fade">
+    <div class="row" style="justify-content:space-between"><h1>Resultado del simulacro</h1><button id="again">Nuevo simulacro</button></div>
+    <div class="card row" style="gap:28px">
+      <div><div class="score-big">${mPts + cPts}<span class="muted" style="font-size:22px">/100</span></div><div class="muted" style="font-size:13px">${pending ? `faltan corregir ${pending} ejercicio${pending>1?"s":""} de código` : "corrección completa"} · usaste ${SIM.usedMin} de ${SIM.mins} min</div></div>
+      <div class="stack" style="gap:2px"><span class="mono">Opción múltiple: ${mPts}/30</span><span class="mono">Código: ${cPts}/70</span></div>
+    </div>
+    ${SIM.qs.map((it, n) => it.k === "m" ? `<div class="card stack">
+        <div class="row" style="justify-content:space-between"><b>Pregunta ${n+1}</b><span class="tag ${it.sel!=null && it.opts[it.sel].ok ? "ok" : "bad"}">${it.sel==null ? "sin responder" : it.opts[it.sel].ok ? "10/10" : "0/10"}</span></div>
+        <div>${it.q.gen ? md(it.q.q) : it.q.q}</div>${it.q.code ? pre(it.q.code) : ""}
+        <div class="opts">${it.opts.map((o,i) => `<div class="opt ${o.ok ? "right" : i===it.sel ? "wrong" : ""}"><span class="l">${"abcd"[i]}.</span><span>${it.q.gen ? md(o.txt) : esc(o.txt)}</span></div>`).join("")}</div>
+        <div class="feedback info">${it.q.gen ? md(it.q.why) : it.q.why}</div></div>`
+      : `<div class="card stack">
+        <div class="row" style="justify-content:space-between"><b>Pregunta ${n+1} · ${esc(it.e.title)}</b><span class="tag ${it.score==null ? "" : it.score>=90 ? "ok" : "bad"}">${it.score==null ? "sin corregir" : Math.round(it.score*0.35) + "/35"}</span></div>
+        <details><summary>Tu respuesta</summary><div>${pre(it.code)}</div></details>
+        <div class="row">${sample ? `<button class="primary" data-g="${n}">Corregir con Claude</button>` : ""}<span class="muted" style="font-size:13px">o autoevaluate:</span>${[[100,"Bien"],[50,"A medias"],[0,"Mal"]].map(([v,l]) => `<button class="chip" data-s="${n}" data-v="${v}" aria-pressed="${it.score===v}">${l}</button>`).join("")}</div>
+        <div id="sg${n}"></div>
+        <details><summary>Solución modelo</summary><div>${pre(it.e.sol)}</div></details></div>`).join("")}
+  </div>`;
+  $("#again").onclick = () => { SIM = null; vSim(); };
+  document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { const it = SIM.qs[+b.dataset.s]; it.score = +b.dataset.v; S.code[it.e.id] = it.score >= 90 ? "ok" : it.score >= 40 ? "part" : "bad"; save(); simResults(); });
+  document.querySelectorAll("[data-g]").forEach(b => b.onclick = () => { const n = +b.dataset.g, it = SIM.qs[n]; gradeCode(it.e, it.code, $("#sg"+n), b, r => { it.score = r.puntaje; S.code[it.e.id] = r.puntaje >= 90 ? "ok" : r.puntaje >= 40 ? "part" : "bad"; save(); const keep = $("#sg"+n).innerHTML; simResults(); $("#sg"+n).innerHTML = keep; }); });
+}
+
+/* ============ ESTRUCTURAS ============ */
+const ESTR = [
+{k:"stack", n:"Pila", full:"Pila (Stack)", idea:"LIFO: el último que entra es el primero que sale. Solo ves y tocás el **tope**. Por dentro es una SLL donde `m_top` es la cabeza.", dib:"m_top\n  ↓\n [3] → [2] → [1] → nullptr\n último en entrar     primero en entrar", ops:[
+{f:"push(x)", que:"Mete x arriba", c:"O(1)", pasos:["Crear un nodo nuevo cuyo `next` es el tope actual.","El tope pasa a ser el nodo nuevo.","Sumar 1 a `m_size`."], code:`void push(const TData& value) {
+    m_top = new Node(value, m_top);  // nuevo -> viejo tope
+    ++m_size;
+}`},
+{f:"pop()", que:"Saca el de arriba", c:"O(1)", pasos:["Si está vacía, no hacer nada.","Guardar el tope en un auxiliar (si no, lo perdés: fuga de memoria).","Mover `m_top` al siguiente.","`delete` del auxiliar y restar 1 a `m_size`."], code:`void pop() {
+    if (isEmpty()) return;
+    Node* removed = m_top;     // 1. guardar
+    m_top = m_top->next;       // 2. mover
+    delete removed;            // 3. liberar
+    --m_size;
+}`},
+{f:"top()", que:"Mira el de arriba sin sacarlo", c:"O(1)", pasos:["Si está vacía, devolver `TData()` (valor por defecto).","Si no, devolver el dato del tope."], code:`TData top() const {
+    return isEmpty() ? TData() : m_top->data;
+}`},
+{f:"isEmpty() / size()", que:"¿Está vacía? / ¿Cuántos hay?", c:"O(1)", pasos:["Se leen de `m_size`, que se mantiene actualizado en push y pop."], code:`bool isEmpty() const { return m_size == 0; }
+int size() const { return m_size; }`}
+], uso:"Para recorrerla sin romperla: si el método es `const`, hacés `Stack copia(*this);` y desarmás la copia. Si no es const, pasás todo a un aux y lo devolvés (doble inversión = orden original)."},
+{k:"queue", n:"Cola", full:"Cola (Queue)", idea:"FIFO: el primero que entra es el primero que sale. Se entra por **atrás** (`m_rear`) y se sale por **adelante** (`m_front`).", dib:"m_front                m_rear\n  ↓                      ↓\n [1] → [2] → [3] → [4] → nullptr\n sale por acá       entra por acá", ops:[
+{f:"enqueue(x)", que:"Mete x al final", c:"O(1)", pasos:["Crear el nodo nuevo.","Si la cola está vacía: `m_front` y `m_rear` apuntan al nuevo.","Si no: el último actual apunta al nuevo, y el nuevo pasa a ser `m_rear`.","Sumar 1 a `m_size`."], code:`void enqueue(const TData& value) {
+    Node* nuevo = new Node(value);
+    if (isEmpty()) {
+        m_front = nuevo;
+        m_rear = nuevo;
+    } else {
+        m_rear->next = nuevo;   // engancho atrás
+        m_rear = nuevo;
+    }
+    ++m_size;
+}`},
+{f:"dequeue()", que:"Saca el del frente", c:"O(1)", pasos:["Si está vacía, no hacer nada.","Guardar el frente y mover `m_front` al siguiente.","`delete` del viejo frente y restar 1.","Si quedó vacía, `m_rear = nullptr` (si no, queda colgando)."], code:`void dequeue() {
+    if (isEmpty()) return;
+    Node* borrar = m_front;
+    m_front = m_front->next;
+    delete borrar;
+    --m_size;
+    if (m_size == 0) m_rear = nullptr;  // ¡no olvidar!
+}`},
+{f:"front()", que:"Mira el del frente sin sacarlo", c:"O(1)", pasos:["Vacía → `TData()`. Si no, el dato de `m_front`."], code:`TData front() const {
+    return isEmpty() ? TData() : m_front->data;
+}`},
+{f:"isEmpty() / size()", que:"¿Está vacía? / ¿Cuántos hay?", c:"O(1)", pasos:["Igual que en la pila: se leen de `m_size`."], code:`bool isEmpty() const { return m_size == 0; }
+int size() const { return m_size; }`}
+], uso:"Para recorrerla sin romperla: `int n = size();` y n vueltas de `x = front(); dequeue(); ... enqueue(x);` (rotación completa). Si no re-encolás x, lo borraste."},
+{k:"sll", n:"SLL", full:"Lista simple (SLL)", idea:"Cada nodo conoce solo al **siguiente**. Tiene `m_head`, `m_tail` y `m_size`. No se puede ir para atrás: por eso todo lo que necesita al **anterior** cuesta O(n).", dib:"m_head                 m_tail\n  ↓                      ↓\n [1] → [2] → [3] → [4] → nullptr", ops:[
+{f:"pushFront(x)", que:"Inserta al inicio", c:"O(1)", pasos:["Nodo nuevo que apunta al head actual; head = nuevo.","Si la lista estaba vacía, tail también es el nuevo.","`m_size++`."], code:`void pushFront(const TData& value) {
+    m_head = new Node(value, m_head);
+    if (m_tail == nullptr) m_tail = m_head;  // estaba vacía
+    m_size++;
+}`},
+{f:"pushBack(x)", que:"Inserta al final", c:"O(1)", pasos:["Crear el nodo.","Vacía: head y tail = nuevo.","Si no: `m_tail->next = nuevo` y tail = nuevo.","`m_size++`."], code:`void pushBack(const TData& value) {
+    Node* nuevo = new Node(value);
+    if (m_tail == nullptr) { m_head = m_tail = nuevo; }
+    else { m_tail->next = nuevo; m_tail = nuevo; }
+    m_size++;
+}`},
+{f:"popFront()", que:"Borra el primero", c:"O(1)", pasos:["Vacía → return.","Guardar head, mover head al siguiente, `delete`.","Si quedó vacía, tail = nullptr.","`m_size--`."], code:`void popFront() {
+    if (m_head == nullptr) return;
+    Node* borrar = m_head;
+    m_head = m_head->next;
+    delete borrar;
+    if (m_head == nullptr) m_tail = nullptr;
+    m_size--;
+}`},
+{f:"popBack()", que:"Borra el último", c:"O(n)", pasos:["Vacía → return.","Un solo nodo: `delete` y head = tail = nullptr.","Si no: recorrer hasta el **penúltimo** (el que tiene `next == m_tail`).","`delete` del tail, tail = penúltimo, `tail->next = nullptr`, `m_size--`."], code:`void popBack() {
+    if (m_head == nullptr) return;
+    if (m_head == m_tail) {                // un solo nodo
+        delete m_head;
+        m_head = m_tail = nullptr;
+        m_size--;
+        return;
+    }
+    Node* a = m_head;
+    while (a->next != m_tail) a = a->next; // O(n): busco el penúltimo
+    delete m_tail;
+    m_tail = a;
+    m_tail->next = nullptr;
+    m_size--;
+}`},
+{f:"buscar(x)", que:"¿Está x?", c:"O(n)", pasos:["Arrancar en head y avanzar con `next` hasta encontrarlo o llegar a nullptr."], code:`bool buscar(const TData& valor) const {
+    Node* a = m_head;
+    while (a != nullptr) {
+        if (a->data == valor) return true;
+        a = a->next;
+    }
+    return false;
+}`},
+{f:"eliminar(x)", que:"Borra la primera aparición de x", c:"O(n)", pasos:["Recorrer con **dos** punteros: `ant` y `act`.","Si no está, return.","Si `ant` es nullptr, era la cabeza: mover head. Si no, `ant->next = act->next`.","Si era el tail, tail = ant. `delete` y `m_size--`."], code:`void eliminar(const TData& valor) {
+    Node* ant = nullptr;
+    Node* act = m_head;
+    while (act != nullptr && !(act->data == valor)) {
+        ant = act;
+        act = act->next;
+    }
+    if (act == nullptr) return;              // no está
+    if (ant == nullptr) m_head = act->next;  // era la cabeza
+    else ant->next = act->next;
+    if (act == m_tail) m_tail = ant;         // era la cola
+    delete act;
+    m_size--;
+}`}
+], uso:"Siempre preguntate: ¿estaba vacía? ¿era la cabeza? ¿era la cola? ¿era el único nodo?"},
+{k:"dll", n:"DLL", full:"Lista doble (DLL)", idea:"Cada nodo conoce al **anterior** (`prev`) y al **siguiente** (`next`). Cuesta un puntero más por nodo, pero borrar el último o un nodo que ya tenés es O(1).", dib:"m_head                 m_tail\n  ↓                      ↓\n [1] ⇄ [2] ⇄ [3] ⇄ [4]\n head->prev = nullptr   tail->next = nullptr", ops:[
+{f:"pushBack(x)", que:"Inserta al final", c:"O(1)", pasos:["Crear el nodo.","Vacía: head = tail = nuevo.","Si no: `nuevo->prev = m_tail`, `m_tail->next = nuevo`, tail = nuevo.","`m_size++`."], code:`void pushBack(const TData& value) {
+    Node* nuevo = new Node(value);
+    if (m_tail == nullptr) {
+        m_head = nuevo;
+        m_tail = nuevo;
+    } else {
+        nuevo->prev = m_tail;
+        m_tail->next = nuevo;
+        m_tail = nuevo;
+    }
+    m_size++;
+}`},
+{f:"pushFront(x)", que:"Inserta al inicio", c:"O(1)", pasos:["Espejo de pushBack: `nuevo->next = m_head`, `m_head->prev = nuevo`, head = nuevo."], code:`void pushFront(const TData& value) {
+    Node* nuevo = new Node(value);
+    if (m_head == nullptr) {
+        m_head = nuevo;
+        m_tail = nuevo;
+    } else {
+        nuevo->next = m_head;
+        m_head->prev = nuevo;
+        m_head = nuevo;
+    }
+    m_size++;
+}`},
+{f:"popBack()", que:"Borra el último", c:"O(1)", pasos:["Vacía → return.","Guardar tail; tail = `m_tail->prev` (¡acá está la ventaja de la DLL!).","Si el nuevo tail existe, su `next = nullptr`; si no, quedó vacía: head = nullptr.","`delete` y `m_size--`."], code:`void popBack() {
+    if (m_tail == nullptr) return;
+    Node* borrar = m_tail;
+    m_tail = m_tail->prev;              // O(1) gracias a prev
+    if (m_tail != nullptr) m_tail->next = nullptr;
+    else m_head = nullptr;              // quedó vacía
+    delete borrar;
+    m_size--;
+}`},
+{f:"popFront()", que:"Borra el primero", c:"O(1)", pasos:["Espejo de popBack, usando head y `next`."], code:`void popFront() {
+    if (m_head == nullptr) return;
+    Node* borrar = m_head;
+    m_head = m_head->next;
+    if (m_head != nullptr) m_head->prev = nullptr;
+    else m_tail = nullptr;
+    delete borrar;
+    m_size--;
+}`},
+{f:"desenganchar(a)", que:"Borra un nodo que ya encontraste", c:"O(1)", pasos:["Si `a` tiene anterior, el anterior salta a `a->next`; si no, era la cabeza: mover head.","Si `a` tiene siguiente, ese apunta para atrás a `a->prev`; si no, era la cola: mover tail.","`delete` y `m_size--`. (Encontrar `a` sí es O(n).)"], code:`// a = nodo a borrar (ya encontrado)
+if (a->prev != nullptr) a->prev->next = a->next;
+else                    m_head = a->next;   // era la cabeza
+if (a->next != nullptr) a->next->prev = a->prev;
+else                    m_tail = a->prev;   // era la cola
+delete a;
+m_size--;`},
+{f:"insertarDespues(a, x)", que:"Mete x después del nodo a", c:"O(1)", pasos:["Son **4 punteros**: `n->prev`, `n->next`, el `prev` del siguiente y el `next` de a.","Si a era el último, tail = n."], code:`Node* n = new Node(valor);
+n->prev = a;
+n->next = a->next;
+if (a->next != nullptr) a->next->prev = n;
+else m_tail = n;
+a->next = n;
+m_size++;`},
+{f:"recorrer al revés", que:"De tail a head", c:"O(n)", pasos:["Arrancar en tail y avanzar con `prev`."], code:`for (Node* a = m_tail; a != nullptr; a = a->prev)
+    cout << a->data;`}
+], uso:"Mismos casos borde que la SLL, pero ahora mantenés **dos** enlaces: si tocás un `next`, revisá el `prev` que le corresponde."},
+{k:"dyn", n:"Arreglo dinámico", full:"Arreglo dinámico (DynArray)", idea:"Memoria **contigua**: acceso por índice en O(1). Tiene `m_size` (cuántos hay) y `m_capacity` (cuánto lugar reservado). Cuando se llena, duplica.", dib:"m_data → [10][20][30][  ][  ][  ][  ][  ]\n          size = 3        capacity = 8", ops:[
+{f:"pushBack(x)", que:"Agrega al final", c:"O(1) amort.", pasos:["Si `m_size == m_capacity`: nueva capacidad = el doble (o 1 si era 0).","Reservar bloque nuevo con `new[]`, copiar uno por uno, `delete[]` del viejo, reasignar.","Guardar x en la posición `m_size` y sumar 1."], code:`void pushBack(const TData& valor) {
+    if (m_size == m_capacity) {
+        int nc = (m_capacity == 0) ? 1 : m_capacity * 2;
+        TData* nuevo = new TData[nc];
+        for (int i = 0; i < m_size; i++) nuevo[i] = m_data[i];
+        delete[] m_data;
+        m_data = nuevo;
+        m_capacity = nc;
+    }
+    m_data[m_size] = valor;
+    m_size++;
+}`},
+{f:"get(i)", que:"Lee la posición i", c:"O(1)", pasos:["Dirección = inicio + i. No hay que recorrer nada."], code:`TData get(int i) const { return m_data[i]; }`},
+{f:"insertar al inicio", que:"Mete x en la posición 0", c:"O(n)", pasos:["(Crecer si hace falta, como en pushBack.)","Correr **todos** una posición a la derecha, desde el final hacia atrás.","Poner x en 0 y sumar 1. Por eso insertar al inicio es caro."], code:`void pushFront(const TData& valor) {
+    // (si está lleno, crecer como en pushBack)
+    for (int i = m_size; i > 0; i--)
+        m_data[i] = m_data[i - 1];   // corro todo a la derecha
+    m_data[0] = valor;
+    m_size++;
+}`},
+{f:"size() / capacity()", que:"Cuántos hay / cuánto lugar", c:"O(1)", pasos:["Siempre `size ≤ capacity`. Ej: 5 elementos duplicando desde 1 → capacity 8 (1, 2, 4, 8)."], code:`int size() const { return m_size; }
+int capacity() const { return m_capacity; }`}
+], uso:"Duplicar → O(1) amortizado. Crecer de a +1 o +k → O(n) por inserción (O(n²) en total). Eso es lo que preguntan."}
+];
+const E = {k:"stack"};
+const cc = c => c.startsWith("O(1)") ? "hl-ok" : "hl-bad";
+function vEstructuras(){
+  const s = ESTR.find(x => x.k === E.k);
+  $("#app").innerHTML = `<div class="view stack fade">
+    <h1>Estructuras</h1>
+    <p class="muted">Elegí una. Primero mirá la tabla (qué operaciones existen), después abrí cada una para ver la lógica y el código.</p>
+    <div class="row" id="estr">${ESTR.map(x => `<button class="chip" data-k="${x.k}" aria-pressed="${x.k===E.k}">${x.n}</button>`).join("")}</div>
+    <div class="card stack">
+      <h2>${esc(s.full)}</h2>
+      <p>${md(s.idea)}</p>
+      <pre class="code">${esc(s.dib)}</pre>
+      <div class="scroll"><table class="cheat"><thead><tr><th>Operación</th><th>Qué hace</th><th>Costo</th></tr></thead><tbody>${s.ops.map(o => `<tr><td class="c">${esc(o.f)}</td><td>${esc(o.que)}</td><td class="c ${cc(o.c)}">${esc(o.c)}</td></tr>`).join("")}</tbody></table></div>
+    </div>
+    <div class="stack" style="gap:10px">${s.ops.map((o,i) => `<details ${i===0 ? "open" : ""}><summary><span class="mono">${esc(o.f)}</span> <span class="muted">· ${esc(o.que)} ·</span> <span class="mono ${cc(o.c)}">${esc(o.c)}</span></summary><div class="stack" style="gap:10px"><span class="eyebrow">Lógica</span><ol class="plan">${o.pasos.map(p => `<li>${md(p)}</li>`).join("")}</ol><span class="eyebrow">Código</span>${pre(o.code)}</div></details>`).join("")}</div>
+    <div class="feedback info"><h3>Para recordar</h3><div>${md(s.uso)}</div></div>
+    <div class="row"><a class="btn" href="#codigo">Practicar en Código →</a></div>
+  </div>`;
+  document.querySelectorAll("#estr .chip").forEach(b => b.onclick = () => { E.k = b.dataset.k; vEstructuras(); });
+}
+
+/* ============ RESUMEN ============ */
+function vResumen(){
+  const O = (s, cls) => `<td class="c ${cls||""}">${s}</td>`;
+  $("#app").innerHTML = `<div class="view stack fade">
+    <h1>Resumen</h1>
+    <div class="card stack">
+      <h2>Complejidades (peor caso)</h2>
+      <div class="scroll"><table class="cheat"><thead><tr><th>Estructura</th><th>Acceso i</th><th>Insertar inicio</th><th>Insertar final</th><th>Borrar inicio</th><th>Borrar final</th><th>Buscar</th></tr></thead><tbody>
+        <tr><td>Arreglo dinámico</td>${O("O(1)","hl-ok")}${O("O(n)","hl-bad")}${O("O(1) amort.","hl-ok")}${O("O(n)","hl-bad")}${O("O(1)","hl-ok")}${O("O(n)")}</tr>
+        <tr><td>SLL solo head</td>${O("O(n)")}${O("O(1)","hl-ok")}${O("O(n)","hl-bad")}${O("O(1)","hl-ok")}${O("O(n)","hl-bad")}${O("O(n)")}</tr>
+        <tr><td>SLL head + tail</td>${O("O(n)")}${O("O(1)","hl-ok")}${O("O(1)","hl-ok")}${O("O(1)","hl-ok")}${O("O(n) ← trampa","hl-bad")}${O("O(n)")}</tr>
+        <tr><td>DLL head + tail</td>${O("O(n)")}${O("O(1)","hl-ok")}${O("O(1)","hl-ok")}${O("O(1)","hl-ok")}${O("O(1)","hl-ok")}${O("O(n)")}</tr>
+      </tbody></table></div>
+      <p class="muted" style="font-size:13.5px">Pila: push/pop/top O(1) (todo en la cabeza). Cola: enqueue en tail, dequeue en head, O(1). Recorrer cualquiera con la interfaz pública: O(n).</p>
+    </div>
+    <div class="card stack">
+      <h2>Big O en 4 reglas</h2>
+      <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px">
+        <li>Bucles <b>anidados</b> se multiplican; <b>secuenciales</b> se suman (y queda el mayor).</li>
+        <li><code>i *= 2</code> o <code>i /= 2</code> → O(log n). Un bucle interno de largo fijo es O(1).</li>
+        <li>Las constantes se descartan: O(3n + 5) = O(n); n(n+1)/2 = O(n²).</li>
+        <li>Amortizado: costo total / operaciones. Duplicar capacidad → O(1) amortizado; +1 o +k → no.</li>
+      </ul>
+    </div>
+    <div class="card stack">
+      <h2>Los 5 patrones que se repiten</h2>
+      <h3>1. Recorrer una Queue sin alterarla</h3>
+      ${pre(`int n = size();                 // guardalo ANTES
+for (int i = 0; i < n; i++) {
+    TData x = front();
+    dequeue();
+    // ... procesar x (contar, decidir si se descarta)
+    enqueue(x);                 // si no lo re-encolás, lo borraste
+}`)}
+      <h3>2. Recorrer una Stack sin alterarla</h3>
+      ${pre(`// método const → trabajar sobre una copia
+Stack copia(*this);
+while (!copia.isEmpty()) { /* usar copia.top() */ copia.pop(); }
+
+// método no const → pasar a aux y devolver (doble inversión)
+Stack aux;
+while (!isEmpty()) { aux.push(top()); pop(); }
+while (!aux.isEmpty()) { push(aux.top()); aux.pop(); }`)}
+      <h3>3. Desenganchar un nodo de una DLL</h3>
+      ${pre(`if (a->prev != nullptr) a->prev->next = a->next;
+else                    m_head = a->next;     // era la cabeza
+if (a->next != nullptr) a->next->prev = a->prev;
+else                    m_tail = a->prev;     // era la cola
+delete a;
+m_size--;`)}
+      <h3>4. Borrar en una SLL (necesitás el anterior)</h3>
+      ${pre(`Node* ant = nullptr;
+Node* act = m_head;
+while (act != nullptr && !(act->data == valor)) { ant = act; act = act->next; }
+if (act == nullptr) return;                    // no está
+if (ant == nullptr) m_head = act->next;        // era la cabeza
+else ant->next = act->next;
+if (act == m_tail) m_tail = ant;               // era la cola
+delete act;
+m_size--;`)}
+      <h3>5. Crecer un arreglo dinámico</h3>
+      ${pre(`int nc = (m_capacity == 0) ? 1 : m_capacity * 2;
+TData* nuevo = new TData[nc];
+for (int i = 0; i < m_size; i++) nuevo[i] = m_data[i];
+delete[] m_data;
+m_data = nuevo;
+m_capacity = nc;`)}
+    </div>
+    <div class="card stack">
+      <h2>Checklist antes de tocar «Comprobar»</h2>
+      <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px">
+        <li>¿Probé mentalmente: <b>vacía</b>, <b>un solo elemento</b>, el valor en la <b>cabeza</b>, en la <b>cola</b>, y que <b>no exista</b>?</li>
+        <li>¿Actualicé <code>m_size</code>? ¿<code>m_tail</code>? ¿El <code>prev</code> del siguiente?</li>
+        <li>¿Hice <code>delete</code> de cada nodo que saqué? ¿<code>delete[]</code> para arreglos?</li>
+        <li>¿El método es <code>const</code>? Entonces nada de pop/push sobre *this: usá una copia.</li>
+        <li>¿Usé <code>size()</code> como condición del for mientras saco elementos? Guardalo antes en <code>n</code>.</li>
+        <li>¿Pedían solo interfaz pública? Entonces no toques <code>m_front</code> ni <code>m_top</code>.</li>
+        <li>¿Comparo con <code>==</code> (o <code>&lt;</code>)? TData lo tiene que soportar.</li>
+      </ul>
+    </div>
+  </div>`;
+}
+
+render();
+</script>
+
+</body></html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; SORTING.exe — LAC</title>
+<style>
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:19px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(30px,5vw,50px); line-height:1.1; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .tp{color:var(--cyan);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+
+  /* ---------- array cells (reused pattern) ---------- */
+  .arr-row{display:flex; gap:6px; flex-wrap:wrap; margin-top:16px;}
+  .arr-cell{width:56px; text-align:center; padding:10px 4px 8px; background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; font-family:var(--font-mono); position:relative; transition:border-color .2s, box-shadow .2s, background .2s;}
+  .arr-cell .idx{font-size:10px; color:var(--text-faint);}
+  .arr-cell .v{font-size:15px; color:var(--text); margin-top:2px;}
+  .arr-cell.sorted{border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.06);}
+  .arr-cell.key{border-color:var(--amber); box-shadow:0 0 10px rgba(245,158,11,0.3);}
+  .arr-cell.key .v{color:var(--amber);}
+  .arr-cell.lo{border-color:var(--violet);}
+  .arr-cell.hi{border-color:var(--violet);}
+  .arr-cell.mid{border-color:var(--cyan); box-shadow:0 0 12px rgba(0,212,255,0.3);}
+  .arr-cell.mid .v{color:var(--cyan);}
+  .arr-cell.found{border-color:var(--green); box-shadow:0 0 12px rgba(16,185,129,0.35);}
+  .arr-cell.found .v{color:var(--green);}
+  .arr-cell .car{position:absolute; top:-16px; left:50%; transform:translateX(-50%); font-size:10px; opacity:0; transition:opacity .2s;}
+  .arr-cell.lo .car.lo-l, .arr-cell.hi .car.hi-l, .arr-cell.mid .car.mid-l{opacity:1;}
+  .car.lo-l{color:var(--violet);} .car.hi-l{color:var(--violet);} .car.mid-l{color:var(--cyan);}
+
+  .cmp-table{width:100%; border-collapse:collapse; margin-top:16px; font-family:var(--font-mono); font-size:12.5px;}
+  .cmp-table th, .cmp-table td{padding:9px 12px; border-bottom:1px solid var(--border-soft); text-align:left;}
+  .cmp-table th{color:var(--cyan); font-weight:normal; letter-spacing:.04em;}
+  .cmp-table td{color:var(--text-dim);}
+  .cmp-table tr:last-child td{border-bottom:none;}
+
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:560px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // ORDENAMIENTO Y BÚSQUEDA</div>
+  <div class="nav-title">SORTING.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a></li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a></li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a></li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a></li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a></li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a></li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a></li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>requiere Big O y Teorema Maestro</div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">Ordenar y buscar:<br>de O(n²) a <span class="accent">O(n log n)</span>.</h1>
+    <p class="cover-sub">Los mismos tres algoritmos ingenuos que se te ocurrirían solo, por qué cuestan lo que cuestan, y cómo dividir el problema los vuelve mucho más rápidos.</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> Big O, Teorema Maestro, Recursividad</span>
+      <span><b>cubre:</b> burbuja · selección · inserción · mergesort · quicksort · búsqueda lineal y binaria</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>El panel de Nodos necesita ordenarse</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat notas_reunion.txt</p>
+        <p><span class="accent">maga_t:</span> RRHH pidió que el panel lateral se pueda ordenar por nombre o por fecha de creación.</p>
+        <p><span class="ok">ema_v:</span> Fácil: comparo de a pares y voy intercambiando hasta que quede todo ordenado.</p>
+        <p><span class="accent">maga_t:</span> Eso funciona, pero es O(n²) — con 20 nodos ni se nota, con 200.000 se siente. Hay formas de lograrlo en O(n log n) dividiendo el problema, como ya viste con el Teorema Maestro.</p>
+        <p><span class="ok">ema_v:</span> ¿Y una vez ordenado, cómo busco un nodo puntual por id?</p>
+        <p><span class="accent">maga_t:</span> Ahí es donde entra la búsqueda binaria — pero ojo, <em>solo</em> funciona si la lista ya está ordenada. Vamos por partes.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Explicar por qué burbuja, selección e inserción son O(n²).</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Trazar a mano cómo ordenan burbuja, selección e inserción.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Explicar por qué MergeSort y QuickSort logran O(n log n) dividiendo el problema.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Elegir el algoritmo apropiado según estabilidad, memoria y tamaño de entrada.</p></div>
+      <div class="obj-card"><div class="k">05</div><p>Diferenciar búsqueda lineal de binaria, y saber cuándo se puede usar cada una.</p></div>
+      <div class="obj-card"><div class="k">06</div><p>Reconocer los errores más comunes al implementar ordenamiento y búsqueda.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3>Los tres clásicos de orden cuadrático</h3>
+    <p><strong>Burbuja:</strong> recorre el arreglo comparando pares adyacentes, intercambiándolos si están en el orden incorrecto, repitiendo hasta que no haya más intercambios. <strong>Selección:</strong> en cada vuelta, busca el mínimo del resto del arreglo y lo coloca en su posición final. <strong>Inserción:</strong> toma cada elemento y lo inserta en la posición correcta dentro de la porción ya ordenada, como cuando ordenás cartas en la mano.</p>
+    <p>Los tres hacen, en el peor caso, un trabajo proporcional a comparar <strong>cada par posible</strong> de elementos — eso es <code>n · (n-1) / 2</code> comparaciones, que en Big O es <code>O(n²)</code>.</p>
+
+    <h3>Divide y vencerás: MergeSort</h3>
+    <p>En vez de comparar todo contra todo, MergeSort divide el arreglo a la mitad, ordena cada mitad recursivamente, y después mezcla (<em>merge</em>) las dos mitades ya ordenadas en una sola pasada lineal. Esto es exactamente <code>T(N) = 2·T(N/2) + O(N)</code> — el mismo Teorema Maestro del módulo anterior, que resuelve en <code>O(N log N)</code>.</p>
+
+    <h3>Divide y vencerás, con una trampa: QuickSort</h3>
+    <p>QuickSort elige un elemento como <strong>pivote</strong>, particiona el arreglo en "menores al pivote" y "mayores al pivote", y ordena cada partición recursivamente. En el mejor caso (particiones parejas) es <code>O(N log N)</code>, igual que MergeSort. Pero si el pivote elegido termina siendo siempre el menor o el mayor del segmento — por ejemplo, si siempre elegís el primer elemento y el arreglo ya viene ordenado — las particiones quedan completamente desbalanceadas, y la complejidad se degrada a <code>O(N²)</code>.</p>
+
+    <h3>Estabilidad</h3>
+    <p>Un ordenamiento es <strong>estable</strong> si preserva el orden relativo de los elementos que se consideran iguales según el criterio de ordenamiento. Importa cuando ordenás por más de un criterio en pasadas sucesivas: si primero ordenás una lista de alumnos por la nota del parcialito 3, y después por el promedio (con un algoritmo estable), los empates en promedio van a quedar ordenados por parcialito 3 — pero solo si cada pasada fue estable. Con un algoritmo inestable, ese orden se pierde.</p>
+
+    <h3>Comparación y uso apropiado</h3>
+    <table class="cmp-table">
+      <tr><th>Algoritmo</th><th>Mejor caso</th><th>Peor caso</th><th>Estable</th><th>In-place</th></tr>
+      <tr><td>Burbuja</td><td>O(n)</td><td>O(n²)</td><td>Sí</td><td>Sí</td></tr>
+      <tr><td>Selección</td><td>O(n²)</td><td>O(n²)</td><td>No</td><td>Sí</td></tr>
+      <tr><td>Inserción</td><td>O(n)</td><td>O(n²)</td><td>Sí</td><td>Sí</td></tr>
+      <tr><td>MergeSort</td><td>O(n log n)</td><td>O(n log n)</td><td>Sí</td><td>No</td></tr>
+      <tr><td>QuickSort</td><td>O(n log n)</td><td>O(n²)</td><td>No</td><td>Sí</td></tr>
+    </table>
+    <p style="margin-top:14px;">Regla práctica: con entradas chicas o casi ordenadas, Inserción gana por simplicidad y bajo overhead. Con entradas grandes, MergeSort o QuickSort. Si necesitás la garantía de O(n log n) siempre, MergeSort. Si te alcanza con O(n log n) en el caso típico y querés ahorrar memoria, QuickSort.</p>
+
+    <h3>Búsqueda lineal y búsqueda binaria</h3>
+    <p><strong>Búsqueda lineal:</strong> recorre el arreglo de punta a punta comparando cada elemento — funciona con cualquier arreglo, ordenado o no, en <code>O(n)</code>. <strong>Búsqueda binaria:</strong> descarta la mitad del espacio de búsqueda en cada paso — <code>O(log n)</code> — pero exige una precondición ineludible: el arreglo tiene que estar ordenado. Aplicarla sobre datos desordenados no tira error; simplemente da resultados incorrectos en silencio.</p>
+
+    <h3>Un paso más allá: ordenamientos no comparativos</h3>
+    <p>Burbuja, Selección, Inserción, MergeSort y QuickSort ordenan <em>comparando</em> elementos entre sí. Cuando los valores a ordenar están en un rango acotado y conocido (por ejemplo, fechas, notas de 0 a 10, o strings de largo fijo), existen algoritmos como <strong>Counting Sort</strong> o <strong>Radix Sort</strong> que evitan comparar directamente y logran <code>O(n + k)</code>, con <code>k</code> el tamaño del rango — más rápido que cualquier O(n log n) cuando k es chico frente a n.</p>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+
+    <h3>Ordenamiento por inserción, paso a paso</h3>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="insStepNum">0</span> / <span id="insStepTotal">5</span></span>
+        <div class="btn-row">
+          <button id="insPrev">◀ anterior</button>
+          <button id="insNext" class="primary">insertar siguiente ▶</button>
+          <button id="insReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="arr-row" id="insRow"></div>
+      <p class="step-caption" id="insCaption">Tocá <span class="mono">insertar siguiente</span> para empezar. Arreglo inicial: [5, 2, 4, 6, 1, 3].</p>
+    </div>
+
+    <h3>Búsqueda binaria, paso a paso</h3>
+    <p>Arreglo ya ordenado. Buscamos el 23.</p>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="binStepNum">0</span> / <span id="binStepTotal">3</span></span>
+        <div class="btn-row">
+          <button id="binPrev">◀ anterior</button>
+          <button id="binNext" class="primary">comparar ▶</button>
+          <button id="binReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="arr-row" id="binRow"></div>
+      <p class="step-caption" id="binCaption">Tocá <span class="mono">comparar</span> para arrancar la búsqueda.</p>
+    </div>
+
+    <h3>Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Los errores que más aparecen con sorting y búsqueda</h2>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> Entonces para el panel uso MergeSort si quiero la garantía, y para buscar un nodo puntual, binaria — siempre que ya esté ordenado.</p>
+        <p><span class="accent">maga_t:</span> Exacto. Y ahora que sabés medir y comparar algoritmos, el próximo paso es dejar de pensar solo en arreglos — vienen los árboles.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">EN EL PROYECTO INTEGRADOR</span><p>Toda función de ordenamiento personalizada se documenta con su complejidad mejor/peor caso y si es estable, en el mismo comentario Doxygen — es parte del contrato tanto como la firma de la función.</p></div>
+  </section>
+
+  <footer><p>Material de apoyo AyED, cátedra de Algoritmos y Estructuras de Datos, FCEFyN · Ing. Valenzuela Gabriel.</p></footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement;
+    var scrolled = doc.scrollTop;
+    var max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){
+      var rect = sections[i].getBoundingClientRect();
+      if (rect.top <= 120) activeId = sections[i].id;
+    }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  var navToggle = document.getElementById('navtoggle');
+  var sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  navLinks.forEach(function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  /* ================= insertion sort stepper ================= */
+  var insStates = [
+    [5,2,4,6,1,3],
+    [2,5,4,6,1,3],
+    [2,4,5,6,1,3],
+    [2,4,5,6,1,3],
+    [1,2,4,5,6,3],
+    [1,2,3,4,5,6]
+  ];
+  var insCaptions = [
+    'Arreglo inicial. El primer elemento (5) se considera "ya ordenado" por sí solo.',
+    'Tomamos el 2 y lo insertamos en su lugar entre los ya ordenados: pasa a estar antes del 5.',
+    'Tomamos el 4 y lo insertamos en su lugar: entre 2 y 5.',
+    'Tomamos el 6 — ya está en su lugar respecto de lo ordenado hasta ahora, no hace falta mover nada.',
+    'Tomamos el 1 — tiene que ir al principio, así que los otros cuatro se corren un lugar.',
+    'Tomamos el 3 e insertamos en su lugar. El arreglo queda completamente ordenado.'
+  ];
+  var insSortedUpto = [1,2,3,4,5,6];
+  var insStepNumEl = document.getElementById('insStepNum');
+  var insCaption = document.getElementById('insCaption');
+  var insRow = document.getElementById('insRow');
+  var INS_TOTAL = 5;
+  var insStep = 0;
+  function renderIns(){
+    insStepNumEl.textContent = insStep;
+    var arr = insStates[insStep];
+    var sortedUpto = insSortedUpto[insStep];
+    insRow.innerHTML = arr.map(function(v, i){
+      var cls = 'arr-cell';
+      if (i < sortedUpto) cls += ' sorted';
+      if (i === sortedUpto && insStep < INS_TOTAL) cls += ' key';
+      return '<div class="' + cls + '"><div class="idx">' + i + '</div><div class="v">' + v + '</div></div>';
+    }).join('');
+    insCaption.textContent = insCaptions[insStep];
+    document.getElementById('insPrev').disabled = (insStep === 0);
+    document.getElementById('insNext').disabled = (insStep === INS_TOTAL);
+  }
+  document.getElementById('insNext').addEventListener('click', function(){ if (insStep < INS_TOTAL){ insStep++; renderIns(); } });
+  document.getElementById('insPrev').addEventListener('click', function(){ if (insStep > 0){ insStep--; renderIns(); } });
+  document.getElementById('insReset').addEventListener('click', function(){ insStep = 0; renderIns(); });
+  renderIns();
+
+  /* ================= binary search stepper ================= */
+  var binArr = [2,5,8,12,16,23,38,45,56,72];
+  var binTarget = 23;
+  var binStates = [
+    { lo:0, hi:9, mid:null, found:false },
+    { lo:5, hi:9, mid:4, found:false },
+    { lo:5, hi:6, mid:7, found:false },
+    { lo:5, hi:6, mid:5, found:true }
+  ];
+  var binCaptions = [
+    'Buscamos el ' + binTarget + '. ini=0, fin=9.',
+    'medio=(0+9)/2=4 → arr[4]=' + binArr[4] + '. Como ' + binArr[4] + ' &lt; ' + binTarget + ', descartamos la mitad izquierda: ini=5.',
+    'medio=(5+9)/2=7 → arr[7]=' + binArr[7] + '. Como ' + binArr[7] + ' &gt; ' + binTarget + ', descartamos la mitad derecha: fin=6.',
+    'medio=(5+6)/2=5 → arr[5]=' + binArr[5] + '. ¡Coincide! Encontrado en la posición 5, en solo 3 comparaciones sobre 10 elementos.'
+  ];
+  var binStepNumEl = document.getElementById('binStepNum');
+  var binCaption = document.getElementById('binCaption');
+  var binRow = document.getElementById('binRow');
+  var BIN_TOTAL = 3;
+  var binStep = 0;
+  function renderBin(){
+    binStepNumEl.textContent = binStep;
+    var s = binStates[binStep];
+    binRow.innerHTML = binArr.map(function(v, i){
+      var cls = 'arr-cell';
+      var car = '';
+      if (i === s.lo){ cls += ' lo'; car += '<div class="car lo-l">ini</div>'; }
+      if (i === s.hi){ cls += ' hi'; car += '<div class="car hi-l" style="' + (i===s.lo?'margin-top:11px;':'') + '">fin</div>'; }
+      if (s.mid !== null && i === s.mid){ cls = cls.replace(' lo','').replace(' hi',''); cls += ' mid'; car = '<div class="car mid-l">medio</div>'; }
+      if (s.found && i === s.mid){ cls = cls.replace(' mid',''); cls += ' found'; car = '<div class="car mid-l" style="color:var(--green);">¡acá!</div>'; }
+      return '<div class="' + cls + '">' + car + '<div class="idx">' + i + '</div><div class="v">' + v + '</div></div>';
+    }).join('');
+    binCaption.innerHTML = binCaptions[binStep];
+    document.getElementById('binPrev').disabled = (binStep === 0);
+    document.getElementById('binNext').disabled = (binStep === BIN_TOTAL);
+  }
+  document.getElementById('binNext').addEventListener('click', function(){ if (binStep < BIN_TOTAL){ binStep++; renderBin(); } });
+  document.getElementById('binPrev').addEventListener('click', function(){ if (binStep > 0){ binStep--; renderBin(); } });
+  document.getElementById('binReset').addEventListener('click', function(){ binStep = 0; renderBin(); });
+  renderBin();
+
+  /* ================= error gallery ================= */
+  var errors = [
+    { tag:'resultado incorrecto silencioso', title:'Búsqueda binaria sobre un arreglo sin ordenar',
+      bad:'int* arr = {38, 2, 45, 8, 23};\nint pos = busquedaBinaria(arr, 5, 8);\n// arr NO está ordenado',
+      cons:'La búsqueda binaria asume que puede descartar la mitad del arreglo con solo mirar un elemento. Sobre datos desordenados, esa suposición es falsa — el algoritmo no tira error, simplemente puede no encontrar un elemento que sí está, o devolver una posición incorrecta.',
+      fix:'// ordenar primero (una sola vez),\n// y recién ahí buscar tantas\n// veces como haga falta:\nordenar(arr, 5);\nint pos = busquedaBinaria(arr, 5, 8);' },
+    { tag:'caso patológico', title:'QuickSort con pivote fijo sobre datos ya ordenados',
+      bad:'// pivote = siempre el primer elemento\nint pivote = arr[ini];\n\n// sobre un arreglo YA ordenado,\n// cada partición queda de tamaño\n// n-1 y 0 — el peor caso posible',
+      cons:'Con el arreglo ya ordenado (o ya ordenado al revés) y un pivote fijo, cada partición es tan desbalanceada como puede ser. QuickSort degrada de O(n log n) a O(n²) — exactamente en el caso que más comúnmente se da en la práctica (datos parcialmente ordenados).',
+      fix:'// elegir el pivote de forma\n// aleatoria, o usando la mediana\n// de tres candidatos, evita que\n// un patrón de entrada previsible\n// fuerce siempre el peor caso' },
+    { tag:'orden perdido', title:'Encadenar ordenamientos sin verificar estabilidad',
+      bad:'ordenarPorParcialito3(alumnos); // estable\nordenarPorPromedio(alumnos);    // NO estable',
+      cons:'La intención es que, entre alumnos con igual promedio, se respete el orden por parcialito 3. Pero si el segundo ordenamiento no es estable, ese orden relativo se pierde de forma impredecible — el resultado "parece" andar en pruebas chicas y falla en casos reales.',
+      fix:'// usar un algoritmo estable\n// (ej. MergeSort o Radix Sort)\n// en TODAS las pasadas de un\n// ordenamiento multi-criterio' },
+    { tag:'bug de índices', title:'Off-by-one en el bucle de burbuja/inserción',
+      bad:'for (int i = 0; i &lt;= n; i++) {\n  if (arr[i] &gt; arr[i+1]) // ¡se pasa!\n    swap(arr, i, i+1);\n}',
+      cons:'Con i llegando hasta n (inclusive) y comparando arr[i+1], la última iteración accede a arr[n+1] — fuera de los límites del arreglo. Es el clásico error de límites en algoritmos con bucles anidados o comparaciones "mirando adelante".',
+      fix:'for (int i = 0; i &lt; n - 1; i++) {\n  if (arr[i] &gt; arr[i+1])\n    swap(arr, i, i+1);\n}' },
+    { tag:'elección apurada', title:'Usar un O(n²) sin pensar el tamaño real de los datos',
+      bad:'// "anduvo perfecto en la demo\n//  con 15 elementos"\nordenamientoBurbuja(nodosDelDiagrama);\n// producción: 200.000 nodos',
+      cons:'Un O(n²) que tarda milisegundos con 15 elementos puede tardar minutos con 200.000. El algoritmo "funciona" en el sentido de que da el resultado correcto — el problema es puramente de escala, y por eso es tan fácil no detectarlo hasta que ya es tarde.',
+      fix:'// para entradas que pueden\n// crecer sin límite conocido,\n// default a O(n log n)\n// (MergeSort/QuickSort) desde\n// el diseño, no como optimización\n// posterior' }
+  ];
+  var errGrid = document.getElementById('errGrid');
+  errors.forEach(function(e, i){
+    var card = document.createElement('div');
+    card.className = 'err-card';
+    card.innerHTML =
+      '<div class="tag">' + e.tag + '</div>' +
+      '<h4>' + e.title + '</h4>' +
+      '<div class="code">' + e.bad + '</div>' +
+      '<div class="err-sec c2">CONSECUENCIA</div>' +
+      '<p class="why">' + e.cons + '</p>' +
+      '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+      '<div class="fix-box" id="fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code">' + e.fix + '</div></div>';
+    errGrid.appendChild(card);
+  });
+  errGrid.addEventListener('click', function(ev){
+    if (!ev.target.classList.contains('err-toggle')) return;
+    var i = ev.target.getAttribute('data-i');
+    var box = document.getElementById('fix-' + i);
+    var showing = box.classList.toggle('show');
+    ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+  });
+
+  /* ================= quizzes ================= */
+  var quizzes = [
+    { code:'int arr[] = {4, 2, 7, 1};\n// aplicar selección: en cada vuelta,\n// buscar el mínimo del resto y\n// colocarlo en su posición final',
+      q:'¿Cuál es el arreglo después de la PRIMERA vuelta de selección?', opts:['{1, 2, 7, 4}', '{1, 4, 7, 2}', '{2, 4, 7, 1}', '{4, 2, 7, 1} (sin cambios)'], correct:0,
+      fb:'El mínimo de todo el arreglo es 1, que está en la posición 3. Se intercambia con el elemento de la posición 0 (el 4): {1, 2, 7, 4}.' },
+    { code:'// MergeSort: T(N) = 2·T(N/2) + O(N)\n// QuickSort (peor caso): T(N) = T(N-1) + O(N)',
+      q:'¿Por qué QuickSort puede degradar a O(n²) mientras que MergeSort siempre es O(n log n)?', opts:['MergeSort usa menos memoria', 'MergeSort siempre divide parejo (N/2 y N/2); QuickSort depende del pivote, que en el peor caso genera particiones de tamaño N-1 y 0', 'QuickSort es recursivo y MergeSort no', 'No es cierto, los dos son siempre O(n log n)'], correct:1,
+      fb:'La garantía de O(n log n) de MergeSort viene de que SIEMPRE divide a la mitad, sin importar los datos. QuickSort depende de qué tan bien parte el pivote — en el peor caso (pivote siempre extremo), la recursión queda tan desbalanceada como T(N) = T(N-1) + O(N), que es O(n²).' },
+    { code:'int arr[] = {5, 5, 3, 5, 1};\n// ordenar de menor a mayor,\n// preservando el orden relativo\n// entre los tres "5"',
+      q:'¿Qué característica del algoritmo de ordenamiento garantiza esto?', opts:['Que sea in-place', 'Que sea recursivo', 'Que sea estable', 'Que use O(log n) de memoria extra'], correct:2,
+      fb:'La estabilidad es justamente la garantía de que elementos considerados iguales (acá, los tres "5") mantienen su orden relativo original después de ordenar.' },
+    { code:'int arr[] = {1, 3, 5, 7, 9, 11};\nbuscarLineal(arr, 6, 11);',
+      q:'¿Cuántas comparaciones hace, en el peor caso, una búsqueda lineal buscando 11 en este arreglo de 6 elementos?', opts:['1', '3', '6', 'log₂(6) ≈ 2.6'], correct:2,
+      fb:'La búsqueda lineal revisa uno por uno desde el principio. Si el elemento buscado es el último (o no está), tiene que revisar los 6 elementos: O(n) en el peor caso, sin importar si están ordenados.' }
+  ];
+  var quizList = document.getElementById('quizList');
+  quizzes.forEach(function(qz, qi){
+    var wrap = document.createElement('div');
+    wrap.className = 'quiz';
+    var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+    wrap.innerHTML =
+      '<div class="badge violet">CHECKPOINT ' + (qi+1) + '</div>' +
+      '<div class="code" style="margin-top:8px;">' + qz.code + '</div>' +
+      '<p style="color:var(--text); margin:6px 0 10px;">' + qz.q + '</p>' +
+      '<div class="opt-row">' + optsHTML + '</div>' +
+      '<div class="quiz-fb" id="fb-' + qi + '"></div>' +
+      '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button>' +
+        '<button class="conf-btn" data-c="dude">dudé</button>' +
+        '<button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+    quizList.appendChild(wrap);
+  });
+  quizList.addEventListener('click', function(ev){
+    var t = ev.target;
+    if (t.classList.contains('opt')){
+      var qi = t.getAttribute('data-qi');
+      var oi = parseInt(t.getAttribute('data-oi'),10);
+      var qz = quizzes[qi];
+      var row = t.parentElement;
+      Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+      if (oi === qz.correct){ t.classList.add('correct'); }
+      else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+      var fb = document.getElementById('fb-' + qi);
+      fb.textContent = qz.fb;
+      fb.classList.add('show');
+    }
+    if (t.classList.contains('conf-btn')){
+      var siblings = t.parentElement.querySelectorAll('.conf-btn');
+      Array.prototype.forEach.call(siblings, function(b){ b.classList.remove('picked'); });
+      t.classList.add('picked');
+    }
+  });
+})();
+</script>
+</body>
+</html>

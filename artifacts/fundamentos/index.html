@@ -1,0 +1,1841 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Fundamentos AyED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: sticky tab nav over four stacked topic panels, each panel repeating a
+   concepto -> bullets -> diagrama -> ejemplo -> mnemotecnia -> ejercicios template. */
+:root{
+  --bg:#f5f4f0;
+  --surface:#ffffff;
+  --surface-2:#edece6;
+  --border:#d8d6cc;
+  --fg:#181a16;
+  --muted:#5c5f56;
+  --accent:#3a6b5c;
+  --accent-ink:#f5f4f0;
+  --accent-soft:#dde9e2;
+  --accent2:#8a4f2e;
+  --accent2-soft:#f1e3d4;
+  --good:#1f7a4d;
+  --good-soft:#dcf0e3;
+  --bad:#b23b3b;
+  --bad-soft:#f8e0df;
+  --code-bg:#1d2320;
+  --code-fg:#dfe6de;
+  --shadow:0 1px 2px rgba(20,20,15,.06), 0 8px 24px -12px rgba(20,20,15,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d100e;
+    --surface:#161a17;
+    --surface-2:#1e2420;
+    --border:#2c332d;
+    --fg:#e8ece6;
+    --muted:#9aa294;
+    --accent:#6fcf9e;
+    --accent-ink:#0b1510;
+    --accent-soft:#17251d;
+    --accent2:#e3a06b;
+    --accent2-soft:#271d14;
+    --good:#6fcf9e;
+    --good-soft:#15241c;
+    --bad:#e38686;
+    --bad-soft:#2a1717;
+    --code-bg:#0a0d0b;
+    --code-fg:#cfe3d4;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d100e;
+  --surface:#161a17;
+  --surface-2:#1e2420;
+  --border:#2c332d;
+  --fg:#e8ece6;
+  --muted:#9aa294;
+  --accent:#6fcf9e;
+  --accent-ink:#0b1510;
+  --accent-soft:#17251d;
+  --accent2:#e3a06b;
+  --accent2-soft:#271d14;
+  --good:#6fcf9e;
+  --good-soft:#15241c;
+  --bad:#e38686;
+  --bad-soft:#2a1717;
+  --code-bg:#0a0d0b;
+  --code-fg:#cfe3d4;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:'Inter',system-ui,sans-serif;
+  padding-left:max(16px, env(safe-area-inset-left,0px));
+  padding-right:max(16px, env(safe-area-inset-right,0px));
+}
+h1,h2,h3,.display{font-family:'Space Grotesk',system-ui,sans-serif; text-wrap:balance;}
+code, .mono, .stackbox, .diagram text, .code-block{font-family:'JetBrains Mono',ui-monospace,monospace;}
+.wrap{max-width:860px; margin:0 auto; padding-bottom:64px;}
+a{color:var(--accent);}
+
+/* ---- Hero ---- */
+.hero{padding:28px 0 18px; border-bottom:1px solid var(--border);}
+.hero .eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600;}
+.hero h1{font-size:clamp(24px,5vw,34px); margin:6px 0 8px; font-weight:700;}
+.hero p{color:var(--muted); font-size:14.5px; line-height:1.55; margin:0 0 16px; max-width:56ch;}
+.progress-overview{display:flex; gap:10px; flex-wrap:wrap;}
+.progress-chip{
+  display:flex; align-items:center; gap:8px; background:var(--surface);
+  border:1px solid var(--border); border-radius:10px; padding:8px 12px; font-size:12.5px;
+  box-shadow:var(--shadow);
+}
+.progress-chip .dot{width:9px;height:9px;border-radius:50%;background:var(--border); flex:none;}
+.progress-chip .dot.done{background:var(--good);}
+.progress-chip .dot.mid{background:var(--accent2);}
+
+/* ---- Tabs ---- */
+.tabbar{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:5;
+  background:var(--bg); border-bottom:1px solid var(--border);
+  display:flex; gap:4px; overflow-x:auto; padding:10px 0; margin-bottom:8px;
+  scrollbar-width:none;
+}
+.tabbar::-webkit-scrollbar{display:none;}
+.tab{
+  flex:none; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13.5px;
+  padding:9px 14px; border-radius:999px; border:1px solid var(--border);
+  background:var(--surface); color:var(--muted); cursor:pointer; white-space:nowrap;
+}
+.tab[aria-selected="true"]{background:var(--accent); color:var(--accent-ink); border-color:var(--accent);}
+.tab .n{opacity:.65; margin-right:6px;}
+
+/* ---- Panels ---- */
+.panel{display:none; padding:20px 0 40px;}
+.panel.active{display:block;}
+.topic-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:4px;}
+.topic-head h2{font-size:clamp(20px,4vw,26px); margin:0;}
+.topic-tag{font-size:11.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); padding:3px 9px; border-radius:6px;}
+.topic-hook{color:var(--muted); font-size:14px; margin:4px 0 22px; max-width:62ch; line-height:1.6;}
+
+.block{margin:26px 0;}
+.block h3{font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 12px; font-weight:700;}
+
+.concept-card{
+  background:var(--accent-soft); border:1px solid var(--border); border-radius:14px;
+  padding:16px 18px; font-size:16px; line-height:1.6;
+}
+.concept-card b{color:var(--accent); background:none;}
+
+ul.checklist{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px;}
+ul.checklist li{
+  display:flex; gap:10px; align-items:flex-start; background:var(--surface);
+  border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:14.5px; line-height:1.5;
+}
+ul.checklist input[type=checkbox]{margin-top:3px; width:16px; height:16px; accent-color:var(--accent); flex:none;}
+ul.checklist li.checked{opacity:.6;}
+ul.checklist li.checked span{text-decoration:line-through;}
+ul.checklist code{background:var(--surface-2); padding:1px 5px; border-radius:4px; font-size:13px;}
+
+.diagram-card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:var(--shadow);}
+.diagram-card svg{display:block; width:100%; height:auto;}
+.diagram-controls{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;}
+.btn{
+  font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:8px 14px;
+  border-radius:8px; border:1px solid var(--border); background:var(--surface-2); color:var(--fg); cursor:pointer;
+}
+.btn:hover{border-color:var(--accent);}
+.btn.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent);}
+.btn.ghost{background:transparent;}
+.diagram-note{margin-top:10px; font-size:13px; color:var(--muted); min-height:36px; line-height:1.5;}
+
+.example-card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:4px; box-shadow:var(--shadow);}
+.code-block{
+  background:var(--code-bg); color:var(--code-fg); border-radius:10px; padding:14px 16px;
+  font-size:13px; line-height:1.65; overflow-x:auto; white-space:pre;
+}
+.code-block .c{color:#8aa08f;}
+.example-walk{padding:12px 16px 14px; font-size:13.5px; color:var(--muted); line-height:1.6;}
+.example-walk b{color:var(--fg);}
+
+.mnemo{
+  background:var(--accent2-soft); border:1px dashed var(--accent2); border-radius:12px;
+  padding:14px 16px; font-size:14.5px; line-height:1.6;
+}
+.mnemo .lbl{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--accent2); display:block; margin-bottom:6px;}
+
+.quiz{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:var(--shadow);}
+.quiz p.q{font-size:14.5px; font-weight:600; margin:0 0 12px; line-height:1.5;}
+.quiz .opts{display:flex; flex-direction:column; gap:8px;}
+.opt-btn{
+  text-align:left; font-size:14px; padding:10px 12px; border-radius:9px; border:1px solid var(--border);
+  background:var(--surface-2); color:var(--fg); cursor:pointer; line-height:1.4;
+}
+.opt-btn:hover{border-color:var(--accent);}
+.opt-btn.correct{background:var(--good-soft); border-color:var(--good); color:var(--fg);}
+.opt-btn.incorrect{background:var(--bad-soft); border-color:var(--bad); color:var(--fg);}
+.opt-btn[disabled]{cursor:default;}
+.quiz .expl{margin-top:10px; font-size:13.5px; color:var(--muted); line-height:1.55; display:none;}
+.quiz .expl.show{display:block;}
+.quiz .fill{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+.quiz input[type=text]{
+  font-family:'JetBrains Mono',monospace; font-size:14px; padding:9px 10px; border-radius:8px;
+  border:1px solid var(--border); background:var(--surface-2); color:var(--fg); flex:1; min-width:120px;
+}
+
+.sim{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:var(--shadow);}
+.sim-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
+.sim-row input[type=text]{width:84px;}
+.stack-area{min-height:150px; display:flex; flex-direction:column-reverse; align-items:center; gap:6px; padding:10px; border:1px dashed var(--border); border-radius:10px; background:var(--surface-2);}
+.queue-area{min-height:70px; display:flex; align-items:center; gap:6px; padding:10px; border:1px dashed var(--border); border-radius:10px; background:var(--surface-2); overflow-x:auto;}
+.stackbox{
+  min-width:64px; padding:8px 10px; border-radius:8px; background:var(--accent); color:var(--accent-ink);
+  font-size:14px; font-weight:700; text-align:center; box-shadow:var(--shadow); flex:none;
+}
+.stackbox.top{outline:2px solid var(--accent2); outline-offset:2px;}
+.empty-note{color:var(--muted); font-size:13px; font-style:italic;}
+.end-label{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+
+.sort-row{display:flex; gap:6px; flex-wrap:wrap; align-items:flex-end; min-height:64px;}
+.sort-box{
+  min-width:44px; padding:10px 6px 6px; border-radius:8px; background:var(--surface-2); border:2px solid var(--border);
+  color:var(--fg); font-size:15px; font-weight:700; text-align:center; flex:none; position:relative;
+}
+.sort-box .idx{position:absolute; top:-18px; left:0; right:0; font-size:10px; font-weight:400; color:var(--muted);}
+.sort-box.done{background:var(--good-soft); border-color:var(--good);}
+.sort-box.candidate{border-color:var(--accent2); outline:2px solid var(--accent2); outline-offset:1px;}
+.sort-box.compare{outline:2px dashed var(--accent); outline-offset:1px;}
+
+.code-block .ln{display:block; margin:0 -16px; padding:1px 16px; border-left:3px solid transparent; white-space:pre;}
+.code-block .ln.active{background:rgba(111,207,158,0.16); border-left-color:#6fcf9e;}
+
+.gnode{fill:var(--surface-2); stroke:var(--border); stroke-width:2;}
+.gnode.visited{fill:var(--good-soft); stroke:var(--good);}
+.gnode.current{fill:var(--accent2-soft); stroke:var(--accent2); stroke-width:3;}
+.gedge{stroke:var(--border); stroke-width:2;}
+.gtext{font-size:13px; font-weight:700; fill:var(--fg); text-anchor:middle;}
+
+.tnode{fill:var(--surface-2); stroke:var(--border); stroke-width:2;}
+.tnode.visited{fill:var(--surface); stroke:var(--accent); stroke-width:2;}
+.tnode.current{fill:var(--accent2-soft); stroke:var(--accent2); stroke-width:3;}
+.tedge{stroke:var(--border); stroke-width:2;}
+.ttext{font-size:13px; font-weight:700; fill:var(--fg); text-anchor:middle;}
+
+.mem-byte{display:flex; flex-direction:column; border:1px solid var(--border); border-radius:6px; overflow:hidden;}
+.mem-bit{width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:9px; color:var(--muted); border-bottom:1px solid var(--border);}
+.mem-bit:last-child{border-bottom:none;}
+
+footer{border-top:1px solid var(--border); margin-top:20px; padding:20px 0 40px; color:var(--muted); font-size:12.5px; line-height:1.6;}
+
+@media (max-width:480px){
+  .code-block{font-size:12px;}
+  .stackbox{min-width:52px; font-size:12.5px;}
+}
+</style>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">AyED · FCEFyN · repaso completo Primer y Segundo Parcial</div>
+    <h1>Fundamentos AyED</h1>
+    <p>Pestañas 01-04: los cuatro pilares del Primer Parcial (Punteros, Recursión, POO, Pilas y Colas) — la base de todo lo demás. Pestañas 05-08: los temas del Segundo Parcial (Ordenamiento, Árboles, Grafos, Otras Estructuras), construidos sobre esa base. Cada sección tiene el concepto en palabras simples, un diagrama para ver el patrón, ejercicios de menor a mayor dificultad, y un ejemplo final al estilo del examen.</p>
+    <div class="progress-overview" id="progressOverview"></div>
+  </div>
+
+  <div class="tabbar" id="tabbar" role="tablist">
+    <button class="tab" data-tab="punteros" role="tab"><span class="n">01</span>Punteros</button>
+    <button class="tab" data-tab="recursion" role="tab"><span class="n">02</span>Recursión</button>
+    <button class="tab" data-tab="poo" role="tab"><span class="n">03</span>POO básica</button>
+    <button class="tab" data-tab="pilas-colas" role="tab"><span class="n">04</span>Pilas y Colas</button>
+    <button class="tab" data-tab="ordenamiento" role="tab"><span class="n">05</span>Ordenamiento</button>
+    <button class="tab" data-tab="arboles" role="tab"><span class="n">06</span>Árboles</button>
+    <button class="tab" data-tab="grafos" role="tab"><span class="n">07</span>Grafos</button>
+    <button class="tab" data-tab="otras-estructuras" role="tab"><span class="n">08</span>Otras Estructuras</button>
+  </div>
+
+  <!-- ============ PUNTEROS ============ -->
+  <section class="panel" id="panel-punteros">
+    <div class="topic-head"><h2>Punteros</h2><span class="topic-tag">Base de todo lo que viene</span></div>
+    <p class="topic-hook">Un árbol, un nodo de grafo, una lista enlazada: todos son, en el fondo, "una variable que guarda dónde está otra variable". Si esto no está claro, cualquier estructura con nodos se vuelve magia incomprensible.</p>
+
+    <div class="block">
+      <h3>La idea en una frase</h3>
+      <div class="concept-card">Una variable normal guarda <b>un dato</b>. Un puntero guarda <b>la dirección de memoria</b> donde vive ese dato — no es el dato, es el mapa para llegar a él.</div>
+    </div>
+
+    <div class="block">
+      <h3>Qué tenés que tener claro</h3>
+      <ul class="checklist" data-section="punteros">
+        <li><input type="checkbox"><span><code>int x = 42;</code> reserva una casilla de memoria y guarda 42 adentro.</span></li>
+        <li><input type="checkbox"><span><code>int* p = &x;</code> — el <code>&</code> significa "dame la dirección de". <code>p</code> guarda esa dirección, no el 42.</span></li>
+        <li><input type="checkbox"><span><code>*p</code> significa "el valor que está en la dirección que p guarda" (desreferenciar). <code>*p = 100;</code> cambia <code>x</code>, porque apuntan al mismo lugar.</span></li>
+        <li><input type="checkbox"><span>Un puntero puede apuntar a nada válido: <code>nullptr</code>. Desreferenciarlo ahí (<code>*p</code> con p nulo) rompe el programa.</span></li>
+        <li><input type="checkbox"><span>Aritmética de punteros: <code>p + 1</code> no avanza 1 byte, avanza <code>sizeof(tipo)</code> bytes — te mueve al siguiente elemento del arreglo.</span></li>
+        <li><input type="checkbox"><span>En structs con punteros, <code>nodo->dato</code> es exactamente lo mismo que <code>(*nodo).dato</code>: primero desreferenciás, después accedés al campo.</span></li>
+        <li><input type="checkbox"><span><code>new</code> reserva memoria en el heap que vive hasta que vos la liberás con <code>delete</code> (o hasta que termine el programa) — no se destruye sola al salir del scope.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Diagrama: qué pasa en memoria</h3>
+      <div class="diagram-card">
+        <svg viewBox="0 0 400 170" id="ptrSvg">
+          <defs>
+            <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--accent2)"></path>
+            </marker>
+          </defs>
+          <text x="60" y="22" text-anchor="middle" font-size="11" fill="var(--muted)">variable x</text>
+          <rect x="20" y="30" width="80" height="54" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="60" y="50" text-anchor="middle" font-size="10" fill="var(--muted)">dirección</text>
+          <text x="60" y="63" text-anchor="middle" font-size="10.5" fill="var(--fg)">0x7ffd...a20</text>
+          <text x="60" y="78" text-anchor="middle" font-size="15" font-weight="700" fill="var(--fg)" id="xVal">42</text>
+
+          <text x="300" y="22" text-anchor="middle" font-size="11" fill="var(--muted)">puntero p</text>
+          <rect x="260" y="30" width="80" height="54" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="300" y="50" text-anchor="middle" font-size="10" fill="var(--muted)">dirección</text>
+          <text x="300" y="63" text-anchor="middle" font-size="10.5" fill="var(--fg)">0x7ffd...a40</text>
+          <text x="300" y="78" text-anchor="middle" font-size="10.5" fill="var(--accent)" id="pVal">0x7ffd...a20</text>
+
+          <path id="ptrArrow" d="M270,30 C 230,0 100,0 65,28" fill="none" stroke="var(--accent2)" stroke-width="2" marker-end="url(#arrow)"></path>
+
+          <text x="200" y="130" text-anchor="middle" font-size="11.5" fill="var(--muted)" id="ptrCaption">p guarda la dirección de x → por eso la flecha va de p hacia x.</text>
+        </svg>
+        <div class="diagram-controls">
+          <button class="btn primary" id="ptrAssignBtn">Ejecutar *p = 100;</button>
+          <button class="btn" id="ptrNullBtn">Ejecutar p = nullptr;</button>
+          <button class="btn ghost" id="ptrResetBtn">Reiniciar</button>
+        </div>
+        <div class="diagram-note" id="ptrNote">Mirá la flecha: nace en p y termina en x. Esa flecha ES el puntero.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto</h3>
+      <div class="example-card">
+        <div class="code-block">int a = 5;
+int* p = &a;     <span class="c">// p apunta a a</span>
+*p = *p + 10;     <span class="c">// "lo que hay en la dirección de p" += 10</span>
+std::cout &lt;&lt; a;  <span class="c">// ¿qué imprime?</span></div>
+        <div class="example-walk"><b>Paso a paso:</b> <code>&a</code> da la dirección de <code>a</code>, que <code>p</code> guarda. <code>*p</code> va a esa dirección y lee el valor (5), le suma 10, y lo vuelve a escribir en esa misma dirección. Como esa dirección ES donde vive <code>a</code>, <code>a</code> queda en <b>15</b>. El puntero no copió el valor: te dio acceso directo a la casilla original.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Para memorizar</h3>
+      <div class="mnemo"><span class="lbl">Mnemotecnia</span><b>&</b> = Address (¿dónde vive?) → te da la dirección.<br><b>*</b> = "metete Ahí" (desreferenciar) → te da (o te deja cambiar) lo que hay en esa dirección.</div>
+    </div>
+
+    <div class="block">
+      <h3>Ejercicios rápidos</h3>
+      <div class="quiz" data-q>
+        <p class="q">1. ¿Qué imprime este código?</p>
+        <div class="code-block" style="margin-bottom:10px;">int x = 7;
+int* p = &x;
+int* q = p;
+*q = 20;
+std::cout &lt;&lt; x;</div>
+        <div class="opts">
+          <button class="opt-btn" data-correct="false">7 (q es una copia independiente)</button>
+          <button class="opt-btn" data-correct="true">20 (p y q apuntan al mismo lugar que x)</button>
+          <button class="opt-btn" data-correct="false">Error de compilación</button>
+        </div>
+        <div class="expl">q se asigna como <code>p</code>, así que ambos guardan la misma dirección (la de x). Modificar <code>*q</code> modifica esa dirección — y x vive ahí.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">2. Si <code>p</code> es <code>int*</code> y apunta al primer elemento de un arreglo de enteros, ¿qué hace <code>p++</code>?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="false">Avanza 1 byte exacto</button>
+          <button class="opt-btn" data-correct="true">Avanza sizeof(int) bytes — apunta al siguiente elemento</button>
+          <button class="opt-btn" data-correct="false">No compila, los punteros no se incrementan</button>
+        </div>
+        <div class="expl">La aritmética de punteros conoce el tipo al que apunta: avanza "una casilla del arreglo", no un byte literal.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">3. ¿Por qué <code>nodo->dato</code> y <code>(*nodo).dato</code> son lo mismo?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="false">No son lo mismo, -> es más rápido</button>
+          <button class="opt-btn" data-correct="true">-> primero desreferencia el puntero y después accede al campo, igual que (*nodo).dato</button>
+          <button class="opt-btn" data-correct="false">-> solo funciona con punteros a punteros</button>
+        </div>
+        <div class="expl">-> es simplemente azúcar sintáctica: desreferenciar y acceder al miembro en un solo paso.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo integrador: armando una lista a mano</h3>
+      <div class="example-card">
+        <div class="code-block">struct NodoLista {
+    int valor;
+    NodoLista* siguiente;   <span class="c">// puntero al próximo nodo (o nullptr si es el último)</span>
+};
+
+int main() {
+    NodoLista* primero = new NodoLista{10, nullptr};
+    NodoLista* segundo = new NodoLista{20, nullptr};
+    NodoLista* tercero = new NodoLista{30, nullptr};   <span class="c">// 3 nodos creados en el heap con new</span>
+
+    primero->siguiente = segundo;   <span class="c">// -> porque 'primero' es un puntero</span>
+    segundo->siguiente = tercero;
+    <span class="c">// tercero->siguiente ya es nullptr: ahí termina la lista</span>
+
+    NodoLista* actual = primero;    <span class="c">// 'actual' es un cursor que recorre la lista</span>
+    while (actual != nullptr) {
+        std::cout &lt;&lt; actual->valor &lt;&lt; " ";  <span class="c">// accedo al dato con ->  </span>
+        actual = actual->siguiente;   <span class="c">// avanzo: ahora actual apunta al siguiente</span>
+    }
+    <span class="c">// imprime: 10 20 30</span>
+
+    delete primero; delete segundo; delete tercero;   <span class="c">// liberamos lo que creamos con new</span>
+}</div>
+        <div class="example-walk">Este ejemplo junta todo lo de la sección: creás nodos en el heap con <code>new</code> (cada uno es un bloque de memoria aparte), los <b>encadenás</b> guardando en <code>siguiente</code> la dirección del próximo — por eso <code>-&gt;</code>, porque <code>primero</code> y <code>segundo</code> son punteros — y después recorrés la lista con un puntero "cursor" (<code>actual</code>) que avanza de nodo en nodo. Ese patrón, <b>"mientras no sea nullptr, procesar y avanzar al siguiente"</b>, es la base de casi cualquier recorrido de lista, árbol o grafo que vas a programar en la materia. Y como cada nodo se creó con <code>new</code>, hay que liberarlo con <code>delete</code> al final — si no, esa memoria queda reservada para siempre (memory leak).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RECURSION ============ -->
+  <section class="panel" id="panel-recursion">
+    <div class="topic-head"><h2>Recursión</h2><span class="topic-tag">Sostiene Árboles y DFS</span></div>
+    <p class="topic-hook">Casi todo "Árboles" en el segundo parcial (altura, factor de balance, búsquedas en BST) y DFS en grafos se resuelve con una función que se llama a sí misma. Si confiás en el patrón, dejás de necesitar "desenrollar" todo a mano.</p>
+
+    <div class="block">
+      <h3>La idea en una frase</h3>
+      <div class="concept-card">Una función recursiva resuelve un problema resolviendo una <b>versión más chica del mismo problema</b>, hasta llegar a un caso tan simple que ya conoce la respuesta sin llamarse de nuevo.</div>
+    </div>
+
+    <div class="block">
+      <h3>Qué tenés que tener claro</h3>
+      <ul class="checklist" data-section="recursion">
+        <li><input type="checkbox"><span>Toda recursión necesita dos partes: <b>caso base</b> (frena la recursión) y <b>caso recursivo</b> (reduce el problema y llama de nuevo).</span></li>
+        <li><input type="checkbox"><span>Cada llamada crea su propio "marco" en la pila de llamadas, con sus propias variables locales — no se mezclan entre sí.</span></li>
+        <li><input type="checkbox"><span>No hace falta desenrollar todo mentalmente: confiá en que la llamada recursiva ya resuelve bien el subproblema más chico (el "salto de fe").</span></li>
+        <li><input type="checkbox"><span>Si el caso base está mal, o nunca se alcanza, el programa explota con <b>stack overflow</b> (demasiados marcos apilados).</span></li>
+        <li><input type="checkbox"><span>En árboles, el patrón casi siempre es: <code>resolver(nodo) = combinar( resolver(izq), resolver(der) )</code>, con "nodo == nullptr" como caso base.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Diagrama: la pila de llamadas en vivo</h3>
+      <div class="diagram-card">
+        <div id="recStack" style="display:flex; flex-direction:column-reverse; gap:6px; min-height:220px; justify-content:flex-start;"></div>
+        <div class="diagram-controls">
+          <button class="btn ghost" id="recPrev">◀ Paso anterior</button>
+          <button class="btn primary" id="recNext">Paso siguiente ▶</button>
+          <span class="end-label" id="recStepCount" style="align-self:center;"></span>
+        </div>
+        <div class="diagram-note" id="recNote"></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto</h3>
+      <div class="example-card">
+        <div class="code-block">int factorial(int n) {
+    if (n == 0) return 1;       <span class="c">// caso base</span>
+    return n * factorial(n-1);  <span class="c">// caso recursivo</span>
+}</div>
+        <div class="example-walk"><b>Cómo leerlo sin desenrollar todo:</b> no pienses "factorial(4) llama a factorial(3) que llama a..." de una. Preguntate solo dos cosas: (1) ¿cuándo para? → cuando n llega a 0. (2) ¿cómo uso el resultado de un problema más chico para armar el mío? → multiplico n por el factorial de n-1, que ya confío que está bien calculado. Usá el diagrama de arriba para ver la pila real paso a paso.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Para memorizar</h3>
+      <div class="mnemo"><span class="lbl">Mnemotecnia</span>Antes de escribir una sola línea recursiva, respondé en voz alta: <b>"¿Cuál es el caso más chico que ya sé resolver sin llamarme?"</b> — esa es tu condición de corte. Todo lo demás es "resolvé el pedacito, y combiná con lo que ya resolviste antes".</div>
+    </div>
+
+    <div class="block">
+      <h3>Ejercicios rápidos</h3>
+      <div class="quiz" data-q>
+        <p class="q">1. En esta función, ¿cuál es el caso base?</p>
+        <div class="code-block" style="margin-bottom:10px;">int alturaDe(NodoAVL* nodo) {
+    if (nodo == nullptr) return 0;
+    int izq = alturaDe(nodo->izquierdo);
+    int der = alturaDe(nodo->derecho);
+    return 1 + std::max(izq, der);
+}</div>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">nodo == nullptr → return 0</button>
+          <button class="opt-btn" data-correct="false">return 1 + max(izq, der)</button>
+          <button class="opt-btn" data-correct="false">No tiene caso base, es recursión infinita</button>
+        </div>
+        <div class="expl">Un árbol vacío (nullptr) no necesita llamarse de nuevo: ya sabés que su altura es 0. Ese es el límite donde la recursión deja de crecer.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">2. ¿Qué pasaría si en <code>factorial</code> el caso base fuera <code>if (n == 5) return 1;</code> y lo llamás con <code>factorial(3)</code>?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="false">Devuelve 1 igual</button>
+          <button class="opt-btn" data-correct="true">Nunca llega a n==5 (n baja: 3,2,1,0,-1...) → stack overflow</button>
+          <button class="opt-btn" data-correct="false">El compilador lo detecta y da error</button>
+        </div>
+        <div class="expl">n decrece desde 3, nunca va a tocar 5: la recursión nunca encuentra su caso base y sigue apilando llamadas hasta reventar la pila.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo integrador: recursión sobre una estructura con punteros</h3>
+      <div class="example-card">
+        <div class="code-block">struct NodoAVL {
+    EstacionCritica dato;
+    NodoAVL* izquierdo;
+    NodoAVL* derecho;
+};
+
+<span class="c">// cuenta cuántas estaciones del árbol tienen id menor que "limite"</span>
+int contarMenoresA(NodoAVL* nodo, int limite) {
+    if (nodo == nullptr) return 0;        <span class="c">// caso base: árbol vacío, no suma nada</span>
+
+    int cuenta = (nodo->dato.id &lt; limite) ? 1 : 0;   <span class="c">// ¿este nodo cuenta?</span>
+
+    <span class="c">// caso recursivo: este nodo + lo que cuentan sus dos subárboles</span>
+    return cuenta + contarMenoresA(nodo->izquierdo, limite)
+                  + contarMenoresA(nodo->derecho, limite);
+}</div>
+        <div class="example-walk">Esta función mezcla recursión con punteros: para "entrar" a cada nodo usás <code>-&gt;</code> (porque <code>nodo</code> es un puntero a <code>NodoAVL</code>), el caso base es el mismo patrón que vas a usar en casi todo Árboles (<code>nodo == nullptr</code>), y el caso recursivo no se llama una sola vez sino <b>dos</b> — una para el subárbol izquierdo y otra para el derecho — y suma los resultados. Esta es exactamente la forma de las funciones recursivas sobre árboles que te van a pedir en el parcial (altura, factor de balance, conteos por rango): un trabajito con el nodo actual + combinar lo que devuelven las llamadas recursivas a los hijos.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ POO ============ -->
+  <section class="panel" id="panel-poo">
+    <div class="topic-head"><h2>POO básica</h2><span class="topic-tag">El formato de TODOS los ejercicios del parcial</span></div>
+    <p class="topic-hook">En el examen nunca partís de una hoja en blanco: siempre te dan una clase ya armada (como <code>MetroNocturno</code> o <code>AgendaServicios</code>) y vos completás 1-2 métodos adentro. Saber leer rápido qué es privado y qué es público te ahorra minutos clave.</p>
+
+    <div class="block">
+      <h3>La idea en una frase</h3>
+      <div class="concept-card">Una <b>clase</b> es un plano que describe qué datos tiene un objeto y qué puede hacer. Un <b>objeto</b> es una instancia concreta construida a partir de ese plano.</div>
+    </div>
+
+    <div class="block">
+      <h3>Qué tenés que tener claro</h3>
+      <ul class="checklist" data-section="poo">
+        <li><input type="checkbox"><span><code>private</code>: solo lo pueden usar los propios métodos de la clase, desde adentro.</span></li>
+        <li><input type="checkbox"><span><code>public</code>: lo puede usar cualquiera que tenga un objeto de esa clase, desde afuera.</span></li>
+        <li><input type="checkbox"><span>El constructor (mismo nombre que la clase) inicializa el objeto cuando se crea con <code>new</code> o por valor.</span></li>
+        <li><input type="checkbox"><span>Un método definido fuera de la clase se escribe <code>TipoRetorno NombreClase::nombreMetodo(...) { ... }</code> — el <code>::</code> dice "esto pertenece a esa clase".</span></li>
+        <li><input type="checkbox"><span>Dentro de un método de la clase, tenés acceso directo a todos los atributos <code>private</code> de ese objeto (sin pedir permiso).</span></li>
+        <li><input type="checkbox"><span>En el parcial: antes de escribir código, leé qué atributos privados ya existen (arreglos, contadores) — casi siempre ya tenés lo que necesitás, no hace falta inventar estructuras nuevas.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Diagrama: plano de clase → objetos</h3>
+      <div class="diagram-card">
+        <svg viewBox="0 0 400 230">
+          <rect x="20" y="10" width="200" height="140" rx="10" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="120" y="30" text-anchor="middle" font-size="12" font-weight="700" fill="var(--fg)">class NodoAVL</text>
+          <rect x="32" y="40" width="176" height="52" rx="6" fill="var(--bad-soft)" stroke="var(--bad)" stroke-opacity=".5"></rect>
+          <text x="40" y="54" font-size="9.5" fill="var(--bad)" font-weight="700">PRIVATE</text>
+          <text x="40" y="69" font-size="10" fill="var(--fg)">EstacionCritica dato;</text>
+          <text x="40" y="82" font-size="10" fill="var(--fg)">NodoAVL* izq, * der;</text>
+          <rect x="32" y="98" width="176" height="42" rx="6" fill="var(--good-soft)" stroke="var(--good)" stroke-opacity=".5"></rect>
+          <text x="40" y="112" font-size="9.5" fill="var(--good)" font-weight="700">PUBLIC</text>
+          <text x="40" y="128" font-size="10" fill="var(--fg)">NodoAVL(EstacionCritica e);</text>
+
+          <path d="M220,80 C 260,80 260,50 300,42" fill="none" stroke="var(--muted)" stroke-dasharray="3 3"></path>
+          <path d="M220,90 C 260,90 260,100 300,108" fill="none" stroke="var(--muted)" stroke-dasharray="3 3"></path>
+          <text x="245" y="68" font-size="9" fill="var(--muted)">crea instancias</text>
+
+          <rect x="300" y="16" width="86" height="52" rx="8" fill="var(--surface)" stroke="var(--border)"></rect>
+          <text x="343" y="36" text-anchor="middle" font-size="10.5" fill="var(--fg)" font-weight="700">nodo50</text>
+          <text x="343" y="52" text-anchor="middle" font-size="9" fill="var(--muted)">dato.id = 50</text>
+
+          <rect x="300" y="84" width="86" height="52" rx="8" fill="var(--surface)" stroke="var(--border)"></rect>
+          <text x="343" y="104" text-anchor="middle" font-size="10.5" fill="var(--fg)" font-weight="700">nodo30</text>
+          <text x="343" y="120" text-anchor="middle" font-size="9" fill="var(--muted)">dato.id = 30</text>
+
+          <text x="200" y="168" text-anchor="middle" font-size="10.5" fill="var(--bad)">main() NO puede escribir:</text>
+          <text x="200" y="184" text-anchor="middle" font-size="10.5" fill="var(--bad)">nodo50.dato (es private)</text>
+          <text x="200" y="202" text-anchor="middle" font-size="10.5" fill="var(--good)">main() SÍ puede llamar:</text>
+          <text x="200" y="218" text-anchor="middle" font-size="10.5" fill="var(--good)">monitor.factorBalanceDe(50) (es public)</text>
+        </svg>
+        <div class="diagram-note">Rojo = solo accesible desde adentro de la clase. Verde = accesible desde cualquier lado que tenga el objeto.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto</h3>
+      <div class="example-card">
+        <div class="code-block">class MonitorAVL {
+private:
+    NodoAVL* raiz;
+public:
+    int factorBalanceDe(int estacionId);  <span class="c">// lo vas a completar vos</span>
+};
+
+<span class="c">// fuera de la clase, implementando el método:</span>
+int MonitorAVL::factorBalanceDe(int estacionId) {
+    <span class="c">// ACÁ ADENTRO: "raiz" es visible aunque sea private,</span>
+    <span class="c">// porque este método PERTENECE a la clase.</span>
+}</div>
+        <div class="example-walk"><b>La trampa típica:</b> el estudiante ve <code>private</code> y piensa "no lo puedo tocar". Pero dentro de un método de <b>esa misma clase</b>, sí podés — el <code>private</code> bloquea el acceso desde <b>afuera</b> (por ejemplo desde <code>main()</code>), no desde los propios métodos.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Para memorizar</h3>
+      <div class="mnemo"><span class="lbl">Mnemotecnia</span><b>Private</b> es tu diario íntimo: solo vos (los métodos de la clase) lo leés. <b>Public</b> es tu vidriera: cualquiera que pase por la calle (código externo) lo puede ver y usar.</div>
+    </div>
+
+    <div class="block">
+      <h3>Ejercicios rápidos</h3>
+      <div class="quiz" data-q>
+        <p class="q">1. Dado <code>NodoAVL* izquierdo;</code> como atributo <code>private</code>, ¿desde dónde lo puedo usar directamente?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="false">Desde cualquier función del programa</button>
+          <button class="opt-btn" data-correct="true">Solo desde métodos de la propia clase NodoAVL (o de MonitorAVL si es su nodo interno)</button>
+          <button class="opt-btn" data-correct="false">Nunca, ni siquiera desde la propia clase</button>
+        </div>
+        <div class="expl">private restringe el acceso a "desde afuera de la clase", no a "desde ningún lado".</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">2. Te piden implementar <code>int RedComponentes::tamanoComponenteOperativa(int origenId)</code>. ¿Qué es lo primero que tenés que mirar?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">Los atributos private de la clase (qué arreglos/estructuras ya existen para usar)</button>
+          <button class="opt-btn" data-correct="false">Directamente escribir la lógica sin mirar nada más</button>
+          <button class="opt-btn" data-correct="false">Crear una clase nueva auxiliar</button>
+        </div>
+        <div class="expl">Casi siempre el enunciado ya te da (como private) exactamente los arreglos que necesitás: estaciones[], hayTunel[][], cantidadEstaciones. El trabajo es usarlos, no inventar de cero.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo integrador: clase completa, :: , objetos por valor y por puntero</h3>
+      <div class="example-card">
+        <div class="code-block">class Mochila {
+private:
+    int capacidadMaxima;
+    int pesoActual;
+
+public:
+    Mochila(int capacidad) {          <span class="c">// constructor: se ejecuta al crear el objeto</span>
+        capacidadMaxima = capacidad;
+        pesoActual = 0;
+    }
+
+    bool agregarPeso(int peso);       <span class="c">// declarado acá...</span>
+    int espacioLibre();               <span class="c">// ...implementado más abajo, fuera de la clase</span>
+};
+
+<span class="c">// "Mochila::" le dice al compilador: este método PERTENECE a la clase Mochila</span>
+bool Mochila::agregarPeso(int peso) {
+    if (pesoActual + peso > capacidadMaxima) return false;   <span class="c">// no entra, está lleno</span>
+    pesoActual = pesoActual + peso;    <span class="c">// accedo directo: estoy ADENTRO de la clase</span>
+    return true;
+}
+
+int Mochila::espacioLibre() {
+    return capacidadMaxima - pesoActual;
+}
+
+int main() {
+    Mochila mia(50);                   <span class="c">// objeto "por valor", vive en la pila</span>
+    Mochila* otra = new Mochila(30);   <span class="c">// 'otra' es un PUNTERO a un objeto en el heap</span>
+
+    mia.agregarPeso(20);       <span class="c">// objeto directo -&gt; punto</span>
+    otra->agregarPeso(10);     <span class="c">// puntero -&gt; flecha</span>
+
+    std::cout &lt;&lt; mia.espacioLibre();    <span class="c">// 30</span>
+    std::cout &lt;&lt; otra->espacioLibre();  <span class="c">// 20</span>
+
+    delete otra;   <span class="c">// se creó con new: hay que liberarlo a mano</span>
+}</div>
+        <div class="example-walk">Acá están juntos los tres puntos que te generan dudas. <b>(1) El <code>::</code></b> aparece cuando separás la <i>declaración</i> de un método (adentro de la clase: <code>agregarPeso(int peso);</code>) de su <i>implementación</i> (afuera, como función aparte) — sin <code>Mochila::</code> el compilador pensaría que <code>agregarPeso</code> es una función suelta sin relación con la clase; <code>::</code> es literalmente "este método es DE esta clase". <b>(2) Objeto por valor vs por puntero:</b> <code>mia</code> es un objeto normal que vive en la pila y se accede con <code>.</code>; <code>otra</code> es un <b>puntero</b> a un objeto que vive en el heap (lo creaste con <code>new</code>) y se accede con <code>-&gt;</code>. Las dos son Mochilas, solo cambia cómo las creaste y cómo las tocás. <b>(3) Memoria:</b> como <code>otra</code> se creó con <code>new</code>, en algún momento hay que hacer <code>delete otra;</code> — a <code>mia</code> no, porque se destruye sola al terminar <code>main()</code>. En el parcial casi siempre vas a estar del lado de "implementar el método con <code>::</code>" y no del lado de crear objetos, pero entender los dos lados te ayuda a leer rápido el código que ya te dan.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PILAS Y COLAS ============ -->
+  <section class="panel" id="panel-pilas-colas">
+    <div class="topic-head"><h2>Pilas y Colas</h2><span class="topic-tag">El concepto detrás de BFS</span></div>
+    <p class="topic-hook">BFS (que vas a usar un montón en Grafos) ES, en el fondo, "meter cosas en una cola e ir sacando". Si tenés clarísima la diferencia entre pila y cola, entender BFS/DFS es gratis.</p>
+
+    <div class="block">
+      <h3>La idea en una frase</h3>
+      <div class="concept-card">Pila (<b>Stack</b>): el último que entra es el primero que sale — <b>LIFO</b>. Cola (<b>Queue</b>): el primero que entra es el primero que sale — <b>FIFO</b>.</div>
+    </div>
+
+    <div class="block">
+      <h3>Qué tenés que tener claro</h3>
+      <ul class="checklist" data-section="pilas-colas">
+        <li><input type="checkbox"><span>Pila: <code>push</code> (apila arriba), <code>pop</code> (saca de arriba), <code>top</code> (mira el de arriba sin sacarlo).</span></li>
+        <li><input type="checkbox"><span>Cola: <code>enqueue</code> (entra por atrás), <code>dequeue</code> (sale por adelante), <code>front</code> (mira el primero sin sacarlo).</span></li>
+        <li><input type="checkbox"><span>BFS usa una <b>cola</b>: explora "por capas" (todos los vecinos directos antes de ir más lejos) — por eso encuentra el camino más corto en un grafo sin pesos.</span></li>
+        <li><input type="checkbox"><span>DFS se va lo más profundo posible antes de volver — se implementa con <b>recursión</b> (que internamente ya es una pila de llamadas) o con una pila explícita.</span></li>
+        <li><input type="checkbox"><span>La cátedra tiene su propia <code>Queue&lt;TData&gt;</code> (no <code>std::queue</code>): memorizá su contrato — <code>enqueue</code>, <code>dequeue</code>, <code>front()</code>, <code>isEmpty()</code>, <code>size()</code>.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Simulador: jugá vos con una Pila y una Cola</h3>
+      <div class="sim">
+        <div class="sim-row">
+          <span class="end-label" style="width:100%;">PILA (Stack) — entra y sale por el mismo extremo, arriba</span>
+          <input type="text" id="stackInput" placeholder="valor" maxlength="4">
+          <button class="btn primary" id="stackPush">Apilar (push)</button>
+          <button class="btn" id="stackPop">Desapilar (pop)</button>
+        </div>
+        <div class="stack-area" id="stackArea"><span class="empty-note">pila vacía</span></div>
+      </div>
+      <div class="sim" style="margin-top:14px;">
+        <div class="sim-row">
+          <span class="end-label" style="width:100%;">COLA (Queue) — entra por atrás, sale por adelante</span>
+          <input type="text" id="queueInput" placeholder="valor" maxlength="4">
+          <button class="btn primary" id="queueEnq">Encolar (enqueue)</button>
+          <button class="btn" id="queueDeq">Desencolar (dequeue)</button>
+        </div>
+        <div class="queue-area" id="queueArea"><span class="empty-note">cola vacía</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto</h3>
+      <div class="example-card">
+        <div class="code-block">Apilás: A, B, C   →  al desapilar sale: C, B, A   (LIFO)
+Encolás: A, B, C  →  al desencolar sale: A, B, C  (FIFO)</div>
+        <div class="example-walk"><b>Por qué importa para BFS:</b> si metés en la cola los vecinos de la estación actual, y siempre sacás por el frente, vas a procesar primero todas las estaciones a distancia 1, después todas las de distancia 2, etc. — nunca "te adelantás" a explorar algo lejano antes que algo cercano. Esa es la garantía de camino más corto de BFS.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Para memorizar</h3>
+      <div class="mnemo"><span class="lbl">Mnemotecnia</span><b>Pila = pila de platos</b>: el último plato que pusiste arriba es el primero que sacás → LIFO.<br><b>Cola = cola del supermercado</b>: el primero que se puso en la fila es el primero que se va → FIFO.</div>
+    </div>
+
+    <div class="block">
+      <h3>Ejercicios rápidos</h3>
+      <div class="quiz" data-q>
+        <p class="q">1. Encolás, en este orden: Central, Neon, Docks. ¿En qué orden salen con dequeue?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">Central, Neon, Docks (mismo orden en que entraron)</button>
+          <button class="opt-btn" data-correct="false">Docks, Neon, Central (orden invertido)</button>
+        </div>
+        <div class="expl">FIFO: el primero que entra (Central) es el primero que sale.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">2. ¿Por qué BFS garantiza el camino MÁS CORTO (en cantidad de tramos) y una búsqueda recursiva tipo DFS no?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">Porque BFS explora en capas por distancia (cola), así que nunca llega "tarde" a un nodo más cercano</button>
+          <button class="opt-btn" data-correct="false">Porque BFS usa menos memoria que DFS</button>
+          <button class="opt-btn" data-correct="false">No es cierto, da lo mismo cuál uses</button>
+        </div>
+        <div class="expl">DFS se mete por una rama hasta el fondo antes de probar otra — puede encontrar UN camino, pero no necesariamente el más corto. BFS, al procesar por capas, sí lo garantiza.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">3. En el contrato de la cátedra, <code>front()</code> en la Queue&lt;TData&gt;...</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="false">Saca y devuelve el primer elemento</button>
+          <button class="opt-btn" data-correct="true">Devuelve una COPIA del primero, sin sacarlo (hay que llamar a dequeue() aparte para sacarlo)</button>
+        </div>
+        <div class="expl">Son dos pasos separados a propósito: mirar (front) y sacar (dequeue) — un error clásico es olvidarse de hacer dequeue() y quedar en loop infinito.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo integrador: una Pila armada como clase, resolviendo un problema real</h3>
+      <div class="example-card">
+        <div class="code-block">class Pila {
+private:
+    int datos[100];
+    int cantidad;
+
+public:
+    Pila() { cantidad = 0; }             <span class="c">// constructor: arranca vacía</span>
+
+    void push(int valor) { datos[cantidad] = valor; cantidad++; }
+    int pop()  { cantidad--; return datos[cantidad]; }   <span class="c">// saca el de arriba y lo devuelve</span>
+    int top()  { return datos[cantidad - 1]; }            <span class="c">// mira el de arriba SIN sacarlo</span>
+    bool estaVacia() { return cantidad == 0; }
+};
+
+<span class="c">// clásico: ¿los paréntesis de un string están bien balanceados?</span>
+bool parentesisBalanceados(std::string texto) {
+    Pila pila;                           <span class="c">// objeto Pila "por valor"</span>
+
+    for (char c : texto) {
+        if (c == '(') {
+            pila.push(c);                 <span class="c">// abre un paréntesis: lo apilo</span>
+        } else if (c == ')') {
+            if (pila.estaVacia()) return false;   <span class="c">// cierra algo que nunca se abrió</span>
+            pila.pop();                   <span class="c">// cierra: desapilo el ( que le corresponde</span>
+        }
+    }
+    return pila.estaVacia();   <span class="c">// si queda algo sin cerrar, no está balanceado</span>
+}</div>
+        <div class="example-walk">Esta <code>Pila</code> es una clase como cualquier otra (constructor, métodos públicos, datos privados) — la diferencia es que la usás como herramienta en vez de modelar algo del mundo real. El truco de <code>parentesisBalanceados</code> es la aplicación más clásica de LIFO: cada vez que abrís un paréntesis lo "guardás" arriba de la pila, y cuando aparece uno que cierra, tiene que coincidir con el <b>último</b> que abriste — justo lo que <code>pop()</code> te devuelve. Si en algún momento querés cerrar y la pila ya está vacía, ese <code>)</code> no tiene con qué emparejarse: no está balanceado. Este mismo patrón — "necesito deshacer en el orden inverso al que hice las cosas" — es la razón de fondo por la que DFS y la recursión misma funcionan con una pila por debajo.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ORDENAMIENTO ============ -->
+  <section class="panel" id="panel-ordenamiento">
+    <div class="topic-head"><h2>Ordenamiento</h2><span class="topic-tag">Comparar e intercambiar, con método</span></div>
+    <p class="topic-hook">Todos los algoritmos de ordenamiento hacen lo mismo en el fondo: comparar elementos e intercambiarlos. La diferencia entre ellos es CUÁNDO comparan y CUÁNTAS veces — de eso depende si son O(n²) o O(n log n).</p>
+
+    <div class="block">
+      <h3>La idea en una frase</h3>
+      <div class="concept-card">Ordenar es ir dejando, paso a paso, cada elemento en su posición final — la diferencia entre algoritmos es la <b>estrategia</b> para decidir qué comparar en cada paso.</div>
+    </div>
+
+    <div class="block">
+      <h3>Qué tenés que tener claro</h3>
+      <ul class="checklist" data-section="ordenamiento">
+        <li><input type="checkbox"><span><b>Selección:</b> en cada pasada busca el MÍNIMO de lo que falta ordenar y lo manda al frente. Pocos intercambios, pero siempre compara todo.</span></li>
+        <li><input type="checkbox"><span><b>Burbuja:</b> recorre comparando VECINOS y los intercambia si están en el orden incorrecto — el mayor va "burbujeando" hacia el final en cada pasada.</span></li>
+        <li><input type="checkbox"><span><b>Inserción:</b> toma el próximo elemento y lo inserta en el lugar correcto dentro de la parte ya ordenada — como ordenar cartas en la mano. Rápido si los datos ya están casi ordenados.</span></li>
+        <li><input type="checkbox"><span>Selección, Burbuja e Inserción son <b>O(n²)</b>: simples de programar a mano, pero lentos para n grande.</span></li>
+        <li><input type="checkbox"><span><b>Mergesort:</b> divide el arreglo en mitades, ordena cada mitad por separado (recursión) y las MEZCLA ya ordenadas. Siempre <b>O(n log n)</b>, pero usa memoria extra.</span></li>
+        <li><input type="checkbox"><span><b>Quicksort:</b> elige un pivote, separa menores/mayores a su alrededor, y ordena cada lado por recursión. Rápido en promedio (O(n log n)), pero si el pivote siempre es el peor posible, cae a O(n²).</span></li>
+        <li><input type="checkbox"><span>Un ordenamiento es <b>estable</b> si dos elementos iguales mantienen su orden relativo original — importa cuando ordenás por más de un criterio (ej: por fecha, y después por nombre).</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Diagrama: Selección — código y arreglo sincronizados</h3>
+      <div class="diagram-card">
+        <div class="code-block" id="selCode" style="margin-bottom:14px;"></div>
+        <div class="sort-row" id="selRow"></div>
+        <div class="diagram-controls">
+          <button class="btn ghost" id="selPrev">◀ Paso anterior</button>
+          <button class="btn primary" id="selNext">Paso siguiente ▶</button>
+          <span class="end-label" id="selStepCount" style="align-self:center;"></span>
+        </div>
+        <div class="diagram-note" id="selNote"></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Diagrama: Burbuja — código y arreglo sincronizados</h3>
+      <div class="diagram-card">
+        <div class="code-block" id="bubCode" style="margin-bottom:14px;"></div>
+        <div class="sort-row" id="bubRow"></div>
+        <div class="diagram-controls">
+          <button class="btn ghost" id="bubPrev">◀ Paso anterior</button>
+          <button class="btn primary" id="bubNext">Paso siguiente ▶</button>
+          <span class="end-label" id="bubStepCount" style="align-self:center;"></span>
+        </div>
+        <div class="diagram-note" id="bubNote"></div>
+      </div>
+      <div class="diagram-note" style="margin-top:4px;">Fijate la diferencia con Selección: acá la zona "ya ordenada" (verde) crece desde la <b>derecha</b>, no desde la izquierda — porque cada pasada empuja el mayor hasta el final, en vez de traer el mínimo al frente.</div>
+    </div>
+
+    <div class="block">
+      <h3>Diagrama: Inserción — código y arreglo sincronizados</h3>
+      <div class="diagram-card">
+        <div class="code-block" id="insCode" style="margin-bottom:14px;"></div>
+        <div class="sort-row" id="insRow"></div>
+        <div class="diagram-controls">
+          <button class="btn ghost" id="insPrev">◀ Paso anterior</button>
+          <button class="btn primary" id="insNext">Paso siguiente ▶</button>
+          <span class="end-label" id="insStepCount" style="align-self:center;"></span>
+        </div>
+        <div class="diagram-note" id="insNote"></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Para memorizar</h3>
+      <div class="mnemo"><span class="lbl">Mnemotecnia</span><b>Selección</b>: elegís al campeón (mínimo) de lo que queda.<br><b>Burbuja</b>: el más grande sube como burbuja, de a un lugar por vez.<br><b>Inserción</b>: como ordenar cartas en la mano, insertando cada una donde corresponde.<br><b>Mergesort = divide y MEZCLA. Quicksort = divide por un PIVOTE.</b></div>
+    </div>
+
+    <div class="block">
+      <h3>Ejercicios rápidos</h3>
+      <div class="quiz" data-q>
+        <p class="q">1. En burbuja, ¿qué se compara en cada paso?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="false">El elemento con el mínimo de todo el arreglo</button>
+          <button class="opt-btn" data-correct="true">Dos elementos VECINOS (adyacentes)</button>
+          <button class="opt-btn" data-correct="false">El primer y el último elemento</button>
+        </div>
+        <div class="expl">Burbuja compara pares consecutivos y los intercambia si están desordenados — por eso el mayor "flota" hacia el final de a un paso.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">2. ¿Cuál es la complejidad en el PEOR CASO de Quicksort, y cuándo pasa?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="false">O(n log n) siempre, sin excepción</button>
+          <button class="opt-btn" data-correct="true">O(n²), cuando el pivote elegido siempre es el menor o el mayor del segmento</button>
+          <button class="opt-btn" data-correct="false">O(n), porque siempre divide por la mitad</button>
+        </div>
+        <div class="expl">Si el pivote siempre queda en un extremo (peor elección posible), una de las dos particiones queda vacía y Quicksort degenera en un algoritmo O(n²), similar a selección.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">3. Exam-style: tenés que ordenar un arreglo de 50 elementos CASI ya ordenado (solo 2 están fuera de lugar). ¿Qué algoritmo de los vistos conviene más y por qué?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">Inserción — cuando los datos ya están casi ordenados, cada elemento se mueve pocas posiciones, así que se acerca a O(n)</button>
+          <button class="opt-btn" data-correct="false">Selección — siempre recorre todo igual, sin importar el orden inicial</button>
+          <button class="opt-btn" data-correct="false">No importa, todos tardan exactamente lo mismo</button>
+        </div>
+        <div class="expl">Inserción es "adaptativo": su costo depende de cuánto desorden hay. Selección, en cambio, siempre hace la misma cantidad de comparaciones sin importar si los datos ya estaban ordenados.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============ ARBOLES ============ -->
+  <section class="panel" id="panel-arboles">
+    <div class="topic-head"><h2>Árboles (BST y AVL)</h2><span class="topic-tag">Recursión aplicada a buscar rápido</span></div>
+    <p class="topic-hook">Un árbol binario de búsqueda (BST) organiza los datos para que buscar sea rápido. Un AVL es un BST que además se OBLIGA a quedarse equilibrado, para que esa velocidad no se arruine según el orden en que insertes.</p>
+
+    <div class="block">
+      <h3>La idea en una frase</h3>
+      <div class="concept-card">En un BST, para <b>todo</b> nodo: lo que está a la izquierda es MENOR, lo que está a la derecha es MAYOR. Esa regla se repite en cada subárbol, nivel tras nivel.</div>
+    </div>
+
+    <div class="block">
+      <h3>Qué tenés que tener claro</h3>
+      <ul class="checklist" data-section="arboles">
+        <li><input type="checkbox"><span>Buscar en BST: comparás con la raíz; si es menor andás a la izquierda, si es mayor a la derecha, repetís — por eso buscar cuesta O(altura), no O(n).</span></li>
+        <li><input type="checkbox"><span>El problema de un BST sin control: si insertás datos ya ordenados (1,2,3,4...), degenera en una lista — la altura se vuelve O(n) y perdés toda la ventaja.</span></li>
+        <li><input type="checkbox"><span><b>Factor de balance</b> de un nodo = altura(subárbol derecho) − altura(subárbol izquierdo). En un AVL válido, tiene que estar en <code>{-1, 0, 1}</code> para TODO nodo, sin excepción.</span></li>
+        <li><input type="checkbox"><span>Si una inserción deja el factor de balance fuera de ese rango, el AVL hace una <b>rotación</b> para reequilibrarse — reorganiza punteros, pero sigue siendo un BST válido (el orden izquierda-menor/derecha-mayor no se rompe).</span></li>
+        <li><input type="checkbox"><span>Altura de un árbol vacío (<code>nullptr</code>) se define como <b>0</b> (o a veces -1, según la cátedra) — leé siempre la convención exacta que te dan en el enunciado del parcial.</span></li>
+        <li><input type="checkbox"><span>Para contar/buscar en un RANGO de valores (ej: "cuántos nodos entre 10 y 50"), podés <b>podar</b> ramas enteras: si el valor del nodo ya descarta un subárbol completo por la propiedad BST, ni siquiera lo visitás.</span></li>
+        <li><input type="checkbox"><span><b>Operaciones básicas que tenés que saber de memoria:</b> <code>insertar</code> (recursivo, devuelve el puntero del subárbol ya con el nuevo nodo), <code>size</code>/<code>height</code> (recursivos, 1 + recursión en ambos hijos), <code>contains</code> (igual que buscar), <code>min</code>/<code>max</code> (bajar siempre por izquierda o siempre por derecha), <code>inorden</code> (izquierda → nodo → derecha, da el árbol ordenado).</span></li>
+        <li><input type="checkbox"><span><b>Patrón muy común en el parcial:</b> un ABB donde cada nodo guarda OTRA estructura adentro (una <code>Lista</code>, <code>Pila</code> o <code>Cola</code>) — ej: un árbol de máquinas donde cada una tiene una <code>Lista</code> de intervenciones, o un árbol de productos con una <code>Pila</code> de cambios para poder "deshacer". El método primero busca el NODO (no solo el dato) con un helper tipo <code>buscarNodo(clave)</code>, y después opera sobre la estructura interna de ese nodo.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto: las operaciones básicas, todas juntas</h3>
+      <div class="example-card">
+        <div class="code-block">template &lt;class T&gt;
+Nodo&lt;T&gt;* ABB&lt;T&gt;::insertarRec(Nodo&lt;T&gt;* p, const T&amp; x) {
+    if (p == nullptr) return new Nodo&lt;T&gt;(x);   <span class="c">// caso base: acá va el nuevo nodo</span>
+    if (x &lt; p->dato) p->izq = insertarRec(p->izq, x);        <span class="c">// menor → izquierda</span>
+    else if (p->dato &lt; x) p->der = insertarRec(p->der, x);   <span class="c">// mayor → derecha</span>
+    return p;                                    <span class="c">// si es igual, no hace nada (sin duplicados)</span>
+}
+
+template &lt;class T&gt;
+int ABB&lt;T&gt;::tamRec(const Nodo&lt;T&gt;* p) const {
+    if (p == nullptr) return 0;
+    return 1 + tamRec(p->izq) + tamRec(p->der);   <span class="c">// este nodo + sus dos subárboles</span>
+}
+
+template &lt;class T&gt;
+const Nodo&lt;T&gt;* ABB&lt;T&gt;::minNode(const Nodo&lt;T&gt;* p) const {
+    if (p->izq == nullptr) return p;              <span class="c">// no hay nada más chico: este es el mínimo</span>
+    return minNode(p->izq);                       <span class="c">// si hay izquierda, el mínimo está ahí</span>
+}
+
+template &lt;class T&gt;
+void ABB&lt;T&gt;::inordenRec(const Nodo&lt;T&gt;* p, std::vector&lt;T&gt;&amp; out) const {
+    if (p == nullptr) return;
+    inordenRec(p->izq, out);   <span class="c">// primero todo lo menor</span>
+    out.push_back(p->dato);    <span class="c">// después este nodo</span>
+    inordenRec(p->der, out);   <span class="c">// después todo lo mayor</span>
+}</div>
+        <div class="example-walk">Fijate que <b>todas</b> comparten la misma forma: caso base <code>p == nullptr</code>, y la "interesante" sucede combinando lo que devuelven las llamadas a los hijos. <code>insertarRec</code> es la única que DEVUELVE el puntero del nodo (para reconectar el árbol a medida que la recursión vuelve); las demás solo acumulan o comparan. <code>minNode</code> no compara nada — el mínimo de un BST siempre es "lo más a la izquierda posible", así que simplemente bajás por izquierda hasta que no haya más. <code>inordenRec</code> es el único patrón de la materia donde el ORDEN de las 3 líneas (izquierda, nodo, derecha) importa tanto: cambiarlo rompe que la salida quede ordenada.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Diagrama: recorrido de búsqueda en un BST</h3>
+      <div class="diagram-card">
+        <svg viewBox="0 0 320 180" id="treeSvg">
+          <line class="tedge" x1="160" y1="30" x2="90" y2="80"></line>
+          <line class="tedge" x1="160" y1="30" x2="230" y2="80"></line>
+          <line class="tedge" x1="90" y1="80" x2="55" y2="130"></line>
+          <line class="tedge" x1="90" y1="80" x2="125" y2="130"></line>
+          <line class="tedge" x1="230" y1="80" x2="195" y2="130"></line>
+          <line class="tedge" x1="230" y1="80" x2="265" y2="130"></line>
+          <circle class="tnode" id="tn-50" cx="160" cy="30" r="20"></circle>
+          <text class="ttext" x="160" y="35">50</text>
+          <circle class="tnode" id="tn-30" cx="90" cy="80" r="20"></circle>
+          <text class="ttext" x="90" y="85">30</text>
+          <circle class="tnode" id="tn-70" cx="230" cy="80" r="20"></circle>
+          <text class="ttext" x="230" y="85">70</text>
+          <circle class="tnode" id="tn-20" cx="55" cy="130" r="18"></circle>
+          <text class="ttext" x="55" y="135">20</text>
+          <circle class="tnode" id="tn-40" cx="125" cy="130" r="18"></circle>
+          <text class="ttext" x="125" y="135">40</text>
+          <circle class="tnode" id="tn-60" cx="195" cy="130" r="18"></circle>
+          <text class="ttext" x="195" y="135">60</text>
+          <circle class="tnode" id="tn-80" cx="265" cy="130" r="18"></circle>
+          <text class="ttext" x="265" y="135">80</text>
+        </svg>
+        <div class="diagram-controls">
+          <button class="btn ghost" id="treePrev">◀ Paso anterior</button>
+          <button class="btn primary" id="treeNext">Paso siguiente ▶</button>
+          <span class="end-label" id="treeStepCount" style="align-self:center;"></span>
+        </div>
+        <div class="diagram-note" id="treeNote">Buscamos el 40 en este BST. Mirá cómo en 3 pasos llegamos, sin visitar los otros 4 nodos.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto</h3>
+      <div class="example-card">
+        <div class="code-block">int MonitorAVL::alturaDe(NodoAVL* nodo) {
+    if (nodo == nullptr) return 0;                     <span class="c">// caso base</span>
+    return 1 + std::max(alturaDe(nodo->izquierdo), alturaDe(nodo->derecho));
+}
+
+int MonitorAVL::factorBalanceDe(NodoAVL* nodo) {
+    if (nodo == nullptr) return 0;
+    return alturaDe(nodo->derecho) - alturaDe(nodo->izquierdo);   <span class="c">// derecha - izquierda</span>
+}</div>
+        <div class="example-walk">Las dos funciones comparten el mismo patrón recursivo de la sección de Recursión: caso base <code>nodo == nullptr</code>, y caso recursivo que combina los dos subárboles. <code>factorBalanceDe</code> ni siquiera recorre el árbol de nuevo "a mano" — reutiliza <code>alturaDe</code> sobre cada hijo y resta. Si el resultado es mayor a 1 o menor a -1, ese nodo necesita una rotación.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Para memorizar</h3>
+      <div class="mnemo"><span class="lbl">Mnemotecnia</span><b>BST:</b> izquierda MENOS, derecha MÁS.<br><b>AVL:</b> pensalo como una balanza — factor de balance fuera de <code>[-1, 0, 1]</code> significa que un lado pesa demasiado más que el otro, y hay que mover peso (rotar) para equilibrarla.</div>
+    </div>
+
+    <div class="block">
+      <h3>Ejercicios rápidos</h3>
+      <div class="quiz" data-q>
+        <p class="q">1. Un nodo tiene subárbol izquierdo de altura 2 y subárbol derecho de altura 4. ¿Cuál es su factor de balance, y es válido en un AVL?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="false">-2, válido</button>
+          <button class="opt-btn" data-correct="true">2, NO es válido (fuera de {-1,0,1}, necesita rotación)</button>
+          <button class="opt-btn" data-correct="false">6, válido</button>
+        </div>
+        <div class="expl">factorBalance = altura(derecho) - altura(izquierdo) = 4 - 2 = 2. Al estar fuera de [-1,0,1], ese nodo rompe la propiedad AVL.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">2. ¿Por qué insertar 1,2,3,4,5 en orden en un BST normal (sin balanceo) es el peor caso posible?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">Cada nuevo valor es mayor a todos los anteriores, así que siempre se cuelga a la derecha — se forma una lista, no un árbol</button>
+          <button class="opt-btn" data-correct="false">No es el peor caso, cualquier orden da el mismo árbol</button>
+          <button class="opt-btn" data-correct="false">Un BST rechaza datos ya ordenados</button>
+        </div>
+        <div class="expl">Sin ningún valor menor que obligue a ramificar hacia la izquierda, el árbol crece en línea recta hacia la derecha — altura O(n), se pierde toda la ventaja de búsqueda O(log n).</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">3. Exam-style: ¿qué hace esta función?</p>
+        <div class="code-block" style="margin-bottom:10px;">int contar(NodoAVL* nodo, int min, int max) {
+    if (nodo == nullptr) return 0;
+    int cuenta = (nodo->dato.id >= min &amp;&amp; nodo->dato.id &lt;= max) ? 1 : 0;
+    if (nodo->dato.id > min) cuenta += contar(nodo->izquierdo, min, max);
+    if (nodo->dato.id &lt; max) cuenta += contar(nodo->derecho, min, max);
+    return cuenta;
+}</div>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">Cuenta nodos con valor entre min y max, podando subárboles que la propiedad BST ya descarta</button>
+          <button class="opt-btn" data-correct="false">Cuenta TODOS los nodos del árbol, sin excepción</button>
+          <button class="opt-btn" data-correct="false">Busca un único nodo con valor exacto a min</button>
+        </div>
+        <div class="expl">Los if antes de cada llamada recursiva son la poda: si el nodo actual ya es ≤ min, no tiene sentido mirar su subárbol izquierdo (todo ahí es aún menor); si ya es ≥ max, no hace falta mirar el derecho. Así evita visitar nodos que la propiedad BST ya garantiza que están fuera de rango.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo integrador: conteo por rango, al estilo del examen</h3>
+      <div class="example-card">
+        <div class="code-block">struct ServicioTren { int codigoTren; int minutoSalida; int anden; };
+
+<span class="c">// cuenta cuántos servicios salen entre 'desde' y 'hasta' (inclusive), podando</span>
+int AgendaServicios::contarEnVentanaRec(NodoAgenda* nodo, int desde, int hasta) {
+    if (nodo == nullptr) return 0;                              <span class="c">// caso base: subárbol vacío</span>
+
+    int cuenta = 0;
+    if (nodo->dato.minutoSalida >= desde &amp;&amp; nodo->dato.minutoSalida &lt;= hasta)
+        cuenta = 1;                                             <span class="c">// ¿este nodo entra en la ventana?</span>
+
+    <span class="c">// poda: solo bajo a la izquierda si todavía puede haber algo >= desde ahí</span>
+    if (nodo->dato.minutoSalida > desde)
+        cuenta += contarEnVentanaRec(nodo->izquierdo, desde, hasta);
+
+    <span class="c">// poda: solo bajo a la derecha si todavía puede haber algo &lt;= hasta ahí</span>
+    if (nodo->dato.minutoSalida &lt; hasta)
+        cuenta += contarEnVentanaRec(nodo->derecho, desde, hasta);
+
+    return cuenta;
+}
+
+int AgendaServicios::cantidadServiciosEnVentana(int desde, int hasta) {
+    return contarEnVentanaRec(raiz, desde, hasta);   <span class="c">// arranca la recursión desde la raíz privada</span>
+}</div>
+        <div class="example-walk">Esta es la forma exacta en que te van a pedir "contar algo en un rango" en el parcial. Fijate que integra TODO lo que ya sabés: recursión con caso base <code>nullptr</code>, acceso por puntero (<code>nodo->dato</code>, <code>nodo->izquierdo</code>), y un método público corto (<code>cantidadServiciosEnVentana</code>) que solo le pasa la posta a uno privado recursivo (<code>contarEnVentanaRec</code>) agregando el parámetro <code>nodo</code> que la recursión necesita pero la firma pública no expone. La parte que marca la diferencia entre "funciona" y "es eficiente" son los dos <code>if</code> antes de cada llamada recursiva — sin ellos, la función seguiría dando el resultado correcto, pero visitaría el árbol ENTERO en vez de podar las ramas que ya sabés que no pueden tener nada útil.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo integrador: un ABB donde cada nodo "tiene" otra estructura adentro</h3>
+      <div class="example-card">
+        <div class="code-block">struct Cambio { int codigo; int precioAnterior; };
+struct Producto { int codigo; int precio; };   <span class="c">// el ABB se ordena por 'codigo'</span>
+
+<span class="c">// deshace el último cambio de precio: saca de la pila y restaura el precio</span>
+bool CatalogoPrecios::deshacer(Pila&lt;Cambio&gt;&amp; cambios) {
+    if (cambios.isEmpty()) return false;        <span class="c">// no hay nada que deshacer</span>
+
+    Cambio ultimo = cambios.top();               <span class="c">// miro el más reciente, sin sacarlo todavía</span>
+    cambios.pop();                                <span class="c">// ahora sí lo saco de la pila</span>
+
+    Nodo&lt;Producto&gt;* nodo = buscarNodo(ultimo.codigo);  <span class="c">// ① busco el NODO (no solo el dato) en el ABB</span>
+    nodo->dato.precio = ultimo.precioAnterior;    <span class="c">// ② modifico el dato de ESE nodo puntual</span>
+
+    return true;
+}</div>
+        <div class="example-walk">Este es el patrón "compuesto" que apareció una y otra vez en la ejercitación real: el ABB no es la estructura principal del problema, es el <b>índice</b> que te deja encontrar rápido (por código) al elemento que en realidad querés modificar. La lógica tiene siempre dos partes separadas: ① usar el ABB para ubicar el nodo correcto (acá con un <code>buscarNodo</code> que, a diferencia de un `buscar` de solo lectura, te devuelve el puntero al nodo real para poder modificarlo), y ② operar sobre la OTRA estructura que vive adentro de ese nodo (acá una <code>Pila</code> de cambios, en otros ejercicios una <code>Lista</code> o una <code>Cola</code>) usando exactamente las operaciones que ya viste en Pilas y Colas (<code>top</code>, <code>pop</code>, <code>isEmpty</code>). Nunca se te pide reinventar el ABB ni la Pila — se te pide combinarlos.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GRAFOS ============ -->
+  <section class="panel" id="panel-grafos">
+    <div class="topic-head"><h2>Grafos</h2><span class="topic-tag">BFS, DFS y Dijkstra</span></div>
+    <p class="topic-hook">Un grafo es un conjunto de nodos conectados entre sí, sin la jerarquía de un árbol — cualquier nodo puede conectarse con cualquier otro, y puede haber ciclos. BFS, DFS y Dijkstra son tres formas distintas de recorrerlo, cada una para un objetivo distinto.</p>
+
+    <div class="block">
+      <h3>La idea en una frase</h3>
+      <div class="concept-card">BFS explora <b>por capas</b> con una cola (camino más corto en cantidad de aristas). DFS se mete <b>lo más profundo posible</b> antes de volver. Dijkstra busca el camino de <b>menor costo total</b>, no de menos pasos.</div>
+    </div>
+
+    <div class="block">
+      <h3>Qué tenés que tener claro</h3>
+      <ul class="checklist" data-section="grafos">
+        <li><input type="checkbox"><span>BFS usa la <code>Queue&lt;TData&gt;</code> de la cátedra (vista en Pilas y Colas) — encola vecinos no visitados y los procesa en el orden en que entraron.</span></li>
+        <li><input type="checkbox"><span>SIEMPRE hay que marcar nodos como <b>visitados</b> en BFS/DFS — si no, en un grafo con ciclos el algoritmo entra en loop infinito.</span></li>
+        <li><input type="checkbox"><span>DFS se implementa <b>recursivo</b> (o con pila explícita) — sirve para contar componentes conexas, detectar ciclos, explorar caminos completos.</span></li>
+        <li><input type="checkbox"><span>Dijkstra encuentra el camino de <b>menor costo</b> (no menor cantidad de aristas) en un grafo con pesos NO negativos.</span></li>
+        <li><input type="checkbox"><span>La cátedra pide Dijkstra con ARRAYS fijos, sin <code>priority_queue</code> ni STL: un array <code>distancia[]</code> (infinito salvo el origen en 0) y un array <code>visitado[]</code>.</span></li>
+        <li><input type="checkbox"><span>Patrón de Dijkstra "a mano", repetido N veces: (1) buscar a mano el no visitado con menor distancia, (2) marcarlo visitado, (3) "relajar" sus vecinos — si pasar por él da una distancia menor, actualizarla.</span></li>
+        <li><input type="checkbox"><span>Contar componentes conexas con DFS: recorrés todos los nodos; cada vez que encontrás uno no visitado, hacés un DFS completo desde ahí (una componente) y contás cuántas veces arrancaste un DFS nuevo.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Diagrama: BFS paso a paso (con la cola en vivo)</h3>
+      <div class="diagram-card">
+        <svg viewBox="0 0 320 150" id="graphSvg">
+          <line class="gedge" x1="70" y1="40" x2="160" y2="30"></line>
+          <line class="gedge" x1="70" y1="40" x2="90" y2="110"></line>
+          <line class="gedge" x1="160" y1="30" x2="190" y2="110"></line>
+          <line class="gedge" x1="90" y1="110" x2="190" y2="110"></line>
+          <line class="gedge" x1="190" y1="110" x2="260" y2="60"></line>
+          <circle class="gnode" id="gn-A" cx="70" cy="40" r="20"></circle>
+          <text class="gtext" x="70" y="45">A</text>
+          <circle class="gnode" id="gn-B" cx="160" cy="30" r="20"></circle>
+          <text class="gtext" x="160" y="35">B</text>
+          <circle class="gnode" id="gn-C" cx="90" cy="110" r="20"></circle>
+          <text class="gtext" x="90" y="115">C</text>
+          <circle class="gnode" id="gn-D" cx="190" cy="110" r="20"></circle>
+          <text class="gtext" x="190" y="115">D</text>
+          <circle class="gnode" id="gn-E" cx="260" cy="60" r="20"></circle>
+          <text class="gtext" x="260" y="65">E</text>
+        </svg>
+        <div class="end-label" style="margin:10px 0 4px;">cola (Queue&lt;TData&gt;)</div>
+        <div class="sort-row" id="bfsQueueRow" style="min-height:44px;"></div>
+        <div class="diagram-controls">
+          <button class="btn ghost" id="bfsPrev">◀ Paso anterior</button>
+          <button class="btn primary" id="bfsNext">Paso siguiente ▶</button>
+          <span class="end-label" id="bfsStepCount" style="align-self:center;"></span>
+        </div>
+        <div class="diagram-note" id="bfsNote">BFS desde A. Mirá cómo la cola crece con los vecinos nuevos y se vacía en el orden en que entraron.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto</h3>
+      <div class="example-card">
+        <div class="code-block">bool RedSegura::existeRutaSegura(int origenId, int destinoId) {
+    bool visitado[cantidadEstaciones] = {false};
+    Queue&lt;int&gt; cola;
+
+    cola.enqueue(origenId);
+    visitado[origenId] = true;
+
+    while (!cola.isEmpty()) {
+        int actual = cola.front();   <span class="c">// miro el primero, sin sacarlo</span>
+        cola.dequeue();              <span class="c">// ahora sí lo saco</span>
+
+        if (actual == destinoId) return true;   <span class="c">// ¡llegué!</span>
+
+        for (int vecino = 0; vecino &lt; cantidadEstaciones; vecino++) {
+            if (hayConexion[actual][vecino] &amp;&amp; !visitado[vecino]) {
+                visitado[vecino] = true;        <span class="c">// marco ANTES de encolar</span>
+                cola.enqueue(vecino);
+            }
+        }
+    }
+    return false;   <span class="c">// vacié la cola y nunca llegué</span>
+}</div>
+        <div class="example-walk"><b>El detalle que marca la diferencia entre "funciona" y "bug":</b> <code>visitado[vecino] = true</code> se hace <b>antes</b> de encolar, no después de desencolar. Si lo hicieras después, el mismo vecino podría entrar a la cola varias veces (por distintos caminos) antes de que ninguno lo marque como visitado — multiplicando trabajo innecesario, aunque el resultado final siga siendo correcto.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Para memorizar</h3>
+      <div class="mnemo"><span class="lbl">Mnemotecnia</span><b>BFS</b> = ondas en el agua: explora por capas de distancia, con una cola.<br><b>DFS</b> = laberinto siguiendo siempre la pared: se mete al fondo antes de retroceder.<br><b>Dijkstra sin priority_queue</b>: "buscar el mínimo a mano, marcarlo, relajar vecinos — repetir N veces."</div>
+    </div>
+
+    <div class="block">
+      <h3>Ejercicios rápidos</h3>
+      <div class="quiz" data-q>
+        <p class="q">1. ¿Por qué BFS garantiza el camino con MENOS aristas, y Dijkstra no busca eso sino el de MENOR costo?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">BFS no conoce pesos — todas las aristas "cuentan 1", así que menos aristas = menos pasos. Dijkstra sí usa pesos, y un camino con más aristas puede costar menos</button>
+          <button class="opt-btn" data-correct="false">Son lo mismo, da igual cuál uses</button>
+          <button class="opt-btn" data-correct="false">Dijkstra es más rápido que BFS siempre</button>
+        </div>
+        <div class="expl">Un camino de 3 aristas con pesos [1,1,1] (costo 3) puede ser peor que uno de 4 aristas con pesos [1,1,1,0] (costo 3 también) o incluso mejor que uno de 2 aristas con pesos [10,10]. BFS ignora el peso; Dijkstra lo usa.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">2. En DFS recursivo para contar componentes conexas, ¿qué pasa si te olvidás de marcar <code>visitada[actual] = true</code> antes de llamar recursivamente a los vecinos?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">Recursión infinita / stack overflow, porque un nodo puede volver a visitarse a sí mismo a través de un ciclo</button>
+          <button class="opt-btn" data-correct="false">No pasa nada, el resultado sigue siendo correcto</button>
+          <button class="opt-btn" data-correct="false">Cuenta el doble de componentes, pero sin crashear</button>
+        </div>
+        <div class="expl">Sin marcar visitado ANTES de explorar vecinos, un ciclo en el grafo (A-B-C-A) hace que el DFS vuelva a entrar en A una y otra vez — exactamente el mismo problema de "caso base que nunca se alcanza" que vimos en Recursión.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">3. Exam-style: tenés <code>distancia[]</code> inicializado en <code>COSTO_INFINITO</code> salvo el origen (0), y <code>visitado[]</code> en falso. ¿Cuál es el primer paso de cada iteración de Dijkstra "a mano"?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">Buscar, entre los nodos NO visitados, el de menor distancia[] actual</button>
+          <button class="opt-btn" data-correct="false">Marcar todos los nodos como visitados de una</button>
+          <button class="opt-btn" data-correct="false">Elegir un nodo al azar</button>
+        </div>
+        <div class="expl">Sin priority_queue, ese "elegir el mínimo" se hace con un bucle que recorre todo el array distancia[] buscando el no-visitado más chico — es el reemplazo manual de lo que una cola de prioridad haría automático.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo integrador: Dijkstra con arrays, al estilo del examen</h3>
+      <div class="example-card">
+        <div class="code-block">const int COSTO_INFINITO = 999999;
+
+<span class="c">// camino de menor costo total de energía entre dos estaciones</span>
+int MetroNocturno::costoMinimoEnergia(int origenId, int destinoId) {
+    int distancia[cantidadEstaciones];
+    bool visitado[cantidadEstaciones] = {false};
+
+    for (int i = 0; i &lt; cantidadEstaciones; i++) distancia[i] = COSTO_INFINITO;
+    distancia[origenId] = 0;                      <span class="c">// el origen cuesta 0 llegar a sí mismo</span>
+
+    for (int iter = 0; iter &lt; cantidadEstaciones; iter++) {
+        <span class="c">// 1) buscar a mano el no visitado con menor distancia</span>
+        int actual = -1;
+        for (int i = 0; i &lt; cantidadEstaciones; i++) {
+            if (!visitado[i] &amp;&amp; (actual == -1 || distancia[i] &lt; distancia[actual]))
+                actual = i;
+        }
+        if (distancia[actual] == COSTO_INFINITO) break;   <span class="c">// lo que queda es inalcanzable</span>
+
+        visitado[actual] = true;                   <span class="c">// 2) marcarlo visitado</span>
+
+        <span class="c">// 3) relajar vecinos: ¿pasar por 'actual' mejora su distancia?</span>
+        for (int vecino = 0; vecino &lt; cantidadEstaciones; vecino++) {
+            if (costoTramo[actual][vecino] > 0 &amp;&amp; !visitado[vecino]) {
+                int nuevaDist = distancia[actual] + costoTramo[actual][vecino];
+                if (nuevaDist &lt; distancia[vecino]) distancia[vecino] = nuevaDist;
+            }
+        }
+    }
+    return distancia[destinoId];
+}</div>
+        <div class="example-walk">Memorizá esta función como <b>tres bloques que se repiten N veces</b>, exactamente como dice el checklist: buscar el mínimo no visitado (bucle 1), marcarlo (una línea), relajar sus vecinos (bucle 2, actualizando <code>distancia[]</code> solo si mejora). El <code>if (distancia[actual] == COSTO_INFINITO) break;</code> es un detalle fino pero importante: corta el algoritmo apenas ya no quedan nodos alcanzables, en vez de seguir iterando sobre infinitos sin sentido.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OTRAS ESTRUCTURAS ============ -->
+  <section class="panel" id="panel-otras-estructuras">
+    <div class="topic-head"><h2>Otras Estructuras de Datos</h2><span class="topic-tag">Hash, Set, Heap y Bitset</span></div>
+    <p class="topic-hook">Cada una de estas estructuras existe para resolver UN problema puntual mejor que las que ya conocés: buscar rapidísimo sin importar el orden (Hash), saber si algo "está o no" sin duplicados (Set), encontrar siempre el máximo/mínimo rápido (Heap), o guardar millones de sí/no gastando el mínimo de memoria (Bitset).</p>
+
+    <div class="block">
+      <h3>La idea en una frase</h3>
+      <div class="concept-card">Estas estructuras no reemplazan a las anteriores — las complementan, cada una optimizada para UNA operación puntual: buscar por clave, chequear pertenencia, obtener el máximo, o ahorrar memoria bit a bit.</div>
+    </div>
+
+    <div class="block">
+      <h3>Qué tenés que tener claro</h3>
+      <ul class="checklist" data-section="otras-estructuras">
+        <li><input type="checkbox"><span><b>Hash table:</b> una función hash convierte una clave en un índice de array — buscar/insertar es O(1) EN PROMEDIO, sin importar cuántos elementos haya.</span></li>
+        <li><input type="checkbox"><span><b>Colisión:</b> cuando dos claves distintas dan el mismo índice hash. Se resuelve con <i>encadenamiento</i> (cada casilla guarda una lista) o <i>direccionamiento abierto</i> (buscás la siguiente casilla libre).</span></li>
+        <li><input type="checkbox"><span>Un <b>Set</b> es, en esencia, un Hash (o un árbol balanceado) donde solo importa SI un elemento está, no un valor asociado — nunca tiene duplicados.</span></li>
+        <li><input type="checkbox"><span><b>Heap (montículo):</b> un árbol casi-completo donde cada padre es ≥ sus hijos (max-heap) o ≤ sus hijos (min-heap) — la propiedad se cumple SOLO entre padre e hijo directo, no entre hermanos.</span></li>
+        <li><input type="checkbox"><span>En un max-heap representado como array, el padre de la posición <code>i</code> está en <code>(i-1)/2</code>, y sus hijos en <code>2i+1</code> y <code>2i+2</code> — sin necesitar punteros.</span></li>
+        <li><input type="checkbox"><span><b>Bitset:</b> un array donde cada casilla ocupa literalmente UN BIT, no un byte ni un int — para guardar millones de sí/no gastando 8x (o más) menos memoria que <code>bool[]</code>.</span></li>
+        <li><input type="checkbox"><span>Por qué importa en grafos grandes: marcar "visitados" con <code>bool visitado[]</code> gasta 1 byte por nodo; con un bitset gastás 1 bit — 8 veces menos memoria para la misma información.</span></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Diagrama: bool[8] vs bitset(8) en memoria</h3>
+      <div class="diagram-card">
+        <div style="display:flex; gap:36px; align-items:flex-end; flex-wrap:wrap;">
+          <div>
+            <div class="end-label" style="margin-bottom:8px;">bool visitado[8] — 8 bytes</div>
+            <div style="display:flex; gap:4px;">
+              <div class="mem-byte" style="height:22px;"><div class="mem-bit">1B</div></div>
+              <div class="mem-byte" style="height:22px;"><div class="mem-bit">1B</div></div>
+              <div class="mem-byte" style="height:22px;"><div class="mem-bit">1B</div></div>
+              <div class="mem-byte" style="height:22px;"><div class="mem-bit">1B</div></div>
+              <div class="mem-byte" style="height:22px;"><div class="mem-bit">1B</div></div>
+              <div class="mem-byte" style="height:22px;"><div class="mem-bit">1B</div></div>
+              <div class="mem-byte" style="height:22px;"><div class="mem-bit">1B</div></div>
+              <div class="mem-byte" style="height:22px;"><div class="mem-bit">1B</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="end-label" style="margin-bottom:8px;">bitset&lt;8&gt; visitado — 1 byte</div>
+            <div class="mem-byte">
+              <div class="mem-bit">b</div><div class="mem-bit">b</div><div class="mem-bit">b</div><div class="mem-bit">b</div>
+              <div class="mem-bit">b</div><div class="mem-bit">b</div><div class="mem-bit">b</div><div class="mem-bit">b</div>
+            </div>
+          </div>
+        </div>
+        <div class="diagram-note">Misma información (8 sí/no), 8 veces menos memoria — porque cada "casilla" del bitset es un solo bit, empaquetado junto a las demás dentro de un mismo byte.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo resuelto</h3>
+      <div class="example-card">
+        <div class="code-block">struct Celda { int clave; int valor; Celda* siguiente; };   <span class="c">// encadenamiento: cada casilla es una lista</span>
+
+int hash(int clave, int tamanioTabla) {
+    return clave % tamanioTabla;                 <span class="c">// función hash simple: resto de la división</span>
+}
+
+void insertar(Celda* tabla[], int tamanioTabla, int clave, int valor) {
+    int idx = hash(clave, tamanioTabla);
+    Celda* nueva = new Celda{clave, valor, tabla[idx]};  <span class="c">// la nueva apunta a lo que ya había</span>
+    tabla[idx] = nueva;                           <span class="c">// la casilla ahora empieza con la nueva</span>
+}</div>
+        <div class="example-walk">Fijate que <code>insertar</code> no sobreescribe <code>tabla[idx]</code> — lo usa como <code>siguiente</code> de la celda nueva, y después hace que <code>tabla[idx]</code> apunte a la nueva. Es exactamente el mismo patrón de "insertar al comienzo de una lista enlazada" que viste en Punteros, solo que acá la lista vive DENTRO de una casilla del array — así es como el encadenamiento resuelve colisiones: dos claves con el mismo <code>idx</code> conviven en la misma lista, en vez de pisarse.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Para memorizar</h3>
+      <div class="mnemo"><span class="lbl">Mnemotecnia</span><b>Hash</b> = la libreta de teléfonos mágica: no buscás letra por letra, la función hash te dice directo en qué página mirar.<br><b>Heap</b> = el podio: el máximo siempre está arriba de todo, pero el resto no está necesariamente ordenado entre sí.<br><b>Bitset</b> = la misma info, pero exprimida: 8 preguntas sí/no en el espacio de UN byte.</div>
+    </div>
+
+    <div class="block">
+      <h3>Ejercicios rápidos</h3>
+      <div class="quiz" data-q>
+        <p class="q">1. ¿Por qué buscar en una hash table es O(1) en promedio, y no O(n) como en una lista?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">Porque la función hash te da directamente el índice donde buscar, sin tener que recorrer nada</button>
+          <button class="opt-btn" data-correct="false">Porque las hash table siempre están ordenadas</button>
+          <button class="opt-btn" data-correct="false">No es cierto, buscar en una hash table siempre es O(n)</button>
+        </div>
+        <div class="expl">La función hash calcula el índice en tiempo constante — en el caso ideal (sin colisiones) vas directo a la casilla, sin comparar contra los demás elementos.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">2. Exam-style (MCQ real): ¿cuál de estas afirmaciones sobre un max-heap es correcta?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">El valor de cada nodo es mayor o igual al de sus hijos directos, pero no hay relación de orden garantizada entre hermanos</button>
+          <button class="opt-btn" data-correct="false">Todo el árbol está completamente ordenado, como un BST</button>
+          <button class="opt-btn" data-correct="false">El hijo izquierdo siempre es menor que el derecho</button>
+        </div>
+        <div class="expl">La propiedad de heap es LOCAL (padre vs. sus hijos directos), no global como en un BST. Por eso un heap no sirve para buscar un valor cualquiera en O(log n) — solo garantiza que el máximo está en la raíz.</div>
+      </div>
+      <div class="quiz" data-q>
+        <p class="q">3. Exam-style (MCQ real): ¿por qué conviene usar <code>bitset</code> en vez de <code>vector&lt;bool&gt;</code> o un array de <code>bool</code> para marcar nodos visitados en un grafo con millones de nodos?</p>
+        <div class="opts">
+          <button class="opt-btn" data-correct="true">Porque cada posición ocupa 1 bit en vez de 1 byte (o más), así que se usa hasta 8 veces menos memoria para la misma cantidad de nodos</button>
+          <button class="opt-btn" data-correct="false">Porque bitset es más rápido para hacer BFS, independientemente de la memoria</button>
+          <button class="opt-btn" data-correct="false">No hay ninguna ventaja real, es solo otra sintaxis</button>
+        </div>
+        <div class="expl">La ventaja de bitset es específicamente de MEMORIA, no de velocidad algorítmica: con millones de nodos, pasar de 1 byte a 1 bit por nodo puede ser la diferencia entre que el programa entre en memoria o no.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ejemplo integrador: tabla hash completa con búsqueda</h3>
+      <div class="example-card">
+        <div class="code-block">struct Celda { int clave; int valor; Celda* siguiente; };
+
+class TablaHash {
+private:
+    Celda* tabla[101];              <span class="c">// 101: número primo, reduce colisiones</span>
+
+    int hash(int clave) { return clave % 101; }
+
+public:
+    TablaHash() { for (int i = 0; i &lt; 101; i++) tabla[i] = nullptr; }  <span class="c">// todas vacías al inicio</span>
+
+    void insertar(int clave, int valor) {
+        int idx = hash(clave);
+        tabla[idx] = new Celda{clave, valor, tabla[idx]};   <span class="c">// inserto al INICIO de la lista de esa casilla</span>
+    }
+
+    bool buscar(int clave, int&amp; valorEncontrado) {
+        int idx = hash(clave);
+        Celda* actual = tabla[idx];           <span class="c">// voy a recorrer SOLO la lista de esta casilla</span>
+        while (actual != nullptr) {
+            if (actual->clave == clave) {
+                valorEncontrado = actual->valor;
+                return true;                  <span class="c">// encontrado</span>
+            }
+            actual = actual->siguiente;        <span class="c">// mismo patrón "cursor" de Punteros</span>
+        }
+        return false;                          <span class="c">// recorrí toda la lista de esa casilla y no estaba</span>
+    }
+};</div>
+        <div class="example-walk">Esta clase junta todo: <code>private</code>/<code>public</code> y constructor de POO, punteros y <code>new</code> para armar la lista de cada casilla, y el patrón "cursor que avanza con <code>actual = actual->siguiente</code>" que ya viste en Punteros. La diferencia clave con una lista enlazada común es que acá <code>buscar()</code> nunca recorre TODOS los elementos de la tabla — el hash ya te ubicó en la casilla correcta, y <code>while</code> solo recorre los pocos elementos que colisionaron ahí (idealmente, uno o ninguno).</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Repaso completo de AyED — Primer y Segundo Parcial, FCEFyN. Punteros, Recursión, POO, Pilas y Colas, Ordenamiento, Árboles, Grafos y Otras Estructuras de Datos.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- storage helpers ----------
+  function lsGet(key, fallback){
+    try{ const v = localStorage.getItem(key); return v === null ? fallback : JSON.parse(v); }
+    catch(e){ return fallback; }
+  }
+  function lsSet(key, val){
+    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+  }
+
+  // ---------- tabs ----------
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const panels = {
+    punteros: document.getElementById('panel-punteros'),
+    recursion: document.getElementById('panel-recursion'),
+    poo: document.getElementById('panel-poo'),
+    'pilas-colas': document.getElementById('panel-pilas-colas'),
+    ordenamiento: document.getElementById('panel-ordenamiento'),
+    arboles: document.getElementById('panel-arboles'),
+    grafos: document.getElementById('panel-grafos'),
+    'otras-estructuras': document.getElementById('panel-otras-estructuras')
+  };
+  function showTab(name){
+    if(!panels[name]) name = 'punteros';
+    tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.tab === name ? 'true' : 'false'));
+    Object.keys(panels).forEach(k => panels[k].classList.toggle('active', k === name));
+    history.replaceState(null, '', '#' + name);
+  }
+  tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+  window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+  showTab(location.hash.slice(1) || 'punteros');
+
+  // ---------- checklists + progress ----------
+  const sections = ['punteros','recursion','poo','pilas-colas','ordenamiento','arboles','grafos','otras-estructuras'];
+  const sectionLabels = {punteros:'Punteros', recursion:'Recursión', poo:'POO básica', 'pilas-colas':'Pilas y Colas', ordenamiento:'Ordenamiento', arboles:'Árboles', grafos:'Grafos', 'otras-estructuras':'Otras Estructuras'};
+
+  function checklistKey(section, idx){ return 'ayed-fund-' + section + '-' + idx; }
+
+  function initChecklist(ul){
+    const section = ul.dataset.section;
+    Array.from(ul.children).forEach((li, idx) => {
+      const cb = li.querySelector('input[type=checkbox]');
+      const key = checklistKey(section, idx);
+      cb.checked = lsGet(key, false);
+      li.classList.toggle('checked', cb.checked);
+      cb.addEventListener('change', () => {
+        lsSet(key, cb.checked);
+        li.classList.toggle('checked', cb.checked);
+        renderProgress();
+      });
+    });
+  }
+  document.querySelectorAll('ul.checklist').forEach(initChecklist);
+
+  function sectionProgress(section){
+    const ul = document.querySelector('ul.checklist[data-section="' + section + '"]');
+    if(!ul) return 0;
+    const items = Array.from(ul.children);
+    if(items.length === 0) return 0;
+    const done = items.filter((li,idx) => lsGet(checklistKey(section, idx), false)).length;
+    return done / items.length;
+  }
+
+  function renderProgress(){
+    const box = document.getElementById('progressOverview');
+    box.innerHTML = '';
+    sections.forEach(s => {
+      const p = sectionProgress(s);
+      const chip = document.createElement('div');
+      chip.className = 'progress-chip';
+      const dot = document.createElement('span');
+      dot.className = 'dot' + (p >= 1 ? ' done' : (p > 0 ? ' mid' : ''));
+      chip.appendChild(dot);
+      const txt = document.createElement('span');
+      txt.textContent = sectionLabels[s] + ' · ' + Math.round(p*100) + '%';
+      chip.appendChild(txt);
+      box.appendChild(chip);
+    });
+  }
+  renderProgress();
+
+  // ---------- quizzes ----------
+  document.querySelectorAll('.quiz[data-q]').forEach(q => {
+    const btns = Array.from(q.querySelectorAll('.opt-btn'));
+    const expl = q.querySelector('.expl');
+    btns.forEach(b => b.addEventListener('click', () => {
+      if(b.disabled) return;
+      btns.forEach(x => x.disabled = true);
+      btns.forEach(x => {
+        if(x.dataset.correct === 'true') x.classList.add('correct');
+        else if(x === b) x.classList.add('incorrect');
+      });
+      if(expl) expl.classList.add('show');
+    }));
+  });
+
+  // ---------- pointer diagram ----------
+  const xVal = document.getElementById('xVal');
+  const pVal = document.getElementById('pVal');
+  const ptrArrow = document.getElementById('ptrArrow');
+  const ptrCaption = document.getElementById('ptrCaption');
+  const ptrNote = document.getElementById('ptrNote');
+  document.getElementById('ptrAssignBtn').addEventListener('click', () => {
+    xVal.textContent = '100';
+    xVal.setAttribute('fill', 'var(--accent2)');
+    ptrNote.textContent = '*p = 100; escribió 100 en la dirección que p guarda — y esa dirección es la de x. x cambió sin tocarlo "por su nombre".';
+  });
+  document.getElementById('ptrNullBtn').addEventListener('click', () => {
+    pVal.textContent = 'nullptr';
+    ptrArrow.setAttribute('stroke', 'var(--border)');
+    ptrArrow.setAttribute('stroke-dasharray', '4 4');
+    ptrCaption.textContent = 'p ya no apunta a nada válido. *p acá rompería el programa.';
+    ptrNote.textContent = 'p = nullptr; — el puntero sigue existiendo, pero ya no "mira" ninguna casilla real.';
+  });
+  document.getElementById('ptrResetBtn').addEventListener('click', () => {
+    xVal.textContent = '42'; xVal.setAttribute('fill', 'var(--fg)');
+    pVal.textContent = '0x7ffd...a20';
+    ptrArrow.setAttribute('stroke', 'var(--accent2)');
+    ptrArrow.removeAttribute('stroke-dasharray');
+    ptrCaption.textContent = 'p guarda la dirección de x → por eso la flecha va de p hacia x.';
+    ptrNote.textContent = 'Mirá la flecha: nace en p y termina en x. Esa flecha ES el puntero.';
+  });
+
+  // ---------- recursion stack stepper ----------
+  const recSteps = [
+    {frames:[], note:'Arrancamos: main() llama a factorial(4).'},
+    {frames:['factorial(4)  n=4≠0 → necesito 4 × factorial(3)'], note:'factorial(4) no es caso base: debe esperar el resultado de factorial(3) antes de poder devolver nada.'},
+    {frames:['factorial(4)  n=4≠0 → necesito 4 × factorial(3)','factorial(3)  n=3≠0 → necesito 3 × factorial(2)'], note:'Se apila otro marco. factorial(4) queda "pausado" esperando.'},
+    {frames:['factorial(4)  n=4≠0 → necesito 4 × factorial(3)','factorial(3)  n=3≠0 → necesito 3 × factorial(2)','factorial(2)  n=2≠0 → necesito 2 × factorial(1)'], note:'Otro marco más. Cada uno tiene su propio n, independiente de los demás.'},
+    {frames:['factorial(4)  n=4≠0 → necesito 4 × factorial(3)','factorial(3)  n=3≠0 → necesito 3 × factorial(2)','factorial(2)  n=2≠0 → necesito 2 × factorial(1)','factorial(1)  n=1≠0 → necesito 1 × factorial(0)'], note:'Vamos bajando n de a uno en cada marco nuevo.'},
+    {frames:['factorial(4)  n=4≠0 → necesito 4 × factorial(3)','factorial(3)  n=3≠0 → necesito 3 × factorial(2)','factorial(2)  n=2≠0 → necesito 2 × factorial(1)','factorial(1)  n=1≠0 → necesito 1 × factorial(0)','factorial(0)  n=0 → CASO BASE: devuelve 1 sin llamarse de nuevo'], note:'¡Acá frena la recursión! n llegó a 0, así que no se apila nada más.'},
+    {frames:['factorial(4)  …esperando','factorial(3)  …esperando','factorial(2)  …esperando','factorial(1)  recibe 1 de factorial(0) → calcula 1×1 = 1, devuelve 1 y se desapila'], note:'Empieza el "desenrollado": cada marco usa el resultado que le devolvieron y se va.'},
+    {frames:['factorial(4)  …esperando','factorial(3)  …esperando','factorial(2)  recibe 1 de factorial(1) → calcula 2×1 = 2, devuelve 2 y se desapila'], note:'factorial(2) ya tiene lo que necesitaba: multiplica y se retira.'},
+    {frames:['factorial(4)  …esperando','factorial(3)  recibe 2 de factorial(2) → calcula 3×2 = 6, devuelve 6 y se desapila'], note:'factorial(3) resuelve con el 2 que le llegó.'},
+    {frames:['factorial(4)  recibe 6 de factorial(3) → calcula 4×6 = 24, devuelve 24 y se desapila'], note:'El último marco en pie resuelve con el 6.'},
+    {frames:[], note:'factorial(4) devolvió 24 a main(). Pila vacía: la recursión terminó.'}
+  ];
+  let recIdx = 0;
+  const recStackEl = document.getElementById('recStack');
+  const recNoteEl = document.getElementById('recNote');
+  const recCountEl = document.getElementById('recStepCount');
+  function renderRec(){
+    const step = recSteps[recIdx];
+    recStackEl.innerHTML = '';
+    if(step.frames.length === 0){
+      const p = document.createElement('div');
+      p.className = 'empty-note';
+      p.style.textAlign = 'center';
+      p.textContent = recIdx === 0 ? 'pila de llamadas vacía — todavía no arrancó' : 'pila de llamadas vacía — recursión terminada';
+      recStackEl.appendChild(p);
+    } else {
+      step.frames.forEach((f, i) => {
+        const d = document.createElement('div');
+        const isTop = i === step.frames.length - 1;
+        d.className = 'stackbox' + (isTop ? ' top' : '');
+        d.style.alignSelf = 'stretch';
+        d.style.textAlign = 'left';
+        d.style.fontSize = '12.5px';
+        d.textContent = f;
+        recStackEl.appendChild(d);
+      });
+    }
+    recNoteEl.textContent = step.note;
+    recCountEl.textContent = 'Paso ' + (recIdx+1) + ' / ' + recSteps.length;
+    document.getElementById('recPrev').disabled = recIdx === 0;
+    document.getElementById('recNext').disabled = recIdx === recSteps.length - 1;
+  }
+  document.getElementById('recNext').addEventListener('click', () => { if(recIdx < recSteps.length-1){ recIdx++; renderRec(); } });
+  document.getElementById('recPrev').addEventListener('click', () => { if(recIdx > 0){ recIdx--; renderRec(); } });
+  renderRec();
+
+  // ---------- stack / queue simulators ----------
+  let stackData = ['A','B'];
+  let queueData = ['A','B'];
+
+  function renderStack(){
+    const el = document.getElementById('stackArea');
+    el.innerHTML = '';
+    if(stackData.length === 0){
+      el.innerHTML = '<span class="empty-note">pila vacía</span>';
+      return;
+    }
+    stackData.forEach((v, i) => {
+      const d = document.createElement('div');
+      d.className = 'stackbox' + (i === stackData.length-1 ? ' top' : '');
+      d.textContent = v;
+      el.appendChild(d);
+    });
+  }
+  function renderQueue(){
+    const el = document.getElementById('queueArea');
+    el.innerHTML = '';
+    if(queueData.length === 0){
+      el.innerHTML = '<span class="empty-note">cola vacía</span>';
+      return;
+    }
+    const front = document.createElement('span'); front.className='end-label'; front.textContent='frente →'; el.appendChild(front);
+    queueData.forEach(v => {
+      const d = document.createElement('div');
+      d.className = 'stackbox';
+      d.textContent = v;
+      el.appendChild(d);
+    });
+    const back = document.createElement('span'); back.className='end-label'; back.textContent='← atrás'; el.appendChild(back);
+  }
+  function nextLetter(arr){
+    const used = new Set(arr);
+    for(let i=0;i<26;i++){
+      const c = String.fromCharCode(65+i);
+      if(!used.has(c)) return c;
+    }
+    return String(arr.length);
+  }
+  document.getElementById('stackPush').addEventListener('click', () => {
+    const inp = document.getElementById('stackInput');
+    const v = (inp.value.trim() || nextLetter(stackData)).slice(0,4);
+    stackData.push(v);
+    inp.value = '';
+    renderStack();
+  });
+  document.getElementById('stackPop').addEventListener('click', () => { stackData.pop(); renderStack(); });
+  document.getElementById('queueEnq').addEventListener('click', () => {
+    const inp = document.getElementById('queueInput');
+    const v = (inp.value.trim() || nextLetter(queueData)).slice(0,4);
+    queueData.push(v);
+    inp.value = '';
+    renderQueue();
+  });
+  document.getElementById('queueDeq').addEventListener('click', () => { queueData.shift(); renderQueue(); });
+  renderStack(); renderQueue();
+
+  // ---------- generic code+array synced stepper (selección / burbuja / inserción) ----------
+  function createCodeStepper(cfg){
+    var idx = 0;
+    var codeEl = document.getElementById(cfg.codeId);
+    codeEl.innerHTML = cfg.codeLines.map(function(line, i){
+      return '<span class="ln" id="' + cfg.prefix + '-ln-' + i + '">' + line + '</span>';
+    }).join('\n');
+    var rowEl = document.getElementById(cfg.rowId);
+    var noteEl = document.getElementById(cfg.noteId);
+    var countEl = document.getElementById(cfg.countId);
+    var prevBtn = document.getElementById(cfg.prevId);
+    var nextBtn = document.getElementById(cfg.nextId);
+    function render(){
+      var step = cfg.steps[idx];
+      cfg.codeLines.forEach(function(_, i){
+        document.getElementById(cfg.prefix + '-ln-' + i).classList.toggle('active', step.lines.indexOf(i) !== -1);
+      });
+      rowEl.innerHTML = '';
+      step.arr.forEach(function(v, i){
+        var box = document.createElement('div');
+        var cls = 'sort-box';
+        if (step.done && step.done.indexOf(i) !== -1) cls += ' done';
+        if (step.compare && step.compare.indexOf(i) !== -1) cls += ' compare';
+        if (step.candidate === i) cls += ' candidate';
+        box.className = cls;
+        box.innerHTML = '<span class="idx">' + i + '</span>' + v;
+        rowEl.appendChild(box);
+      });
+      noteEl.textContent = step.note;
+      countEl.textContent = 'Paso ' + (idx+1) + ' / ' + cfg.steps.length;
+      prevBtn.disabled = (idx === 0);
+      nextBtn.disabled = (idx === cfg.steps.length - 1);
+    }
+    nextBtn.addEventListener('click', function(){ if(idx < cfg.steps.length-1){ idx++; render(); } });
+    prevBtn.addEventListener('click', function(){ if(idx > 0){ idx--; render(); } });
+    render();
+  }
+
+  createCodeStepper({
+    prefix:'sel', codeId:'selCode', rowId:'selRow', noteId:'selNote', countId:'selStepCount', prevId:'selPrev', nextId:'selNext',
+    codeLines:[
+      'void seleccion(int datos[], int n) {',
+      '    for (int i = 0; i &lt; n - 1; i++) {',
+      '        int idxMin = i;',
+      '        for (int j = i + 1; j &lt; n; j++) {',
+      '            if (datos[j] &lt; datos[idxMin]) idxMin = j;',
+      '        }',
+      '        int tmp = datos[i];',
+      '        datos[i] = datos[idxMin];',
+      '        datos[idxMin] = tmp;',
+      '    }',
+      '}'
+    ],
+    steps:[
+      {lines:[1], arr:[5,2,4,1], done:[], note:'Arranca la pasada i=0: todavía nada está ordenado.'},
+      {lines:[2], arr:[5,2,4,1], done:[], candidate:0, note:'Asumimos que el mínimo está en la posición actual de i (posición 0, valor 5).'},
+      {lines:[3,4], arr:[5,2,4,1], done:[], candidate:0, compare:[1], note:'Comparamos datos[1]=2 con el mínimo actual (5). 2 es menor: el nuevo candidato a mínimo es la posición 1.'},
+      {lines:[3,4], arr:[5,2,4,1], done:[], candidate:1, compare:[2], note:'Comparamos datos[2]=4 con el mínimo actual (2). No es menor: el candidato sigue siendo la posición 1.'},
+      {lines:[3,4], arr:[5,2,4,1], done:[], candidate:1, compare:[3], note:'Comparamos datos[3]=1 con el mínimo actual (2). 1 es menor: el nuevo candidato a mínimo es la posición 3.'},
+      {lines:[6,7,8], arr:[1,2,4,5], done:[0], note:'Terminó de recorrer: el mínimo real está en la posición 3. Lo intercambiamos con la posición 0 (i). La posición 0 queda fija para siempre.'},
+      {lines:[1], arr:[1,2,4,5], done:[0], note:'Pasada i=1: la posición 0 ya está ordenada. Buscamos el mínimo entre las posiciones 1 a 3.'},
+      {lines:[2], arr:[1,2,4,5], done:[0], candidate:1, note:'Asumimos que el mínimo está en la posición 1 (valor 2).'},
+      {lines:[3,4], arr:[1,2,4,5], done:[0], candidate:1, compare:[2], note:'Comparamos datos[2]=4 con el mínimo actual (2). No es menor.'},
+      {lines:[3,4], arr:[1,2,4,5], done:[0], candidate:1, compare:[3], note:'Comparamos datos[3]=5 con el mínimo actual (2). No es menor. El candidato sigue siendo la posición 1.'},
+      {lines:[6,7,8], arr:[1,2,4,5], done:[0,1], note:'El mínimo ya estaba en su lugar (posición 1). El intercambio es "consigo mismo": no cambia nada.'},
+      {lines:[1], arr:[1,2,4,5], done:[0,1], note:'Pasada i=2: buscamos el mínimo entre las posiciones 2 y 3.'},
+      {lines:[2], arr:[1,2,4,5], done:[0,1], candidate:2, note:'Asumimos que el mínimo está en la posición 2 (valor 4).'},
+      {lines:[3,4], arr:[1,2,4,5], done:[0,1], candidate:2, compare:[3], note:'Comparamos datos[3]=5 con el mínimo actual (4). No es menor. El candidato sigue siendo la posición 2.'},
+      {lines:[6,7,8], arr:[1,2,4,5], done:[0,1,2], note:'Ya estaba en su lugar: no cambia nada.'},
+      {lines:[9,10], arr:[1,2,4,5], done:[0,1,2,3], note:'El bucle termina (i ya llegó a n-1). Con 3 posiciones fijas, la última (posición 3) queda ordenada automáticamente. ¡Listo! [1,2,4,5]'}
+    ]
+  });
+
+  createCodeStepper({
+    prefix:'bub', codeId:'bubCode', rowId:'bubRow', noteId:'bubNote', countId:'bubStepCount', prevId:'bubPrev', nextId:'bubNext',
+    codeLines:[
+      'void burbuja(int datos[], int n) {',
+      '    for (int i = 0; i &lt; n - 1; i++) {',
+      '        for (int j = 0; j &lt; n - 1 - i; j++) {',
+      '            if (datos[j] > datos[j + 1]) {',
+      '                int tmp = datos[j];',
+      '                datos[j] = datos[j + 1];',
+      '                datos[j + 1] = tmp;',
+      '            }',
+      '        }',
+      '    }',
+      '}'
+    ],
+    steps:[
+      {lines:[1], arr:[5,2,4,1], done:[], note:'Pasada i=0: recorremos de izquierda a derecha comparando vecinos.'},
+      {lines:[2,3], arr:[5,2,4,1], done:[], compare:[0,1], note:'Comparamos los vecinos en las posiciones 0 y 1: 5 y 2. Como 5>2, están en el orden incorrecto.'},
+      {lines:[4,5,6], arr:[2,5,4,1], done:[], compare:[0,1], note:'Los intercambiamos.'},
+      {lines:[2,3], arr:[2,5,4,1], done:[], compare:[1,2], note:'Comparamos las posiciones 1 y 2: 5 y 4. 5>4, incorrecto.'},
+      {lines:[4,5,6], arr:[2,4,5,1], done:[], compare:[1,2], note:'Los intercambiamos. El 5 "se corre" un lugar más a la derecha — se está yendo hacia el final, como una burbuja.'},
+      {lines:[2,3], arr:[2,4,5,1], done:[], compare:[2,3], note:'Comparamos las posiciones 2 y 3: 5 y 1. 5>1, incorrecto.'},
+      {lines:[4,5,6], arr:[2,4,1,5], done:[3], compare:[2,3], note:'Los intercambiamos. El 5 llegó al final: la posición 3 ya es definitiva, es el valor más grande de todo el arreglo.'},
+      {lines:[1], arr:[2,4,1,5], done:[3], note:'Pasada i=1: la posición 3 ya está fija. Repetimos, pero una posición menos.'},
+      {lines:[2,3], arr:[2,4,1,5], done:[3], compare:[0,1], note:'Comparamos 2 y 4. 2<4, ya están en el orden correcto: no se intercambia.'},
+      {lines:[2,3], arr:[2,4,1,5], done:[3], compare:[1,2], note:'Comparamos 4 y 1. 4>1, incorrecto.'},
+      {lines:[4,5,6], arr:[2,1,4,5], done:[2,3], compare:[1,2], note:'Los intercambiamos. La posición 2 queda fija (valor 4).'},
+      {lines:[1], arr:[2,1,4,5], done:[2,3], note:'Pasada i=2: las posiciones 2 y 3 ya están fijas.'},
+      {lines:[2,3], arr:[2,1,4,5], done:[2,3], compare:[0,1], note:'Comparamos 2 y 1. 2>1, incorrecto.'},
+      {lines:[4,5,6], arr:[1,2,4,5], done:[1,2,3], compare:[0,1], note:'Los intercambiamos. La posición 1 queda fija.'},
+      {lines:[9,10], arr:[1,2,4,5], done:[0,1,2,3], note:'El bucle termina (i llegó a n-1). Con 3 posiciones fijas desde la derecha, la posición 0 queda ordenada sola. ¡Listo! [1,2,4,5]'}
+    ]
+  });
+
+  createCodeStepper({
+    prefix:'ins', codeId:'insCode', rowId:'insRow', noteId:'insNote', countId:'insStepCount', prevId:'insPrev', nextId:'insNext',
+    codeLines:[
+      'void insercion(int datos[], int n) {',
+      '    for (int i = 1; i &lt; n; i++) {',
+      '        int actual = datos[i];',
+      '        int j = i - 1;',
+      '        while (j >= 0 &amp;&amp; datos[j] > actual) {',
+      '            datos[j + 1] = datos[j];',
+      '            j--;',
+      '        }',
+      '        datos[j + 1] = actual;',
+      '    }',
+      '}'
+    ],
+    steps:[
+      {lines:[1], arr:[5,2,4,1], done:[0], note:'Pasada i=1: consideramos ordenado solo el primer elemento (posición 0).'},
+      {lines:[2], arr:[5,2,4,1], done:[0], candidate:1, note:'Guardamos aparte el valor a insertar: actual = datos[1] = 2 (como "levantar la carta nueva").'},
+      {lines:[3], arr:[5,2,4,1], done:[0], note:'j arranca en la posición anterior a i (posición 0).'},
+      {lines:[4], arr:[5,2,4,1], done:[0], compare:[0], note:'¿datos[0]=5 es mayor que actual=2? Sí: hay que correrlo.'},
+      {lines:[5,6], arr:[5,5,4,1], done:[0], note:'Corremos el 5 un lugar a la derecha (pisa el hueco donde estaba "actual", que ya guardamos aparte) y retrocedemos j.'},
+      {lines:[4], arr:[5,5,4,1], done:[0], note:'j ya es -1 (llegamos al principio): el while se corta.'},
+      {lines:[8], arr:[2,5,4,1], done:[0,1], note:'Insertamos "actual" (2) en el hueco que quedó libre (posición 0).'},
+      {lines:[1], arr:[2,5,4,1], done:[0,1], note:'Pasada i=2.'},
+      {lines:[2], arr:[2,5,4,1], done:[0,1], candidate:2, note:'Guardamos actual = datos[2] = 4.'},
+      {lines:[3], arr:[2,5,4,1], done:[0,1], note:'j arranca en la posición 1.'},
+      {lines:[4], arr:[2,5,4,1], done:[0,1], compare:[1], note:'¿datos[1]=5 > 4? Sí: hay que correrlo.'},
+      {lines:[5,6], arr:[2,5,5,1], done:[0,1], note:'Corremos el 5 un lugar a la derecha, retrocedemos j.'},
+      {lines:[4], arr:[2,5,5,1], done:[0,1], compare:[0], note:'¿datos[0]=2 > 4? No: encontramos el hueco correcto, el while se corta.'},
+      {lines:[8], arr:[2,4,5,1], done:[0,1,2], note:'Insertamos 4 en la posición 1.'},
+      {lines:[1], arr:[2,4,5,1], done:[0,1,2], note:'Pasada i=3 (la última).'},
+      {lines:[2], arr:[2,4,5,1], done:[0,1,2], candidate:3, note:'Guardamos actual = datos[3] = 1.'},
+      {lines:[3], arr:[2,4,5,1], done:[0,1,2], note:'j arranca en la posición 2.'},
+      {lines:[4], arr:[2,4,5,1], done:[0,1,2], compare:[2], note:'¿datos[2]=5 > 1? Sí: hay que correrlo.'},
+      {lines:[5,6], arr:[2,4,5,5], done:[0,1,2], note:'Corremos el 5, retrocedemos j.'},
+      {lines:[4], arr:[2,4,5,5], done:[0,1,2], compare:[1], note:'¿datos[1]=4 > 1? Sí: seguimos corriendo.'},
+      {lines:[5,6], arr:[2,4,4,5], done:[0,1,2], note:'Corremos el 4, retrocedemos j.'},
+      {lines:[4], arr:[2,4,4,5], done:[0,1,2], compare:[0], note:'¿datos[0]=2 > 1? Sí: seguimos corriendo.'},
+      {lines:[5,6], arr:[2,2,4,5], done:[0,1,2], note:'Corremos el 2, retrocedemos j hasta -1.'},
+      {lines:[4], arr:[2,2,4,5], done:[0,1,2], note:'j llegó a -1: el while se corta.'},
+      {lines:[8], arr:[1,2,4,5], done:[0,1,2,3], note:'Insertamos 1 en la posición 0. ¡Listo! [1,2,4,5]'}
+    ]
+  });
+
+  // ---------- BST search stepper ----------
+  var treeSteps = [
+    {path:['50'], current:'50', note:'Buscamos el 40. Arrancamos en la raíz: 50.'},
+    {path:['50','30'], current:'30', note:'40 < 50 → vamos a la izquierda.'},
+    {path:['50','30','40'], current:'40', note:'40 > 30 → vamos a la derecha.'},
+    {path:['50','30','40'], current:'40', note:'40 == 40 → ¡encontrado! Visitamos solo 3 de los 7 nodos del árbol.'}
+  ];
+  var treeIdx = 0;
+  var allTreeNodes = ['50','30','70','20','40','60','80'];
+  function renderTree(){
+    var step = treeSteps[treeIdx];
+    allTreeNodes.forEach(function(id){
+      var el = document.getElementById('tn-' + id);
+      el.classList.remove('visited','current');
+      if (step.path.indexOf(id) !== -1) el.classList.add('visited');
+      if (id === step.current) el.classList.add('current');
+    });
+    document.getElementById('treeNote').textContent = step.note;
+    document.getElementById('treeStepCount').textContent = 'Paso ' + (treeIdx+1) + ' / ' + treeSteps.length;
+    document.getElementById('treePrev').disabled = (treeIdx === 0);
+    document.getElementById('treeNext').disabled = (treeIdx === treeSteps.length - 1);
+  }
+  document.getElementById('treeNext').addEventListener('click', function(){ if(treeIdx < treeSteps.length-1){ treeIdx++; renderTree(); } });
+  document.getElementById('treePrev').addEventListener('click', function(){ if(treeIdx > 0){ treeIdx--; renderTree(); } });
+  renderTree();
+
+  // ---------- BFS stepper ----------
+  var bfsSteps = [
+    {queue:['A'], visited:['A'], current:null, note:'Arrancamos: encolamos A (el origen) y lo marcamos visitado.'},
+    {queue:['B','C'], visited:['A','B','C'], current:'A', note:'Desencolamos A, miramos sus vecinos (B, C): no estaban visitados, los encolamos.'},
+    {queue:['C','D'], visited:['A','B','C','D'], current:'B', note:'Desencolamos B. De sus vecinos, A ya estaba visitado (se ignora), D es nuevo: se encola.'},
+    {queue:['D'], visited:['A','B','C','D'], current:'C', note:'Desencolamos C. Sus vecinos (A, D) ya estaban visitados — no se agrega nada.'},
+    {queue:['E'], visited:['A','B','C','D','E'], current:'D', note:'Desencolamos D. Su vecino nuevo es E: se encola.'},
+    {queue:[], visited:['A','B','C','D','E'], current:'E', note:'Desencolamos E, no tiene vecinos nuevos. Cola vacía: BFS terminado. Orden de visita: A, B, C, D, E.'}
+  ];
+  var bfsIdx = 0;
+  var allGraphNodes = ['A','B','C','D','E'];
+  var bfsQueueRowEl = document.getElementById('bfsQueueRow');
+  function renderBfs(){
+    var step = bfsSteps[bfsIdx];
+    allGraphNodes.forEach(function(id){
+      var el = document.getElementById('gn-' + id);
+      el.classList.remove('visited','current');
+      if (step.visited.indexOf(id) !== -1) el.classList.add('visited');
+      if (id === step.current) el.classList.add('current');
+    });
+    bfsQueueRowEl.innerHTML = '';
+    if (step.queue.length === 0){
+      bfsQueueRowEl.innerHTML = '<span class="empty-note">cola vacía</span>';
+    } else {
+      step.queue.forEach(function(v){
+        var box = document.createElement('div');
+        box.className = 'sort-box';
+        box.textContent = v;
+        bfsQueueRowEl.appendChild(box);
+      });
+    }
+    document.getElementById('bfsNote').textContent = step.note;
+    document.getElementById('bfsStepCount').textContent = 'Paso ' + (bfsIdx+1) + ' / ' + bfsSteps.length;
+    document.getElementById('bfsPrev').disabled = (bfsIdx === 0);
+    document.getElementById('bfsNext').disabled = (bfsIdx === bfsSteps.length - 1);
+  }
+  document.getElementById('bfsNext').addEventListener('click', function(){ if(bfsIdx < bfsSteps.length-1){ bfsIdx++; renderBfs(); } });
+  document.getElementById('bfsPrev').addEventListener('click', function(){ if(bfsIdx > 0){ bfsIdx--; renderBfs(); } });
+  renderBfs();
+
+})();
+</script>
+
+</body></html>

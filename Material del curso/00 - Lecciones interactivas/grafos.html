@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; GRAFOS.exe — LAC</title>
+<style>
+
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:19px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(30px,5vw,50px); line-height:1.1; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .tp{color:var(--cyan);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+
+  /* ---------- tree visual ---------- */
+  .tree-wrap{position:relative; margin-top:16px; overflow-x:auto;}
+  .tree-svg{display:block; min-width:500px;}
+  .tree-svg .edge{stroke:var(--border-soft); stroke-width:2; fill:none;}
+  .tree-svg .edge.new{stroke:var(--amber); stroke-dasharray:4 3;}
+  .tree-node circle{fill:var(--bg-raised); stroke:var(--border-soft); stroke-width:1.5; transition:fill .25s, stroke .25s;}
+  .tree-node text{fill:var(--text); font-family:var(--font-mono); font-size:13px; text-anchor:middle; dominant-baseline:central;}
+  .tree-node.visited circle{fill:rgba(0,212,255,0.14); stroke:var(--cyan);}
+  .tree-node.visited text{fill:var(--cyan);}
+  .tree-node.current circle{fill:rgba(245,158,11,0.18); stroke:var(--amber); stroke-width:2.5;}
+  .tree-node.current text{fill:var(--amber);}
+  .tree-node.newnode circle{fill:rgba(16,185,129,0.18); stroke:var(--green); stroke-width:2.5;}
+  .tree-node.newnode text{fill:var(--green);}
+  .tree-node.hidden{opacity:0;}
+  .edge.hidden{opacity:0;}
+
+  .lab-readout{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px;}
+  .ro{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 12px;}
+  .ro .k{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.06em;}
+  .ro .v{font-family:var(--font-mono); font-size:14px; color:var(--cyan); margin-top:3px;}
+  .ro .v.wide{font-size:13px; word-break:break-all;}
+
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:560px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+
+
+  /* ---------- extras compartidos ---------- */
+  .nav-sub{display:block; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint); text-decoration:none; padding:5px 10px 5px 24px; border-radius:6px;}
+  .nav-sub:hover{color:var(--text); background:var(--bg-panel);}
+  .tbl-wrap{overflow-x:auto; margin:14px 0;}
+  table.tbl{border-collapse:collapse; width:100%; font-size:13.5px; min-width:480px;}
+  table.tbl th, table.tbl td{border:1px solid var(--border-soft); padding:8px 11px; text-align:left; color:var(--text); vertical-align:top;}
+  table.tbl th{background:var(--bg-panel-2); font-family:var(--font-mono); font-size:11.5px; color:var(--cyan); letter-spacing:.04em; font-weight:normal;}
+  table.tbl td.dim{color:var(--text-dim);}
+  select, input[type=text], input[type=number]{background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 10px; font-family:var(--font-mono); font-size:12.5px; max-width:100%;}
+  input[type=number]{width:84px;} input[type=text]{width:150px;}
+  select:focus, input:focus{outline:2px solid var(--cyan); outline-offset:1px;}
+  .ctrl-row{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;}
+  .field{display:flex; flex-direction:column; gap:4px;}
+  .field > label{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.06em;}
+  .log{background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:10px 14px; font-family:var(--font-mono); font-size:12.5px; max-height:210px; overflow:auto; color:#B9E9FF; margin-top:14px; line-height:1.55;}
+  .log p{margin:0 0 5px; color:inherit; max-width:none;}
+  .log .ok{color:var(--green);} .log .bad{color:var(--red);} .log .warn{color:var(--amber);} .log .dim{color:var(--text-faint);}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:10px;}
+  .legend i{display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-2px; margin-right:6px; border:1.5px solid;}
+  .code .num{color:var(--amber);} .code .str{color:var(--green);}
+  .steps-list{margin:10px 0 0; padding-left:20px; color:var(--text); font-size:13.5px;}
+  .steps-list li{margin-bottom:5px;}
+  .note-small{font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  strong{color:var(--text);}
+
+
+  .gsvg{display:block; width:100%; max-width:660px; height:auto; margin:6px auto 0;}
+  .ge{stroke:#3a4466; stroke-width:2.5; fill:none; transition:stroke .2s;}
+  .gdir .ge{marker-end:url(#ah);}
+  .gdir .ge.tree{marker-end:url(#ah-g);} .gdir .ge.cand{marker-end:url(#ah-a);} .gdir .ge.rej{marker-end:url(#ah-r);} .gdir .ge.path{marker-end:url(#ah-c);}
+  .ge.tree{stroke:var(--green); stroke-width:4;}
+  .ge.cand{stroke:var(--amber); stroke-width:4;}
+  .ge.rej{stroke:var(--red); stroke-width:3; stroke-dasharray:7 5;}
+  .ge.path{stroke:var(--cyan); stroke-width:4.5;}
+  .gw{font-family:var(--font-mono); font-size:13px; fill:var(--text-dim); stroke:var(--bg-panel); stroke-width:5px; paint-order:stroke;}
+  .gw.tree{fill:var(--green);} .gw.cand{fill:var(--amber);} .gw.rej{fill:var(--red);} .gw.path{fill:var(--cyan);}
+  .gn circle{fill:var(--bg-raised); stroke:#5b6b99; stroke-width:2.5; transition:fill .2s, stroke .2s;}
+  .gn.q circle{stroke:var(--cyan); fill:rgba(0,212,255,0.12);}
+  .gn.cur circle{stroke:var(--amber); fill:rgba(245,158,11,0.22);}
+  .gn.done circle{stroke:var(--green); fill:rgba(16,185,129,0.18);}
+  .gn.done.c1 circle{stroke:var(--cyan); fill:rgba(0,212,255,0.16);}
+  .gn.done.c2 circle{stroke:#A78BFA; fill:rgba(124,58,237,0.22);}
+  .gl{font-family:var(--font-mono); font-size:15px; font-weight:bold; fill:var(--text);}
+  .gc{font-family:var(--font-body, sans-serif); font-size:11.5px; fill:var(--text-faint);}
+  .gt{font-family:var(--font-mono); font-size:12px; fill:var(--amber); font-weight:bold; stroke:var(--bg-panel); stroke-width:4px; paint-order:stroke;}
+  .state-box{margin-top:12px;}
+  .state-box p{margin:6px 0; max-width:none;}
+  .chp{display:inline-block; font-family:var(--font-mono); font-size:12.5px; padding:2px 9px; margin:2px 5px 2px 0; border-radius:6px; background:var(--bg-raised); border:1px solid var(--border-soft); color:var(--text);}
+  .chp.q{border-color:var(--cyan); color:var(--cyan);} .chp.ok{border-color:var(--green); color:var(--green);} .chp.bad{border-color:var(--red); color:var(--red);}
+  td.hit, .hitn{background:rgba(245,158,11,0.22); color:var(--amber) !important; font-weight:bold;}
+  .hitrow{color:var(--amber);}
+  th.kcol{color:var(--amber) !important;}
+  label.inl{display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:12.5px; color:var(--text); cursor:pointer;}
+  label.inl input{accent-color:var(--cyan); width:16px; height:16px;}
+  .pmchk{width:18px; height:18px; accent-color:var(--cyan); cursor:pointer;}
+  .legend span{color:var(--text-dim);}
+
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // GRAFOS</div>
+  <div class="nav-title">GRAFOS.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a>
+    </li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a>
+    </li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a>
+    </li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a>
+      <a class="nav-sub" href="#e-def">definiciones</a>
+      <a class="nav-sub" href="#e-rep">representación</a>
+      <a class="nav-sub" href="#e-bd">BFS y DFS</a>
+      <a class="nav-sub" href="#e-sp">caminos mínimos</a>
+      <a class="nav-sub" href="#e-mst">árbol de expansión (MST)</a>
+      <a class="nav-sub" href="#e-scc">componentes (SCC)</a>
+      <a class="nav-sub" href="#e-dag">DAG y orden topológico</a>
+      <a class="nav-sub" href="#e-flow">flujo máximo</a>
+      <a class="nav-sub" href="#e-mas">más allá y decisión</a>
+    </li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a>
+      <a class="nav-sub" href="#x-rep">representación</a>
+      <a class="nav-sub" href="#x-bd">BFS y DFS</a>
+      <a class="nav-sub" href="#x-dj">Dijkstra</a>
+      <a class="nav-sub" href="#x-bf">Bellman-Ford</a>
+      <a class="nav-sub" href="#x-fw">Floyd-Warshall</a>
+      <a class="nav-sub" href="#x-mst">Kruskal y Prim</a>
+      <a class="nav-sub" href="#x-scc">SCC</a>
+      <a class="nav-sub" href="#x-kh">Kahn</a>
+      <a class="nav-sub" href="#x-fl">flujo máximo</a>
+      <a class="nav-sub" href="#x-mt">matching</a>
+      <a class="nav-sub" href="#x-quiz">checkpoints</a>
+    </li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a>
+    </li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a>
+    </li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>requiere Arreglos, Listas, Colas y Pilas, Árboles, Big O</div>
+</nav>
+
+<main>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5b6b99"/></marker>
+    <marker id="ah-g" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#10B981"/></marker>
+    <marker id="ah-a" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#F59E0B"/></marker>
+    <marker id="ah-r" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#EF4444"/></marker>
+    <marker id="ah-c" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00D4FF"/></marker>
+  </defs></svg>
+
+  <section id="titulo">
+    <div class="cover-badge">PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">Grafos: modelar <span class="accent">redes, rutas y dependencias</span>.</h1>
+    <p class="cover-sub">Un único caso recorre todo el módulo: la red de envíos de DHL entre seis hubs. Con las mismas rutas y los mismos tiempos vas a representar la red, recorrerla, buscar la ruta más rápida, conectarla al menor costo, ordenar el proceso de un paquete y medir cuánta carga soporta.</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> Arreglos, Listas, Colas y Pilas, Árboles, Big O</span>
+      <span><b>cubre:</b> representación · BFS/DFS · caminos mínimos · MST · SCC · DAG · flujo</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>Un cliente de logística entra a DiagramaCba</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba/logistica</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat pedido_cliente.txt</p>
+        <p><span class="accent">maga_t:</span> Llegó un cliente de logística de envíos. Tiene seis hubs, ocho rutas y nos hace cinco preguntas: si hay ruta directa entre dos hubs, cuál es la ruta más rápida de Córdoba a Mar del Plata, cómo conectar todos los hubs gastando lo mínimo, en qué orden hacer las tareas de un paquete y cuántos paquetes por hora soporta la red.</p>
+        <p><span class="ok">ema_v:</span> Parecen cinco problemas distintos.</p>
+        <p><span class="accent">maga_t:</span> Son cinco preguntas sobre <strong>un mismo objeto</strong>: un grafo. Hubs y rutas son vértices y aristas. Lo difícil no es el código, sino reconocer qué pregunta le estás haciendo al grafo.</p>
+        <p><span class="ok">ema_v:</span> ¿Y los tiempos y capacidades de la red?</p>
+        <p><span class="accent">maga_t:</span> Son datos didácticos que fijamos una sola vez; no son rutas reales de la empresa. Si lo mantenemos consistente, cualquier resultado se puede verificar a mano.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Modelar un problema real como grafo y elegir entre matriz, lista de adyacencia y CSR.</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Explorar con BFS (cola) y DFS (pila) y saber qué te garantiza cada uno.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Elegir entre Dijkstra, Bellman-Ford y Floyd-Warshall según los costos y la pregunta.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Conectar todos los vértices al menor costo con Kruskal o Prim, y distinguir MST de camino mínimo.</p></div>
+      <div class="obj-card"><div class="k">05</div><p>Detectar componentes fuertemente conexas y ordenar dependencias con un orden topológico.</p></div>
+      <div class="obj-card"><div class="k">06</div><p>Calcular el flujo máximo con red residual y certificarlo con un corte mínimo.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3 id="e-def">Definiciones que se usan en todo el módulo</h3>
+    <p>Un <strong>grafo</strong> <code>G = (V, E)</code> modela <em>entidades</em> con vértices (<code>V</code>) y <em>relaciones</em> entre ellas con aristas (<code>E</code>). En nuestro caso: los vértices son los hubs de DHL y las aristas son las rutas entre ellos.</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>concepto</th><th>definición</th><th>en la red de DHL</th></tr>
+      <tr><td>no dirigido / dirigido</td><td class="dim">La arista {u, v} se recorre en los dos sentidos / la arista u→v tiene un solo sentido</td><td class="dim">Camiones que van y vuelven / ruta de un solo sentido</td></tr>
+      <tr><td>ponderado</td><td class="dim">Cada arista tiene un peso (costo, tiempo, capacidad)</td><td class="dim">Horas de ruta, o paquetes por hora</td></tr>
+      <tr><td>camino</td><td class="dim">Secuencia de vértices donde cada par consecutivo está unido por una arista</td><td class="dim">Córdoba → Santa Fe → La Plata</td></tr>
+      <tr><td>ciclo</td><td class="dim">Camino cerrado (<code>v₀ = vₖ</code>) que no repite ningún otro vértice</td><td class="dim">Córdoba → Rosario → Santa Fe → Córdoba</td></tr>
+      <tr><td>conexo (no dirigido)</td><td class="dim">Existe un camino entre <strong>todo</strong> par de vértices</td><td class="dim">Desde cualquier hub se llega a cualquier otro</td></tr>
+      <tr><td>fuertemente conexo (dirigido)</td><td class="dim">Existe un camino dirigido entre todo par de vértices, en <strong>ambas</strong> direcciones</td><td class="dim">Ida y vuelta posible entre cualquier par</td></tr>
+      <tr><td>débilmente conexo (dirigido)</td><td class="dim">El grafo no dirigido subyacente (ignorando sentidos) es conexo</td><td class="dim">Hay red, pero no siempre se puede volver</td></tr>
+      <tr><td>árbol</td><td class="dim">Grafo no dirigido conexo y sin ciclos; tiene exactamente <code>V − 1</code> aristas</td><td class="dim">Cinco rutas que unen seis hubs</td></tr>
+      <tr><td>árbol de expansión</td><td class="dim">Árbol que incluye todos los vértices del grafo</td><td class="dim">Un subconjunto de rutas que conecta todos los hubs</td></tr>
+      <tr><td>mutuamente alcanzables</td><td class="dim">Hay camino dirigido de u a v <strong>y</strong> de v a u (no necesitan una arista directa)</td><td class="dim">Dos hubs con ida y vuelta, aunque pasen por otros</td></tr>
+      <tr><td>DAG</td><td class="dim">Grafo dirigido <strong>acíclico</strong>: sin ciclos dirigidos</td><td class="dim">Las tareas que lleva un paquete</td></tr>
+      <tr><td>orden topológico</td><td class="dim">Ordena los vértices de un DAG de modo que, para cada u→v, u aparece antes que v</td><td class="dim">Secuencia válida de tareas</td></tr>
+    </table></div>
+    <div class="callout"><span class="k">NO SON LO MISMO</span><p><strong>Adyacencia</strong> pregunta por <em>una</em> arista ("¿hay ruta directa Córdoba–Mar del Plata?"). <strong>Alcanzabilidad</strong> pregunta por una <em>secuencia</em> de aristas ("¿se puede llegar?"). La respuesta a la primera puede ser no y la de la segunda, sí.</p></div>
+
+    <h3>La red de DHL que usamos en todos los ejemplos</h3>
+    <p>Seis hubs y ocho rutas bidireccionales, con el tiempo de ruta en horas (datos didácticos): <span class="mono">AB = 6, AC = 2, BC = 1, BD = 5, CE = 7, DE = 2, DF = 4, EF = 1</span>. A = Córdoba, B = Rosario, C = Santa Fe, D = Buenos Aires, E = La Plata, F = Mar del Plata. Cuando un tema necesita otro tipo de grafo (un solo sentido, dependencias, capacidades), se avisa y se usan los mismos hubs.</p>
+    <div class="panel"><svg class="gsvg" id="netSvg" viewBox="0 0 650 300" role="img" aria-label="Red de DHL con seis hubs"></svg>
+      <div class="legend"><span>peso de cada ruta = horas de ruta</span></div></div>
+
+    <h3 id="e-rep">Representar la red: matriz, lista y CSR</h3>
+    <p>La <strong>matriz de adyacencia</strong> es una tabla <code>V × V</code>: la celda <code>[u][v]</code> guarda el costo de la ruta u–v (o "no hay"). Consultar una arista es instantáneo, <code>O(1)</code>, pero ocupa <code>V²</code> celdas aunque casi todas estén vacías. La <strong>lista de adyacencia</strong> guarda, para cada hub, solo sus vecinos: <code>O(V + E)</code> de memoria, y para probar una arista hay que recorrer los vecinos de un hub.</p>
+    <p><strong>CSR</strong> (<em>Compressed Sparse Row</em>) es una lista de adyacencia sin un nodo enlazado por vecino: todas las listas van en un solo arreglo <code>neighbor[]</code> y <code>rowStart[]</code> indica dónde empieza la de cada hub. Los vecinos del hub <code>u</code> son <code>neighbor[rowStart[u] .. rowStart[u+1] − 1]</code> (intervalo semiabierto) y su grado es <code>rowStart[u+1] − rowStart[u]</code>. Se construye contando grados, haciendo sumas prefijas y colocando cada vecino. Es muy buena para redes grandes que se consultan mucho y casi no cambian; insertar una ruta obliga a desplazar datos o reconstruir.</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>operación</th><th>matriz</th><th>lista enlazada</th><th>CSR</th></tr>
+      <tr><td>memoria</td><td>O(V²)</td><td>O(V + E)</td><td>O(V + E), sin nodos sueltos</td></tr>
+      <tr><td>¿hay ruta u–v?</td><td>O(1)</td><td>O(grado de u)</td><td>O(grado de u)</td></tr>
+      <tr><td>recorrer vecinos de u</td><td>O(V)</td><td>O(grado de u)</td><td>O(grado de u), contiguos en memoria</td></tr>
+      <tr><td>agregar una ruta</td><td>O(1)</td><td>O(1) al inicio</td><td>costoso (reconstruir)</td></tr>
+    </table></div>
+    <div class="code" data-cpp="1">// CSR: todas las listas de vecinos en un solo arreglo; rowStart[u]..rowStart[u+1]-1 son los vecinos de u.
+struct Csr
+{
+    int rowStart[HUBS + 1]{};
+    int neighbor[2 * ROUTES]{};
+    int hours[2 * ROUTES]{};
+};
+
+void buildCsr(Csr&amp; csr)
+{
+    int fill[HUBS]{};
+    for (const Route&amp; route : NETWORK)                 // 1) contar el grado de cada hub
+    {
+        ++csr.rowStart[route.from + 1];
+        ++csr.rowStart[route.to + 1];
+    }
+    for (int hub{ 0 }; hub &lt; HUBS; ++hub)               // 2) sumas prefijas: inicio de cada fila
+    {
+        csr.rowStart[hub + 1] += csr.rowStart[hub];
+    }
+    for (const Route&amp; route : NETWORK)                 // 3) colocar cada vecino en su lugar
+    {
+        const int a{ csr.rowStart[route.from] + fill[route.from]++ };
+        const int b{ csr.rowStart[route.to] + fill[route.to]++ };
+        csr.neighbor[a] = route.to;
+        csr.hours[a] = route.hours;
+        csr.neighbor[b] = route.from;
+        csr.hours[b] = route.hours;
+    }
+}</div>
+    <div class="code" data-cpp="1">// Matriz de adyacencia ponderada: hours[u][v] == INFINITE si no hay ruta directa.
+struct Matrix
+{
+    int hours[HUBS][HUBS]{};
+
+    Matrix()
+    {
+        for (int u{ 0 }; u &lt; HUBS; ++u)
+        {
+            for (int v{ 0 }; v &lt; HUBS; ++v)
+            {
+                hours[u][v] = (u == v) ? 0 : INFINITE;
+            }
+        }
+        for (const Route&amp; route : NETWORK)
+        {
+            hours[route.from][route.to] = route.hours;
+            hours[route.to][route.from] = route.hours;
+        }
+    }
+};</div>
+
+    <h3 id="e-bd">Explorar la red: BFS y DFS</h3>
+    <p>Los dos recorren la red visitando cada hub una sola vez; cambia la estructura que guarda "lo pendiente". <strong>BFS</strong> usa una <strong>cola</strong> (FIFO): visita primero todo lo cercano, por ondas de distancia en <em>tramos</em>. Por eso encuentra el camino con menos tramos (no el de menos horas). <strong>DFS</strong> usa una <strong>pila</strong> (o la recursión): se interna por una rama hasta no poder más y retrocede. No garantiza el camino más corto, pero su árbol de exploración sirve para detectar ciclos, calcular tiempos de entrada y salida, y es la base de SCC y del orden topológico.</p>
+    <p>Un detalle que rompe programas: en BFS el hub se marca como visitado <strong>al encolarlo</strong>, no al desencolarlo. Para que las trazas sean reproducibles, los vecinos se recorren en orden alfabético. Con listas, los dos cuestan <code>O(V + E)</code>; con matriz, <code>O(V²)</code>.</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>criterio</th><th>BFS</th><th>DFS</th></tr>
+      <tr><td>estructura</td><td>cola FIFO</td><td>pila / recursión</td></tr>
+      <tr><td>orden</td><td>por distancia en tramos</td><td>por rama</td></tr>
+      <tr><td>camino con menos tramos (sin pesos)</td><td>sí</td><td>no</td></tr>
+      <tr><td>tiempo con listas</td><td>O(V + E)</td><td>O(V + E)</td></tr>
+    </table></div>
+    <div class="code" data-cpp="1">// BFS: cola FIFO en un arreglo. Se marca al ENCOLAR para que ningún hub entre dos veces.
+void bfs(const Matrix&amp; net, const int origin, int distance[HUBS])
+{
+    int queue[HUBS]{};
+    int head{ 0 };
+    int tail{ 0 };
+    for (int hub{ 0 }; hub &lt; HUBS; ++hub)
+    {
+        distance[hub] = -1;
+    }
+    distance[origin] = 0;
+    queue[tail++] = origin;
+    while (head &lt; tail)
+    {
+        const int current{ queue[head++] };
+        for (int next{ 0 }; next &lt; HUBS; ++next)
+        {
+            const bool linked{ net.hours[current][next] != INFINITE &amp;&amp; current != next };
+            if (linked &amp;&amp; distance[next] &lt; 0)
+            {
+                distance[next] = distance[current] + 1;
+                queue[tail++] = next;
+            }
+        }
+    }
+}</div>
+    <div class="code" data-cpp="1">// DFS recursivo: la pila de llamadas hace de pila. Devuelve el orden de entrada.
+void dfs(const Matrix&amp; net, const int current, bool visited[HUBS], int order[HUBS], int&amp; count)
+{
+    visited[current] = true;
+    order[count++] = current;
+    for (int next{ 0 }; next &lt; HUBS; ++next)
+    {
+        const bool linked{ net.hours[current][next] != INFINITE &amp;&amp; current != next };
+        if (linked &amp;&amp; !visited[next])
+        {
+            dfs(net, next, visited, order, count);
+        }
+    }
+}</div>
+
+    <h3 id="e-sp">Ruta más rápida: caminos mínimos</h3>
+    <p>Ahora se minimiza la <strong>suma de pesos</strong> (horas), no la cantidad de tramos. La operación que une a todos los algoritmos es la <strong>relajación</strong>: si <code>dist[u] + w(u,v) &lt; dist[v]</code>, entonces mejoramos <code>dist[v]</code> y guardamos <code>padre[v] = u</code>. Una distancia tentativa es la mejor ruta encontrada <em>hasta ahora</em>, no necesariamente la óptima.</p>
+    <ul class="plain">
+      <li><strong>Dijkstra</strong> (una fuente, costos <em>no negativos</em>): en cada paso fija el hub no fijado con menor distancia tentativa y relaja sus rutas. Se puede fijar porque, sin costos negativos, ninguna ruta posterior puede mejorarlo. Con selección lineal cuesta <code>O(V²)</code>; con un heap, <code>O((V + E) log V)</code>.</li>
+      <li><strong>Bellman-Ford</strong> (una fuente, admite costos negativos): relaja <em>todas</em> las aristas hasta <code>V − 1</code> veces. Una pasada extra que todavía mejore revela un <em>ciclo negativo</em> alcanzable. Cuesta <code>O(V·E)</code>. En grafos no dirigidos una arista negativa ya forma un ciclo negativo (ida y vuelta), por eso el ejemplo es de un solo sentido.</li>
+      <li><strong>Floyd-Warshall</strong> (todos los pares): programación dinámica sobre <code>dist[i][j]</code>, permitiendo de a un hub <code>k</code> como intermedio: <code>min(dist[i][j], dist[i][k] + dist[k][j])</code>. El orden de bucles <code>k, i, j</code> es fundamental. <code>O(V³)</code> tiempo, <code>O(V²)</code> memoria.</li>
+    </ul>
+    <p>Otros que conviene conocer: <strong>caminos en un DAG</strong> (relajar en orden topológico: <code>O(V + E)</code>, incluso con costos negativos), <strong>Johnson</strong> (Bellman-Ford para repesar las aristas y después Dijkstra desde cada origen: todos los pares en redes ralas) y <strong>A*</strong> (Dijkstra guiado por una heurística admisible hacia un destino).</p>
+    <div class="code" data-cpp="1">// Dijkstra con selección lineal: O(V^2). Precondición: ninguna ruta con costo negativo.
+void dijkstra(const Matrix&amp; net, const int origin, int distance[HUBS], int parent[HUBS])
+{
+    bool fixed[HUBS]{};
+    for (int hub{ 0 }; hub &lt; HUBS; ++hub)
+    {
+        distance[hub] = INFINITE;
+        parent[hub] = -1;
+    }
+    distance[origin] = 0;
+    for (int round{ 0 }; round &lt; HUBS; ++round)
+    {
+        int best{ -1 };
+        for (int hub{ 0 }; hub &lt; HUBS; ++hub)
+        {
+            if (!fixed[hub] &amp;&amp; distance[hub] != INFINITE &amp;&amp; (best &lt; 0 || distance[hub] &lt; distance[best]))
+            {
+                best = hub;
+            }
+        }
+        if (best &lt; 0)
+        {
+            break;
+        }
+        fixed[best] = true;
+        for (int next{ 0 }; next &lt; HUBS; ++next)
+        {
+            const bool linked{ net.hours[best][next] != INFINITE };
+            const int candidate{ distance[best] + net.hours[best][next] };
+            if (!fixed[next] &amp;&amp; linked &amp;&amp; candidate &lt; distance[next])    // relajación
+            {
+                distance[next] = candidate;
+                parent[next] = best;
+            }
+        }
+    }
+}</div>
+
+    <h3 id="e-mst">Conectar toda la red: árbol de expansión mínimo (MST)</h3>
+    <p>Acá la pregunta es otra: <em>conectar todos los hubs</em> con el menor costo <strong>total</strong>. Un árbol de expansión tiene <code>V − 1</code> aristas y ningún ciclo; el <strong>MST</strong> minimiza la suma de pesos. No minimiza el camino entre dos hubs en particular: en la red de DHL el MST cuesta <strong>11 h</strong> en total y el camino más rápido de A a F cuesta <strong>10 h</strong>, y no hay contradicción porque responden preguntas distintas.</p>
+    <p>Los dos algoritmos se justifican con la <strong>propiedad del corte</strong>: la arista más barata que cruza cualquier corte del grafo pertenece a algún MST (y, por la <strong>propiedad del ciclo</strong>, la más cara de un ciclo no hace falta).</p>
+    <ul class="plain">
+      <li><strong>Kruskal</strong>: ordena todas las rutas por costo y elige la siguiente solo si une dos <em>grupos</em> distintos (si no, cerraría un ciclo). Necesita saber rápido a qué grupo pertenece cada hub: eso lo da <strong>Union-Find</strong>.</li>
+      <li><strong>Prim</strong>: arranca en un hub y hace crecer un único árbol: siempre agrega la ruta más barata que sale del árbol hacia un hub de afuera.</li>
+      <li><strong>Union-Find (DSU)</strong>: cada grupo tiene un representante; <code>find</code> busca la raíz y <code>unite</code> fusiona grupos. Con compresión de caminos y unión por tamaño, cada operación cuesta casi <code>O(1)</code> amortizado (<code>O(α(V))</code>). Sus enlaces padre son auxiliares: no son rutas de la red.</li>
+    </ul>
+    <div class="code" data-cpp="1">// Union-Find con compresión de caminos y unión por tamaño.
+struct DisjointSets
+{
+    int parent[HUBS]{};
+    int size[HUBS]{};
+
+    DisjointSets()
+    {
+        for (int hub{ 0 }; hub &lt; HUBS; ++hub)
+        {
+            parent[hub] = hub;
+            size[hub] = 1;
+        }
+    }
+
+    int find(const int hub)
+    {
+        if (parent[hub] != hub)
+        {
+            parent[hub] = find(parent[hub]);
+        }
+        return parent[hub];
+    }
+
+    bool unite(const int a, const int b)
+    {
+        int rootA{ find(a) };
+        int rootB{ find(b) };
+        if (rootA == rootB)
+        {
+            return false;                      // ya están conectados: la ruta cerraría un ciclo
+        }
+        if (size[rootA] &lt; size[rootB])
+        {
+            const int swap{ rootA };
+            rootA = rootB;
+            rootB = swap;
+        }
+        parent[rootB] = rootA;
+        size[rootA] += size[rootB];
+        return true;
+    }
+};
+
+// Kruskal: ordenar las rutas por costo (inserción, estable) y elegir las que unen grupos distintos.
+int kruskal(Route chosen[HUBS - 1])
+{
+    Route sorted[ROUTES]{};
+    for (int i{ 0 }; i &lt; ROUTES; ++i)
+    {
+        int j{ i };
+        while (j &gt; 0 &amp;&amp; sorted[j - 1].hours &gt; NETWORK[i].hours)
+        {
+            sorted[j] = sorted[j - 1];
+            --j;
+        }
+        sorted[j] = NETWORK[i];
+    }
+    DisjointSets groups;
+    int total{ 0 };
+    int count{ 0 };
+    for (int i{ 0 }; i &lt; ROUTES &amp;&amp; count &lt; HUBS - 1; ++i)
+    {
+        if (groups.unite(sorted[i].from, sorted[i].to))
+        {
+            chosen[count++] = sorted[i];
+            total += sorted[i].hours;
+        }
+    }
+    return total;
+}</div>
+
+    <h3 id="e-scc">Ida y vuelta: componentes fuertemente conexas (SCC)</h3>
+    <p>Cuando hay rutas de <strong>un solo sentido</strong> (usamos A→B, B→C, C→A, B→D, D→E, E→D y F→E), poder llegar de B a D no implica poder volver. Una <strong>SCC</strong> es un conjunto maximal de hubs donde todos son <em>mutuamente alcanzables</em>. Acá son {A, B, C}, {D, E} y {F}. Una DFS simple no alcanza: hay que distinguir "ya visitado" de "ya pertenece a una componente cerrada".</p>
+    <ul class="plain">
+      <li><strong>Kosaraju</strong>: (1) DFS en el grafo original anotando el orden de finalización; (2) transponer el grafo (invertir las flechas); (3) DFS sobre el transpuesto arrancando por el que terminó último. Cada árbol de la segunda pasada es una SCC.</li>
+      <li><strong>Tarjan</strong>: una sola DFS con <code>disc[u]</code> (orden de descubrimiento), <code>low[u]</code> (el descubrimiento más antiguo al que se llega) y una pila de hubs "abiertos". Si <code>low[u] == disc[u]</code>, u es la raíz de una SCC y se desapila hasta u. Una arista a un hub que ya no está en la pila se <strong>ignora</strong>: ese es el detalle que impide mezclar componentes.</li>
+      <li><strong>Condensación</strong>: si cada SCC se reduce a un vértice, el resultado es siempre un DAG (un ciclo entre componentes las fusionaría en una sola).</li>
+    </ul>
+    <div class="code" data-cpp="1">// Tarjan: una sola DFS con disc, low y una pila de hubs "abiertos". Red de UN solo sentido.
+struct OneWay
+{
+    bool link[HUBS][HUBS]{};
+    int discovery[HUBS]{ -1, -1, -1, -1, -1, -1 };
+    int low[HUBS]{};
+    bool onStack[HUBS]{};
+    int stack[HUBS]{};
+    int top{ 0 };
+    int clock{ 0 };
+    int component[HUBS]{};
+    int componentCount{ 0 };
+
+    void visit(const int hub)
+    {
+        discovery[hub] = low[hub] = clock++;
+        stack[top++] = hub;
+        onStack[hub] = true;
+        for (int next{ 0 }; next &lt; HUBS; ++next)
+        {
+            if (!link[hub][next])
+            {
+                continue;
+            }
+            if (discovery[next] &lt; 0)
+            {
+                visit(next);
+                low[hub] = (low[next] &lt; low[hub]) ? low[next] : low[hub];
+            }
+            else if (onStack[next])            // arista de retroceso dentro de la componente abierta
+            {
+                low[hub] = (discovery[next] &lt; low[hub]) ? discovery[next] : low[hub];
+            }
+        }
+        if (low[hub] == discovery[hub])        // raíz de componente: se desapila hasta ella
+        {
+            int member{ -1 };
+            do
+            {
+                member = stack[--top];
+                onStack[member] = false;
+                component[member] = componentCount;
+            } while (member != hub);
+            ++componentCount;
+        }
+    }
+};</div>
+
+    <h3 id="e-dag">El proceso de un paquete: DAG y orden topológico</h3>
+    <p>Un paquete pasa por tareas que solo pueden empezar cuando otras terminaron. Es un grafo <strong>dirigido</strong> donde la arista u→v significa "u antes que v". Tiene solución si y solo si es un <strong>DAG</strong> (sin ciclos). Un <strong>orden topológico</strong> pone cada tarea después de todas sus previas; no es único (<code>A, B, C, D, E, F</code> y <code>A, C, B, E, D, F</code> sirven).</p>
+    <p>Para esta red: <span class="mono">Recepción → Escaneo y pesaje</span>, <span class="mono">Recepción → Etiquetado</span>, <span class="mono">Escaneo → Despacho aduanero</span>, <span class="mono">Escaneo → Carga en camión</span>, <span class="mono">Etiquetado → Carga en camión</span>, <span class="mono">Despacho → Entrega</span>, <span class="mono">Carga → Entrega</span>.</p>
+    <ul class="plain">
+      <li><strong>Kahn</strong>: lleva el <em>grado de entrada</em> de cada tarea (cuántas previas le faltan). Encola las de grado 0; al procesar una, resta 1 a sus sucesoras y encola las que llegan a 0. Si se vacía la cola y quedaron tareas sin procesar, hay un <strong>ciclo</strong>.</li>
+      <li><strong>Por DFS</strong>: el orden inverso de finalización es un orden topológico, siempre que no se encuentre una arista a un hub "en proceso" (que sería un ciclo).</li>
+    </ul>
+    <div class="code" data-cpp="1">// Kahn: grados de entrada + cola. Devuelve cuántas tareas se pudieron ordenar (&lt; HUBS ⇒ hay ciclo).
+int kahn(const bool depends[HUBS][HUBS], int order[HUBS])
+{
+    int pending[HUBS]{};
+    int queue[HUBS]{};
+    int head{ 0 };
+    int tail{ 0 };
+    for (int from{ 0 }; from &lt; HUBS; ++from)
+    {
+        for (int to{ 0 }; to &lt; HUBS; ++to)
+        {
+            if (depends[from][to])
+            {
+                ++pending[to];
+            }
+        }
+    }
+    for (int task{ 0 }; task &lt; HUBS; ++task)
+    {
+        if (pending[task] == 0)
+        {
+            queue[tail++] = task;
+        }
+    }
+    int done{ 0 };
+    while (head &lt; tail)
+    {
+        const int task{ queue[head++] };
+        order[done++] = task;
+        for (int next{ 0 }; next &lt; HUBS; ++next)
+        {
+            if (depends[task][next] &amp;&amp; --pending[next] == 0)
+            {
+                queue[tail++] = next;
+            }
+        }
+    }
+    return done;
+}</div>
+
+    <h3 id="e-flow">¿Cuánto soporta la red? Flujo máximo y asignaciones</h3>
+    <p>Ahora cada ruta tiene una <strong>capacidad</strong> (paquetes por hora). Una asignación de <strong>flujo</strong> factible cumple <code>0 ≤ f(u,v) ≤ c(u,v)</code> y la <em>conservación</em>: en cada hub intermedio, lo que entra es igual a lo que sale. Usamos una red nueva con los mismos hubs: <span class="mono">S→A = 3, S→B = 2, A→B = 2, A→T = 2, B→T = 3</span> (S origen, T destino, A Córdoba, B Rosario).</p>
+    <p><strong>Ford-Fulkerson</strong> busca caminos de S a T con capacidad libre en la <strong>red residual</strong> y los "aumenta". La red residual tiene, además de la capacidad que queda, una <em>arista inversa</em> con el flujo ya enviado: no es una ruta real de vuelta, sino la posibilidad de <strong>cancelar</strong> una decisión anterior. <strong>Edmonds-Karp</strong> es Ford-Fulkerson eligiendo siempre el camino con menos aristas (BFS): <code>O(V·E²)</code>.</p>
+    <p>El <strong>teorema max-flow min-cut</strong> dice que el flujo máximo es igual a la capacidad del corte mínimo. Por eso, cuando no queda camino aumentante, el conjunto de hubs alcanzables desde S en la residual define un corte cuya capacidad es el flujo: eso <em>certifica</em> que es óptimo. De S pueden salir 3 + 2 = 5, lo que demuestra que nunca pueden llegar más de 5, pero no que lleguen 5.</p>
+    <p><strong>Matching bipartito</strong>: para asignar repartidores a zonas, se agrega una fuente conectada a cada repartidor, una arista repartidor → zona por cada asignación permitida y cada zona al sumidero, todas con capacidad 1. Una unidad de flujo es una asignación, y el flujo puede <em>reasignar</em> a alguien cuando una elección inicial bloquea a otro.</p>
+    <div class="code" data-cpp="1">// Edmonds-Karp sobre la red RESIDUAL: residual[u][v] -= delta; residual[v][u] += delta.
+constexpr int NODES{ 4 };    // 0 = S, 1 = A, 2 = B, 3 = T
+
+int edmondsKarp(int residual[NODES][NODES], const int source, const int sink)
+{
+    int total{ 0 };
+    while (true)
+    {
+        int parent[NODES]{ -2, -2, -2, -2 };
+        int queue[NODES]{};
+        int head{ 0 };
+        int tail{ 0 };
+        parent[source] = -1;
+        queue[tail++] = source;
+        while (head &lt; tail &amp;&amp; parent[sink] == -2)          // BFS: el camino con menos aristas
+        {
+            const int current{ queue[head++] };
+            for (int next{ 0 }; next &lt; NODES; ++next)
+            {
+                if (parent[next] == -2 &amp;&amp; residual[current][next] &gt; 0)
+                {
+                    parent[next] = current;
+                    queue[tail++] = next;
+                }
+            }
+        }
+        if (parent[sink] == -2)
+        {
+            return total;                                   // T inalcanzable: flujo máximo
+        }
+        int delta{ INFINITE };
+        for (int node{ sink }; node != source; node = parent[node])
+        {
+            delta = (residual[parent[node]][node] &lt; delta) ? residual[parent[node]][node] : delta;
+        }
+        for (int node{ sink }; node != source; node = parent[node])
+        {
+            residual[parent[node]][node] -= delta;          // se gasta capacidad
+            residual[node][parent[node]] += delta;          // aparece la posibilidad de cancelar
+        }
+        total += delta;
+    }
+}</div>
+
+    <h3 id="e-mas">Más allá: otros problemas de la misma familia</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>problema</th><th>pregunta (en DHL)</th><th>idea</th></tr>
+      <tr><td>puente / punto de articulación</td><td class="dim">¿Qué ruta o hub, si falla, parte la red en dos?</td><td class="dim">DFS con <code>tin</code> y <code>low</code>: puente si <code>low[v] &gt; tin[u]</code>; O(V + E)</td></tr>
+      <tr><td>circuito euleriano</td><td class="dim">¿Un camión puede recorrer <strong>cada ruta</strong> exactamente una vez?</td><td class="dim">Grafo conexo con todos los grados pares (Hierholzer, O(V + E))</td></tr>
+      <tr><td>camino hamiltoniano</td><td class="dim">¿Puede visitar <strong>cada hub</strong> exactamente una vez?</td><td class="dim">Problema difícil (NP-completo)</td></tr>
+      <tr><td>viajante (TSP)</td><td class="dim">Circuito más barato que pasa por todos los hubs y vuelve</td><td class="dim">Held-Karp: <code>DP[S][j]</code> con bitmask, O(n²·2ⁿ); exponencial</td></tr>
+      <tr><td>multiplicación latina</td><td class="dim">Enumerar secuencias de hubs sin repetir</td><td class="dim">Compone <em>conjuntos de caminos</em> elementales; es distinta de min-plus, que calcula <em>costos</em> (<code>min</code> de sumas)</td></tr>
+      <tr><td>flujo de costo mínimo</td><td class="dim">Mover la carga requerida al menor costo</td><td class="dim">Residual + caminos de costo mínimo; Ford-Fulkerson solo maximiza caudal</td></tr>
+      <tr><td>2-SAT</td><td class="dim">Restricciones lógicas de a pares</td><td class="dim">Grafo de implicaciones + SCC: insatisfacible si x y ¬x están en la misma SCC</td></tr>
+    </table></div>
+
+    <h3>Mapa de decisión: ¿qué me están preguntando?</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>el enunciado pide...</th><th>usá</th></tr>
+      <tr><td>¿hay ruta directa?</td><td class="dim">matriz / lista / CSR</td></tr>
+      <tr><td>menos tramos</td><td class="dim">BFS</td></tr>
+      <tr><td>explorar la estructura, ciclos, tiempos</td><td class="dim">DFS</td></tr>
+      <tr><td>ruta más rápida, costos ≥ 0</td><td class="dim">Dijkstra</td></tr>
+      <tr><td>ruta con costos negativos</td><td class="dim">Bellman-Ford (o DAG en orden topológico si es acíclico)</td></tr>
+      <tr><td>todos los pares</td><td class="dim">Floyd-Warshall (o Johnson en redes ralas)</td></tr>
+      <tr><td>conectar todo al menor costo</td><td class="dim">MST: Kruskal o Prim</td></tr>
+      <tr><td>ida y vuelta entre regiones</td><td class="dim">SCC: Kosaraju o Tarjan</td></tr>
+      <tr><td>dependencias, orden de tareas</td><td class="dim">DAG + orden topológico (Kahn)</td></tr>
+      <tr><td>cuánto soporta la red</td><td class="dim">Ford-Fulkerson / Edmonds-Karp</td></tr>
+      <tr><td>asignar uno a uno</td><td class="dim">matching bipartito (flujo)</td></tr>
+    </table></div>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+    <p class="lead">Todos los laboratorios usan la misma red de DHL. Antes de apretar "siguiente", predecí qué va a pasar.</p>
+
+    <h3 id="x-rep">Representación: preguntá por una ruta</h3>
+    <div class="callout"><span class="k">PREDECÍ</span><p>¿Hay ruta directa entre Córdoba (A) y Mar del Plata (F)? ¿Y se puede llegar de A a F? No son la misma pregunta.</p></div>
+    <div class="panel">
+      <div class="ctrl-row">
+        <div class="field"><label>DESDE</label><select id="repFrom"><option value="0" selected>A · Córdoba</option><option value="1">B · Rosario</option><option value="2">C · Santa Fe</option><option value="3">D · Buenos Aires</option><option value="4">E · La Plata</option><option value="5">F · Mar del Plata</option></select></div><div class="field"><label>HASTA</label><select id="repTo"><option value="0">A · Córdoba</option><option value="1">B · Rosario</option><option value="2">C · Santa Fe</option><option value="3">D · Buenos Aires</option><option value="4">E · La Plata</option><option value="5" selected>F · Mar del Plata</option></select></div>
+        <button id="repDirect" class="primary">¿ruta directa?</button><button id="repReach">¿se puede llegar?</button><button id="repReset">↺ reiniciar</button>
+      </div>
+      <svg class="gsvg" id="repSvg" viewBox="0 0 650 300" role="img" aria-label="Red de DHL"></svg>
+      <p class="step-caption" id="repOut">Elegí un par de hubs y una consulta.</p>
+      <div id="repViews"></div>
+    </div>
+
+    <h3 id="x-bd">BFS y DFS: la misma red, dos formas de explorar</h3>
+    <div class="callout"><span class="k">PREDECÍ</span><p>Desde Córdoba, ¿qué estructura necesitás para visitar primero todo lo cercano? ¿Cuál para recordar dónde retroceder?</p></div>
+    
+    <div class="panel">
+      <div class="ctrl-row"><div class="field"><label>ALGORITMO</label><select id="bdAlg"><option value="bfs">BFS (cola)</option><option value="dfs">DFS (pila)</option></select></div><div class="field"><label>ORIGEN</label><select id="bdOrg"><option value="0" selected>A · Córdoba</option><option value="1">B · Rosario</option><option value="2">C · Santa Fe</option><option value="3">D · Buenos Aires</option><option value="4">E · La Plata</option><option value="5">F · Mar del Plata</option></select></div></div>
+      <svg class="gsvg" id="bdSvg" viewBox="0 0 650 300" role="img" aria-label="Red de hubs"></svg>
+      <p class="step-caption" id="bdCap"></p>
+      <div class="btn-row"><button id="bdPrev">◀ anterior</button><button id="bdNext" class="primary">siguiente ▶</button><button id="bdEnd">fin ⏭</button><button id="bdReset">↺ reiniciar</button><span class="note-small" id="bdNum"></span></div>
+      <div class="state-box" id="bdState"></div>
+    </div>
+
+    <h3 id="x-dj">Ruta más rápida: Dijkstra</h3>
+    <div class="callout"><span class="k">PREDECÍ</span><p>A–B–D–F cuesta 15 h y A–C–E–F cuesta 10 h. ¿Cuál es mejor? ¿Cómo probarías que no hay otra ruta oculta más rápida?</p></div>
+    
+    <div class="panel">
+      <div class="ctrl-row"><div class="field"><label>ORIGEN</label><select id="djOrg"><option value="0" selected>A · Córdoba</option><option value="1">B · Rosario</option><option value="2">C · Santa Fe</option><option value="3">D · Buenos Aires</option><option value="4">E · La Plata</option><option value="5">F · Mar del Plata</option></select></div><div class="field"><label>DESTINO</label><select id="djDst"><option value="0">A · Córdoba</option><option value="1">B · Rosario</option><option value="2">C · Santa Fe</option><option value="3">D · Buenos Aires</option><option value="4">E · La Plata</option><option value="5" selected>F · Mar del Plata</option></select></div></div>
+      <svg class="gsvg" id="djSvg" viewBox="0 0 650 300" role="img" aria-label="Red de hubs"></svg>
+      <p class="step-caption" id="djCap"></p>
+      <div class="btn-row"><button id="djPrev">◀ anterior</button><button id="djNext" class="primary">siguiente ▶</button><button id="djEnd">fin ⏭</button><button id="djReset">↺ reiniciar</button><span class="note-small" id="djNum"></span></div>
+      <div class="state-box" id="djState"></div>
+    </div>
+
+    <h3 id="x-bf">Costos negativos: Bellman-Ford</h3>
+    <p>Este es un <strong>caso nuevo</strong>, dirigido y con tres hubs: Córdoba→Rosario 4 h, Córdoba→Santa Fe 2 h y Rosario→Santa Fe −5 h (un crédito por carga de retorno). La mejor ruta a Santa Fe pasa por Rosario: 4 + (−5) = −1 h. Probá agregar el tramo Santa Fe→Córdoba (−1 h): se forma un ciclo negativo.</p>
+    
+    <div class="panel">
+      <div class="ctrl-row"><label class="inl"><input type="checkbox" id="bfNeg"> agregar Santa Fe→Córdoba (−1 h): ciclo negativo</label></div>
+      <svg class="gsvg" id="bfSvg" viewBox="0 0 340 300" role="img" aria-label="Red de hubs"></svg>
+      <p class="step-caption" id="bfCap"></p>
+      <div class="btn-row"><button id="bfPrev">◀ anterior</button><button id="bfNext" class="primary">siguiente ▶</button><button id="bfEnd">fin ⏭</button><button id="bfReset">↺ reiniciar</button><span class="note-small" id="bfNum"></span></div>
+      <div class="state-box" id="bfState"></div>
+    </div>
+
+    <h3 id="x-fw">Todos los pares: Floyd-Warshall</h3>
+    <p>Misma red de seis hubs. Mirá cómo cada hub, al permitirse como intermedio, va mejorando las distancias.</p>
+    
+    <div class="panel">
+      
+      
+      <p class="step-caption" id="fwCap"></p>
+      <div class="btn-row"><button id="fwPrev">◀ anterior</button><button id="fwNext" class="primary">siguiente ▶</button><button id="fwEnd">fin ⏭</button><button id="fwReset">↺ reiniciar</button><span class="note-small" id="fwNum"></span></div>
+      <div class="state-box" id="fwState"></div>
+    </div>
+
+    <h3 id="x-mst">Conectar la red al menor costo: Kruskal y Prim</h3>
+    <div class="callout"><span class="k">PREDECÍ</span><p>¿Cuántas rutas necesita una red sin ciclos que una los seis hubs? ¿Alcanza con elegir siempre las cinco más baratas?</p></div>
+    
+    <div class="panel">
+      <div class="ctrl-row"><div class="field"><label>ALGORITMO</label><select id="mstAlg"><option value="kruskal">Kruskal (rutas por costo)</option><option value="prim">Prim (desde Córdoba)</option></select></div></div>
+      <svg class="gsvg" id="mstSvg" viewBox="0 0 650 300" role="img" aria-label="Red de hubs"></svg>
+      <p class="step-caption" id="mstCap"></p>
+      <div class="btn-row"><button id="mstPrev">◀ anterior</button><button id="mstNext" class="primary">siguiente ▶</button><button id="mstEnd">fin ⏭</button><button id="mstReset">↺ reiniciar</button><span class="note-small" id="mstNum"></span></div>
+      <div class="state-box" id="mstState"></div>
+    </div>
+
+    <h3 id="x-scc">Ida y vuelta: SCC con Tarjan y Kosaraju</h3>
+    <p>Red de <strong>un solo sentido</strong> (mismos hubs): A→B, B→C, C→A, B→D, D→E, E→D, F→E.</p>
+    <div class="callout"><span class="k">PREDECÍ</span><p>¿Qué pares de hubs tienen camino en las dos direcciones? ¿Por qué F→E no mete a F en la componente de E?</p></div>
+    
+    <div class="panel">
+      <div class="ctrl-row"><div class="field"><label>ALGORITMO</label><select id="sccAlg"><option value="tarjan">Tarjan (una DFS)</option><option value="kosaraju">Kosaraju (dos DFS)</option></select></div></div>
+      <svg class="gsvg" id="sccSvg" viewBox="0 0 650 300" role="img" aria-label="Red de hubs"></svg>
+      <p class="step-caption" id="sccCap"></p>
+      <div class="btn-row"><button id="sccPrev">◀ anterior</button><button id="sccNext" class="primary">siguiente ▶</button><button id="sccEnd">fin ⏭</button><button id="sccReset">↺ reiniciar</button><span class="note-small" id="sccNum"></span></div>
+      <div class="state-box" id="sccState"></div>
+    </div>
+
+    <h3 id="x-kh">El proceso de un paquete: Kahn</h3>
+    <div class="callout"><span class="k">PREDECÍ</span><p>¿Pueden Escaneo y Etiquetado hacerse en distinto orden? ¿Qué pasaría si la Entrega también fuera requisito de la Recepción?</p></div>
+    
+    <div class="panel">
+      <div class="ctrl-row"><label class="inl"><input type="checkbox" id="khCyc"> agregar Entrega→Recepción (dependencia circular)</label></div>
+      <svg class="gsvg" id="khSvg" viewBox="0 0 650 300" role="img" aria-label="Red de hubs"></svg>
+      <p class="step-caption" id="khCap"></p>
+      <div class="btn-row"><button id="khPrev">◀ anterior</button><button id="khNext" class="primary">siguiente ▶</button><button id="khEnd">fin ⏭</button><button id="khReset">↺ reiniciar</button><span class="note-small" id="khNum"></span></div>
+      <div class="state-box" id="khState"></div>
+    </div>
+
+    <h3 id="x-fl">Cuánta carga soporta la red: flujo máximo</h3>
+    <div class="callout"><span class="k">PREDECÍ</span><p>Desde S pueden salir 3 + 2 = 5 paquetes/h. ¿Eso prueba que llegan 5 a T, o solo que nunca pueden llegar más?</p></div>
+    <p>Elegí "Ford-Fulkerson (elección desfavorable)" para ver que el cuarto camino usa una arista <em>residual inversa</em> y cancela parte de lo enviado, o "Edmonds-Karp" para ver que con BFS se llega a 5 en solo tres caminos.</p>
+    
+    <div class="panel">
+      <div class="ctrl-row"><div class="field"><label>MODO</label><select id="flMode"><option value="ff">Ford-Fulkerson (elección desfavorable)</option><option value="ek">Edmonds-Karp (BFS)</option></select></div></div>
+      <svg class="gsvg" id="flSvg" viewBox="0 0 480 300" role="img" aria-label="Red de hubs"></svg>
+      <p class="step-caption" id="flCap"></p>
+      <div class="btn-row"><button id="flPrev">◀ anterior</button><button id="flNext" class="primary">siguiente ▶</button><button id="flEnd">fin ⏭</button><button id="flReset">↺ reiniciar</button><span class="note-small" id="flNum"></span></div>
+      <div class="state-box" id="flState"></div>
+    </div>
+
+    <h3 id="x-mt">Asignar repartidores a zonas: matching</h3>
+    <p>Tildá en qué zonas puede trabajar cada repartidor. El cálculo es un flujo máximo sobre la red fuente → repartidores → zonas → sumidero (todas las capacidades valen 1).</p>
+    <div class="panel"><div id="mtGrid"></div><div id="mtOut" style="margin-top:14px"></div></div>
+
+    <h3 id="x-quiz">Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla, y marcá qué tan seguro estabas.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Los errores que más aparecen en esta unidad</h2>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> Entonces para el cliente: matriz o lista según la densidad, Dijkstra para la ruta más rápida, Kruskal para conectar todo, Kahn para ordenar las tareas del paquete y Edmonds-Karp para la capacidad.</p>
+        <p><span class="accent">maga_t:</span> Casi. Antes de elegir el algoritmo, elegí la <strong>pregunta</strong>: ¿suma de costos o cantidad de tramos? ¿una ruta o toda la red? ¿hay sentidos? ¿hay costos negativos? La respuesta a esas cuatro cosas te dice cuál usar.</p>
+        <p><span class="ok">ema_v:</span> Y siempre verificar con la misma red a mano.</p>
+        <p><span class="accent">maga_t:</span> Siempre: 10 h de A a F, 11 h de MST y 5 paquetes por hora. Si tu código da otra cosa, hay un bug.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">EN EL PROYECTO INTEGRADOR</span><p>Documentá en el Doxygen qué representación elegiste y por qué, y anotá la complejidad de cada algoritmo en función de V y E. Un <code>O(V²)</code> con matriz es aceptable en redes chicas; en redes grandes y ralas, la lista o CSR cambian el orden de magnitud.</p></div>
+  </section>
+
+  <footer><p>Material de apoyo cátedra de Algoritmos y Estructuras de Datos, FCEFyN · Ing. Valenzuela Gabriel.</p></footer>
+
+</main>
+
+<script>
+
+(function(){
+  'use strict';
+  /* ---- barra de progreso + navegación ---- */
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement, max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (doc.scrollTop / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){ if (sections[i].getBoundingClientRect().top <= 120) activeId = sections[i].id; }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+  var navToggle = document.getElementById('navtoggle'), sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open'); navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#sidenav a'), function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  /* ---- resaltado de código C++ (liviano, sin dependencias) ---- */
+  var KW = /\b(class|struct|template|typename|public|private|static|const|constexpr|final|noexcept|return|if|else|for|while|do|break|continue|new|delete|nullptr|true|false|using|auto|bool|void|enum|switch|case|default|operator|this|namespace|include|define|ifndef|endif|unsigned)\b/g;
+  var TP = /\b(int|char|size_t|std|uint32_t|uint8_t|uint64_t|long|short|string|vector|bitset|unordered_map|unordered_set|set|multiset|map|TData|Node|Split)\b/g;
+  function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function highlight(src){
+    var out = '', re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*")|([^\/"]+|\/)/g, m;
+    while ((m = re.exec(src)) !== null){
+      if (m[1]) out += '<span class="cm">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="str">' + esc(m[2]) + '</span>';
+      else {
+        var t = esc(m[3]);
+        t = t.replace(/\b(\d+(?:\.\d+)?[uUlL]*)\b/g, '<span class="num">$1</span>');
+        t = t.replace(KW, '<span class="kw">$1</span>').replace(TP, '<span class="tp">$1</span>');
+        out += t;
+      }
+    }
+    return out;
+  }
+  window.CC = { esc: esc, highlight: highlight };
+  window.CC.hlAll = function(root){
+    Array.prototype.forEach.call((root || document).querySelectorAll('.code[data-cpp]'), function(el){
+      if (el.getAttribute('data-done')) return;
+      el.innerHTML = highlight(el.textContent); el.setAttribute('data-done', '1');
+    });
+  };
+
+  /* ---- galería de errores ---- */
+  window.CC.buildErrors = function(gridId, errors){
+    var grid = document.getElementById(gridId);
+    errors.forEach(function(e, i){
+      var card = document.createElement('div'); card.className = 'err-card';
+      card.innerHTML =
+        '<div class="tag">' + e.tag + '</div><h4>' + e.title + '</h4>' +
+        '<div class="code" data-cpp="1">' + esc(e.bad) + '</div>' +
+        '<div class="err-sec c2">CONSECUENCIA</div><p class="why">' + e.cons + '</p>' +
+        '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+        '<div class="fix-box" id="' + gridId + '-fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code" data-cpp="1">' + esc(e.fix) + '</div></div>';
+      grid.appendChild(card);
+    });
+    grid.addEventListener('click', function(ev){
+      if (!ev.target.classList.contains('err-toggle')) return;
+      var box = document.getElementById(gridId + '-fix-' + ev.target.getAttribute('data-i'));
+      var showing = box.classList.toggle('show');
+      ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+    });
+    window.CC.hlAll(grid);
+  };
+
+  /* ---- checkpoints con nivel de seguridad ---- */
+  window.CC.buildQuiz = function(listId, quizzes){
+    var list = document.getElementById(listId);
+    quizzes.forEach(function(qz, qi){
+      var wrap = document.createElement('div'); wrap.className = 'quiz';
+      var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+      wrap.innerHTML =
+        '<div class="badge violet">CHECKPOINT ' + (qi + 1) + '</div>' +
+        (qz.code ? '<div class="code" data-cpp="1" style="margin-top:8px;">' + esc(qz.code) + '</div>' : '') +
+        '<p style="color:var(--text); margin:8px 0 10px;">' + qz.q + '</p>' +
+        '<div class="opt-row">' + optsHTML + '</div>' +
+        '<div class="quiz-fb" id="' + listId + '-fb-' + qi + '"></div>' +
+        '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button><button class="conf-btn" data-c="dude">dudé</button><button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+      list.appendChild(wrap);
+    });
+    list.addEventListener('click', function(ev){
+      var t = ev.target;
+      if (t.classList.contains('opt')){
+        var qi = t.getAttribute('data-qi'), oi = parseInt(t.getAttribute('data-oi'), 10), qz = quizzes[qi], row = t.parentElement;
+        Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+        if (oi === qz.correct) t.classList.add('correct');
+        else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+        var fb = document.getElementById(listId + '-fb-' + qi); fb.textContent = qz.fb; fb.classList.add('show');
+      }
+      if (t.classList.contains('conf-btn')){
+        Array.prototype.forEach.call(t.parentElement.querySelectorAll('.conf-btn'), function(b){ b.classList.remove('picked'); });
+        t.classList.add('picked');
+      }
+    });
+    window.CC.hlAll(list);
+  };
+
+  /* ---- bitácora de operaciones (log) ---- */
+  window.CC.logTo = function(el, lines){
+    el.innerHTML = lines.map(function(l){ return '<p class="' + (l.c || '') + '">' + l.t + '</p>'; }).join('');
+    el.scrollTop = 0;
+  };
+  document.addEventListener('DOMContentLoaded', function(){ window.CC.hlAll(); });
+})();
+
+</script>
+<script>
+(function(){
+'use strict';
+/* ================= motores de Grafos (red DHL) ================= */
+var INF = 1e9;
+var LET = 'ABCDEF';
+/* red didáctica: 6 hubs, 8 rutas bidireccionales, peso = horas de ruta */
+var NET_EDGES = [[0, 1, 6], [0, 2, 2], [1, 2, 1], [1, 3, 5], [2, 4, 7], [3, 4, 2], [3, 5, 4], [4, 5, 1]];
+/* red de un solo sentido (SCC): A→B, B→C, C→A, B→D, D→E, E→D, F→E */
+var DIR_EDGES = [[0, 1], [1, 2], [2, 0], [1, 3], [3, 4], [4, 3], [5, 4]];
+/* dependencias del proceso de un paquete (DAG) */
+var DAG_EDGES = [[0, 1], [0, 2], [1, 3], [1, 4], [2, 4], [3, 5], [4, 5]];
+/* red de capacidad: S=0, A=1, B=2, T=3 */
+var FLOW_EDGES = [[0, 1, 3], [0, 2, 2], [1, 2, 2], [1, 3, 2], [2, 3, 3]];
+
+function adjList(n, edges, directed){
+  var a = []; for (var i = 0; i < n; i++) a.push([]);
+  edges.forEach(function(e){
+    a[e[0]].push({ v: e[1], w: e.length > 2 ? e[2] : 1 });
+    if (!directed) a[e[1]].push({ v: e[0], w: e.length > 2 ? e[2] : 1 });
+  });
+  a.forEach(function(l){ l.sort(function(x, y){ return x.v - y.v; }); });
+  return a;
+}
+function names(arr){ return arr.map(function(i){ return LET[i]; }).join(', '); }
+
+/* ---------------------------- BFS ---------------------------- */
+function bfs(n, edges, s){
+  var adj = adjList(n, edges, false), dist = [], par = [], seen = [], q = [s], order = [], steps = [], i;
+  for (i = 0; i < n; i++){ dist.push(-1); par.push(-1); seen.push(false); }
+  seen[s] = true; dist[s] = 0;
+  steps.push({ t: 'Inicio: se marca ' + LET[s] + ' (distancia 0) y se encola. Se marca al ENCOLAR, así nunca entra dos veces.', cur: s, queue: [s], dist: dist.slice(), par: par.slice(), seen: seen.slice(), fresh: [s], order: [] });
+  var head = 0;
+  while (head < q.length){
+    var u = q[head++], fresh = [];
+    order.push(u);
+    adj[u].forEach(function(e){ if (!seen[e.v]){ seen[e.v] = true; dist[e.v] = dist[u] + 1; par[e.v] = u; q.push(e.v); fresh.push(e.v); } });
+    steps.push({ t: 'Se desencola ' + LET[u] + '. ' + (fresh.length ? 'Descubre ' + names(fresh) + ' a distancia ' + (dist[u] + 1) + '.' : 'No descubre nada nuevo.'), cur: u, queue: q.slice(head), dist: dist.slice(), par: par.slice(), seen: seen.slice(), fresh: fresh, order: order.slice() });
+  }
+  return { steps: steps, dist: dist, par: par, order: order };
+}
+
+/* ---------------------------- DFS ---------------------------- */
+function dfs(n, edges, s){
+  var adj = adjList(n, edges, false), seen = [], par = [], tin = [], tout = [], clock = 0, stack = [], steps = [], order = [], i;
+  for (i = 0; i < n; i++){ seen.push(false); par.push(-1); tin.push(-1); tout.push(-1); }
+  function snap(t, cur, kind){ steps.push({ t: t, cur: cur, kind: kind, stack: stack.slice(), seen: seen.slice(), par: par.slice(), tin: tin.slice(), tout: tout.slice(), order: order.slice() }); }
+  function go(u){
+    seen[u] = true; tin[u] = ++clock; order.push(u); stack.push(u);
+    snap('Se entra a ' + LET[u] + ' (tiempo de entrada ' + tin[u] + ').', u, 'enter');
+    for (var k = 0; k < adj[u].length; k++){
+      var v = adj[u][k].v;
+      if (!seen[v]){ par[v] = u; go(v); }
+    }
+    tout[u] = ++clock; stack.pop();
+    snap('No quedan vecinos nuevos en ' + LET[u] + ': se retrocede (tiempo de salida ' + tout[u] + ').', u, 'back');
+  }
+  go(s);
+  return { steps: steps, order: order, par: par, tin: tin, tout: tout };
+}
+
+/* ---------------------------- Dijkstra ---------------------------- */
+function dijkstra(n, edges, s){
+  var adj = adjList(n, edges, false), dist = [], par = [], fixed = [], steps = [], i;
+  for (i = 0; i < n; i++){ dist.push(INF); par.push(-1); fixed.push(false); }
+  dist[s] = 0;
+  steps.push({ t: 'Inicio: dist[' + LET[s] + '] = 0 y todo lo demás ∞. Nadie está fijado todavía.', cur: -1, dist: dist.slice(), par: par.slice(), fixed: fixed.slice(), upd: [] });
+  for (var it = 0; it < n; it++){
+    var u = -1;
+    for (i = 0; i < n; i++) if (!fixed[i] && dist[i] < INF && (u < 0 || dist[i] < dist[u])) u = i;
+    if (u < 0) break;
+    fixed[u] = true;
+    var upd = [], notes = [];
+    adj[u].forEach(function(e){
+      if (fixed[e.v]) return;
+      var cand = dist[u] + e.w;
+      if (cand < dist[e.v]){ notes.push(LET[e.v] + ': ' + (dist[e.v] >= INF ? '∞' : dist[e.v]) + ' → ' + dist[u] + '+' + e.w + ' = ' + cand); dist[e.v] = cand; par[e.v] = u; upd.push(e.v); }
+      else notes.push(LET[e.v] + ': ' + dist[u] + '+' + e.w + ' = ' + cand + ' no mejora ' + dist[e.v]);
+    });
+    steps.push({ t: 'Se fija ' + LET[u] + ' con distancia ' + dist[u] + ' (el menor tentativo que queda). ' + (notes.length ? 'Relaja: ' + notes.join('; ') + '.' : 'No tiene vecinos sin fijar.'), cur: u, dist: dist.slice(), par: par.slice(), fixed: fixed.slice(), upd: upd });
+  }
+  return { steps: steps, dist: dist, par: par };
+}
+function pathTo(par, v){ var p = []; for (var u = v; u !== -1; u = par[u]) p.unshift(u); return p; }
+
+/* ---------------------------- Bellman-Ford ---------------------------- */
+function bellmanFord(n, edges, s){
+  var d = [], par = [], steps = [], i, pass, changed;
+  for (i = 0; i < n; i++){ d.push(INF); par.push(-1); }
+  d[s] = 0;
+  steps.push({ t: 'Inicio: d[' + LET[s] + '] = 0, el resto ∞.', d: d.slice(), par: par.slice(), hot: [], pass: 0 });
+  for (pass = 1; pass <= n - 1; pass++){
+    changed = false;
+    var notes = [], hot = [];
+    edges.forEach(function(e){
+      if (d[e[0]] < INF && d[e[0]] + e[2] < d[e[1]]){ notes.push(LET[e[0]] + '→' + LET[e[1]] + ': d[' + LET[e[1]] + '] = ' + d[e[0]] + '+(' + e[2] + ') = ' + (d[e[0]] + e[2])); d[e[1]] = d[e[0]] + e[2]; par[e[1]] = e[0]; changed = true; hot.push(e[1]); }
+    });
+    steps.push({ t: 'Pasada ' + pass + ' (se relajan todas las aristas, en orden). ' + (notes.length ? notes.join('; ') + '.' : 'No hubo mejoras: se puede detener.'), d: d.slice(), par: par.slice(), hot: hot, pass: pass });
+    if (!changed) break;
+  }
+  var neg = false;
+  edges.forEach(function(e){ if (d[e[0]] < INF && d[e[0]] + e[2] < d[e[1]]) neg = true; });
+  steps.push({ t: neg ? 'Pasada extra de verificación: todavía hay una mejora → existe un CICLO NEGATIVO alcanzable. Las distancias no están definidas.' : 'Pasada extra de verificación: ninguna arista mejora → no hay ciclos negativos alcanzables. Las distancias son definitivas.', d: d.slice(), par: par.slice(), hot: [], pass: n, neg: neg });
+  return { steps: steps, d: d, par: par, neg: neg };
+}
+
+/* ---------------------------- Floyd-Warshall ---------------------------- */
+function floyd(n, edges){
+  var D = [], i, j, k, steps = [];
+  for (i = 0; i < n; i++){ D.push([]); for (j = 0; j < n; j++) D[i].push(i === j ? 0 : INF); }
+  edges.forEach(function(e){ D[e[0]][e[1]] = Math.min(D[e[0]][e[1]], e[2]); D[e[1]][e[0]] = Math.min(D[e[1]][e[0]], e[2]); });
+  function cp(){ return D.map(function(r){ return r.slice(); }); }
+  steps.push({ t: 'Matriz inicial: solo las rutas directas (0 en la diagonal, ∞ si no hay ruta directa).', D: cp(), ch: [], k: -1 });
+  for (k = 0; k < n; k++){
+    var ch = [];
+    for (i = 0; i < n; i++) for (j = 0; j < n; j++){
+      if (D[i][k] < INF && D[k][j] < INF && D[i][k] + D[k][j] < D[i][j]){ D[i][j] = D[i][k] + D[k][j]; ch.push([i, j]); }
+    }
+    var txt = ch.filter(function(c){ return c[0] < c[1]; }).map(function(c){ return LET[c[0]] + '↔' + LET[c[1]] + ' = ' + D[c[0]][c[1]]; });
+    steps.push({ t: 'Se permite ' + LET[k] + ' como intermedio. ' + (txt.length ? 'Mejoran: ' + txt.join('; ') + '.' : 'Ninguna distancia mejora.'), D: cp(), ch: ch, k: k });
+  }
+  return { steps: steps, D: D };
+}
+
+/* ---------------------------- DSU / Kruskal / Prim ---------------------------- */
+function kruskal(n, edges){
+  var par = [], sz = [], i;
+  for (i = 0; i < n; i++){ par.push(i); sz.push(1); }
+  function find(x){ return par[x] === x ? x : (par[x] = find(par[x])); }
+  function comps(){ var m = {}; for (var v = 0; v < n; v++){ var r = find(v); (m[r] = m[r] || []).push(LET[v]); } return Object.keys(m).map(function(k){ return '{' + m[k].join('') + '}'; }).join(' '); }
+  var sorted = edges.map(function(e, ix){ return { e: e, ix: ix }; }).sort(function(a, b){ return a.e[2] - b.e[2] || a.ix - b.ix; }).map(function(o){ return o.e; });
+  var steps = [], total = 0, taken = [];
+  steps.push({ t: 'Se ordenan las rutas por costo: ' + sorted.map(function(e){ return LET[e[0]] + LET[e[1]] + '(' + e[2] + ')'; }).join(', ') + '. Cada hub empieza como su propio grupo.', taken: [], rej: [], cur: null, total: 0, comps: comps() });
+  var rej = [];
+  for (i = 0; i < sorted.length && taken.length < n - 1; i++){
+    var e = sorted[i], a = find(e[0]), b = find(e[1]);
+    if (a !== b){
+      if (sz[a] < sz[b]){ var t = a; a = b; b = t; } par[b] = a; sz[a] += sz[b]; total += e[2]; taken.push(e);
+      steps.push({ t: LET[e[0]] + LET[e[1]] + ' (' + e[2] + '): une grupos distintos → SE ELIGE. Costo acumulado ' + total + '.', taken: taken.slice(), rej: rej.slice(), cur: e, total: total, comps: comps() });
+    } else {
+      rej.push(e);
+      steps.push({ t: LET[e[0]] + LET[e[1]] + ' (' + e[2] + '): ' + LET[e[0]] + ' y ' + LET[e[1]] + ' ya están en el mismo grupo → cerraría un ciclo, SE DESCARTA.', taken: taken.slice(), rej: rej.slice(), cur: e, total: total, comps: comps() });
+    }
+  }
+  steps.push({ t: 'Ya hay ' + (n - 1) + ' rutas (V − 1) y un solo grupo: el árbol está completo. Costo total ' + total + '. Las rutas que faltan por revisar no hacen falta.', taken: taken.slice(), rej: rej.slice(), cur: null, total: total, comps: comps(), done: true });
+  return { steps: steps, total: total, taken: taken };
+}
+function prim(n, edges, s){
+  var inT = []; for (var i = 0; i < n; i++) inT.push(false);
+  inT[s] = true;
+  var steps = [], taken = [], total = 0;
+  function members(){ var m = []; for (var v = 0; v < n; v++) if (inT[v]) m.push(LET[v]); return m.join(','); }
+  steps.push({ t: 'Se arranca en ' + LET[s] + '. El árbol tiene un solo hub.', taken: [], cand: [], total: 0, inT: inT.slice(), members: members() });
+  while (taken.length < n - 1){
+    var cand = [], best = null;
+    edges.forEach(function(e){
+      if (inT[e[0]] !== inT[e[1]]){ cand.push(e); if (!best || e[2] < best[2]) best = e; }
+    });
+    if (!best) break;
+    var nv = inT[best[0]] ? best[1] : best[0];
+    inT[nv] = true; taken.push(best); total += best[2];
+    steps.push({ t: 'Rutas que cruzan del árbol hacia afuera: ' + cand.map(function(e){ return LET[e[0]] + LET[e[1]] + '=' + e[2]; }).join(', ') + '. La más barata es ' + LET[best[0]] + LET[best[1]] + ' (' + best[2] + '): se suma ' + LET[nv] + '. Total ' + total + '.', taken: taken.slice(), cand: cand, best: best, total: total, inT: inT.slice(), members: members() });
+  }
+  return { steps: steps, total: total, taken: taken };
+}
+
+/* ---------------------------- SCC ---------------------------- */
+function tarjan(n, edges){
+  var adj = adjList(n, edges, true), disc = [], low = [], on = [], st = [], clock = 0, steps = [], comps = [], i;
+  for (i = 0; i < n; i++){ disc.push(-1); low.push(-1); on.push(false); }
+  function snap(t, cur){ steps.push({ t: t, cur: cur, disc: disc.slice(), low: low.slice(), stack: st.slice(), done: comps.map(function(c){ return c.slice(); }) }); }
+  function go(u){
+    disc[u] = low[u] = clock++; st.push(u); on[u] = true;
+    snap('Se entra a ' + LET[u] + ': disc = low = ' + disc[u] + '. Se apila.', u);
+    adj[u].forEach(function(e){
+      var v = e.v;
+      if (disc[v] < 0){
+        go(v);
+        if (low[v] < low[u]){ low[u] = low[v]; snap('Al volver de ' + LET[v] + ', low[' + LET[u] + '] baja a ' + low[u] + ' (desde ' + LET[u] + ' se llega a algo más antiguo).', u); }
+      } else if (on[v]){
+        if (disc[v] < low[u]){ low[u] = disc[v]; }
+        snap(LET[u] + '→' + LET[v] + ' vuelve a un hub que sigue en la pila: low[' + LET[u] + '] = ' + low[u] + '.', u);
+      } else {
+        snap(LET[u] + '→' + LET[v] + ' apunta a un hub cuya componente ya se cerró: se IGNORA (no mezcla componentes).', u);
+      }
+    });
+    if (low[u] === disc[u]){
+      var c = [], v;
+      do { v = st.pop(); on[v] = false; c.push(v); } while (v !== u);
+      comps.push(c);
+      snap('low[' + LET[u] + '] = disc[' + LET[u] + '] = ' + disc[u] + ': ' + LET[u] + ' es la raíz de una componente. Se desapila ' + names(c) + ' → SCC {' + c.map(function(x){ return LET[x]; }).sort().join(',') + '}.', u);
+    }
+  }
+  for (i = 0; i < n; i++) if (disc[i] < 0) go(i);
+  return { steps: steps, comps: comps };
+}
+function kosaraju(n, edges){
+  var adj = adjList(n, edges, true), radj = adjList(n, edges.map(function(e){ return [e[1], e[0]]; }), true), seen = [], fin = [], steps = [], comps = [], i;
+  for (i = 0; i < n; i++) seen.push(false);
+  function d1(u){ seen[u] = true; adj[u].forEach(function(e){ if (!seen[e.v]) d1(e.v); }); fin.push(u); steps.push({ t: 'Primera DFS (grafo original): termina ' + LET[u] + '. Orden de finalización hasta ahora: ' + names(fin) + '.', phase: 1, fin: fin.slice(), comps: [] }); }
+  for (i = 0; i < n; i++) if (!seen[i]) d1(i);
+  for (i = 0; i < n; i++) seen[i] = false;
+  function d2(u, c){ seen[u] = true; c.push(u); radj[u].forEach(function(e){ if (!seen[e.v]) d2(e.v, c); }); }
+  for (i = fin.length - 1; i >= 0; i--){
+    var r = fin[i]; if (seen[r]) continue;
+    var c = []; d2(r, c); comps.push(c);
+    steps.push({ t: 'Segunda DFS sobre el grafo TRANSPUESTO (flechas invertidas), arrancando por el hub que terminó último sin visitar: ' + LET[r] + ' → SCC {' + c.map(function(x){ return LET[x]; }).sort().join(',') + '}.', phase: 2, fin: fin.slice(), comps: comps.map(function(x){ return x.slice(); }) });
+  }
+  return { steps: steps, comps: comps, finish: fin };
+}
+
+/* ---------------------------- Kahn ---------------------------- */
+function kahn(n, edges){
+  var adj = adjList(n, edges, true), indeg = [], i, steps = [], q = [], order = [];
+  for (i = 0; i < n; i++) indeg.push(0);
+  edges.forEach(function(e){ indeg[e[1]]++; });
+  for (i = 0; i < n; i++) if (indeg[i] === 0) q.push(i);
+  steps.push({ t: 'Grados de entrada (cuántas tareas previas faltan): ' + indeg.map(function(d, v){ return LET[v] + '=' + d; }).join(', ') + '. Se encolan las que tienen 0: ' + (q.length ? names(q) : 'ninguna') + '.', queue: q.slice(), indeg: indeg.slice(), order: [], cur: -1 });
+  var head = 0;
+  while (head < q.length){
+    var u = q[head++], fresh = [];
+    order.push(u);
+    adj[u].forEach(function(e){ if (--indeg[e.v] === 0){ q.push(e.v); fresh.push(e.v); } });
+    steps.push({ t: 'Se procesa ' + LET[u] + ' (queda cumplida para sus sucesoras). ' + (fresh.length ? 'Pasan a 0 y se encolan: ' + names(fresh) + '.' : 'Ninguna sucesora queda libre.'), queue: q.slice(head), indeg: indeg.slice(), order: order.slice(), cur: u });
+  }
+  var cyc = order.length < n;
+  steps.push({ t: cyc ? 'La cola quedó vacía pero se procesaron solo ' + order.length + ' de ' + n + ' tareas: las restantes se esperan entre sí → hay un CICLO de dependencias, no existe orden válido.' : 'Se procesaron las ' + n + ' tareas: el orden obtenido respeta todas las precedencias.', queue: [], indeg: indeg.slice(), order: order.slice(), cur: -1, cyc: cyc, final: true });
+  return { steps: steps, order: order, cycle: cyc };
+}
+
+/* ---------------------------- Flujo máximo ---------------------------- */
+var FL = ['S', 'A', 'B', 'T'];
+/* path: lista opcional de caminos forzados (arreglos de nodos); si no, Edmonds-Karp (BFS) */
+function maxflow(n, edges, s, t, forced, nm){
+  nm = nm || FL;
+  var cap = [], f = [], i, j, steps = [], total = 0;
+  for (i = 0; i < n; i++){ cap.push([]); f.push([]); for (j = 0; j < n; j++){ cap[i].push(0); f[i].push(0); } }
+  edges.forEach(function(e){ cap[e[0]][e[1]] += e[2]; });
+  function res(u, v){ return cap[u][v] - f[u][v] + f[v][u]; }
+  function snapFlows(){ return edges.map(function(e){ return f[e[0]][e[1]]; }); }
+  steps.push({ t: 'Flujo inicial 0 en todas las rutas. Cada ruta tiene toda su capacidad libre.', path: [], delta: 0, flows: snapFlows(), total: 0, k: 0 });
+  var k = 0;
+  for (;;){
+    var path = null;
+    if (forced){ if (k >= forced.length) break; path = forced[k]; }
+    else {
+      var par = []; for (i = 0; i < n; i++) par.push(-2);
+      par[s] = -1; var q = [s], h = 0;
+      while (h < q.length && par[t] === -2){ var u = q[h++]; for (var v = 0; v < n; v++) if (par[v] === -2 && res(u, v) > 0){ par[v] = u; q.push(v); } }
+      if (par[t] === -2) break;
+      path = []; for (var x = t; x !== -1; x = par[x]) path.unshift(x);
+    }
+    var delta = INF;
+    for (i = 0; i + 1 < path.length; i++) delta = Math.min(delta, res(path[i], path[i + 1]));
+    if (delta <= 0) break;
+    var back = [];
+    for (i = 0; i + 1 < path.length; i++){
+      var a = path[i], b = path[i + 1], cancel = Math.min(delta, f[b][a]);
+      if (cancel > 0){ f[b][a] -= cancel; back.push(nm[b] + '→' + nm[a]); }
+      f[a][b] += delta - cancel;
+    }
+    total += delta; k++;
+    steps.push({ t: 'Camino ' + k + ': ' + path.map(function(p){ return nm[p]; }).join(' → ') + ' con holgura mínima ' + delta + '. ' + (back.length ? 'Atención: usa ' + back.join(', ') + ' como ruta RESIDUAL INVERSA: no existe ese camino, CANCELA parte del flujo que ya se había mandado en sentido contrario. ' : '') + 'Flujo total ' + total + '.', path: path, delta: delta, flows: snapFlows(), total: total, k: k, back: back });
+  }
+  /* corte mínimo: alcanzables en el residual desde s */
+  var reach = []; for (i = 0; i < n; i++) reach.push(false);
+  reach[s] = true; var st = [s];
+  while (st.length){ var u2 = st.pop(); for (var w = 0; w < n; w++) if (!reach[w] && res(u2, w) > 0){ reach[w] = true; st.push(w); } }
+  var cut = 0, cutEdges = [];
+  edges.forEach(function(e){ if (reach[e[0]] && !reach[e[1]]){ cut += e[2]; cutEdges.push(e); } });
+  steps.push({ t: 'No existe otro camino con holgura desde ' + nm[s] + ' hasta ' + nm[t] + ': el flujo es MÁXIMO = ' + total + '. Certificado: el corte {' + reach.map(function(r, v){ return r ? nm[v] : null; }).filter(Boolean).join(', ') + '} | {' + reach.map(function(r, v){ return r ? null : nm[v]; }).filter(Boolean).join(', ') + '} tiene capacidad ' + cut + ' (= flujo).', path: [], delta: 0, flows: snapFlows(), total: total, k: k, final: true, cutEdges: cutEdges, reach: reach });
+  return { steps: steps, total: total, cut: cut, flows: snapFlows(), reach: reach };
+}
+
+/* matching bipartito: allowed[i] = lista de zonas permitidas para repartidor i */
+function matching(nL, nR, allowed){
+  var n = 2 + nL + nR, edges = [], i, j;
+  for (i = 0; i < nL; i++) edges.push([0, 2 + i, 1]);
+  for (i = 0; i < nL; i++) allowed[i].forEach(function(r){ edges.push([2 + i, 2 + nL + r, 1]); });
+  for (j = 0; j < nR; j++) edges.push([2 + nL + j, 1, 1]);
+  /* s = 0, t = 1 */
+  var nm = ['s', 't']; for (i = 0; i < nL; i++) nm.push('L' + i); for (j = 0; j < nR; j++) nm.push('R' + j);
+  var r = maxflow(n, edges, 0, 1, null, nm), pairs = [];
+  edges.forEach(function(e, ix){ if (e[0] >= 2 && e[0] < 2 + nL && e[1] >= 2 + nL && r.flows[ix] > 0) pairs.push([e[0] - 2, e[1] - 2 - nL]); });
+  return { size: r.total, pairs: pairs, steps: r.steps.length - 2 };
+}
+
+if (typeof module !== 'undefined') module.exports = { INF: INF, NET_EDGES: NET_EDGES, DIR_EDGES: DIR_EDGES, DAG_EDGES: DAG_EDGES, FLOW_EDGES: FLOW_EDGES, adjList: adjList, bfs: bfs, dfs: dfs, dijkstra: dijkstra, pathTo: pathTo, bellmanFord: bellmanFord, floyd: floyd, kruskal: kruskal, prim: prim, tarjan: tarjan, kosaraju: kosaraju, kahn: kahn, maxflow: maxflow, matching: matching };
+
+/* ================= interfaz de Grafos: dibujo, steppers y laboratorios ================= */
+function $(id){ return document.getElementById(id); }
+var CITY = ['Córdoba', 'Rosario', 'Santa Fe', 'Buenos Aires', 'La Plata', 'Mar del Plata'];
+var POS = [{ x: 70, y: 150, l: 'down' }, { x: 220, y: 62, l: 'up' }, { x: 220, y: 238, l: 'down' }, { x: 430, y: 62, l: 'up' }, { x: 430, y: 238, l: 'down' }, { x: 580, y: 150, l: 'down' }];
+var R = 21;
+
+/* ---------- dibujo SVG ---------- */
+function Gfx(svgId, spec){ this.svg = $(svgId); this.s = spec; this.svg.setAttribute('class', 'gsvg' + (spec.directed ? ' gdir' : '')); }
+Gfx.prototype.geom = function(i){
+  var e = this.s.edges[i], a = this.s.nodes[e.a], b = this.s.nodes[e.b], dx = b.x - a.x, dy = b.y - a.y, len = Math.sqrt(dx * dx + dy * dy), ux = dx / len, uy = dy / len, curved = false, k;
+  if (this.s.directed){ for (k = 0; k < this.s.edges.length; k++) if (this.s.edges[k].a === e.b && this.s.edges[k].b === e.a) curved = true; }
+  var gap = this.s.directed ? R + 5 : R;
+  if (!curved){
+    var x1 = a.x + ux * R, y1 = a.y + uy * R, x2 = b.x - ux * gap, y2 = b.y - uy * gap;
+    return { d: 'M' + x1 + ',' + y1 + ' L' + x2 + ',' + y2, lx: (a.x + b.x) / 2, ly: (a.y + b.y) / 2 };
+  }
+  var off = 26, nx = -uy, ny = ux, cx = (a.x + b.x) / 2 + nx * off, cy = (a.y + b.y) / 2 + ny * off;
+  var sx = a.x + (cx - a.x) / Math.sqrt((cx - a.x) * (cx - a.x) + (cy - a.y) * (cy - a.y)) * R, sy = a.y + (cy - a.y) / Math.sqrt((cx - a.x) * (cx - a.x) + (cy - a.y) * (cy - a.y)) * R;
+  var ex = b.x - (b.x - cx) / Math.sqrt((b.x - cx) * (b.x - cx) + (b.y - cy) * (b.y - cy)) * gap, ey = b.y - (b.y - cy) / Math.sqrt((b.x - cx) * (b.x - cx) + (b.y - cy) * (b.y - cy)) * gap;
+  return { d: 'M' + sx + ',' + sy + ' Q' + cx + ',' + cy + ' ' + ex + ',' + ey, lx: 0.25 * sx + 0.5 * cx + 0.25 * ex, ly: 0.25 * sy + 0.5 * cy + 0.25 * ey };
+};
+Gfx.prototype.draw = function(st){
+  st = st || {}; var n = st.n || {}, e = st.e || {}, h = '', i;
+  for (i = 0; i < this.s.edges.length; i++){
+    var g = this.geom(i), ed = this.s.edges[i], c = (e[i] && e[i].c) || '', lab = (e[i] && e[i].lab !== undefined) ? e[i].lab : (ed.w !== undefined ? ed.w : '');
+    h += '<path class="ge ' + c + '" d="' + g.d + '"/>';
+    if (lab !== '') h += '<text class="gw ' + c + '" x="' + g.lx + '" y="' + (g.ly + 4) + '" text-anchor="middle">' + lab + '</text>';
+  }
+  for (i = 0; i < this.s.nodes.length; i++){
+    var nd = this.s.nodes[i], cl = (n[i] && n[i].c) || '', tag = n[i] && n[i].tag;
+    h += '<g class="gn ' + cl + '"><circle cx="' + nd.x + '" cy="' + nd.y + '" r="' + R + '"/><text class="gl" x="' + nd.x + '" y="' + (nd.y + 5) + '" text-anchor="middle">' + nd.t + '</text>';
+    if (nd.name) h += '<text class="gc" x="' + nd.x + '" y="' + (nd.y + (nd.l === 'up' ? -R - 8 : R + 17)) + '" text-anchor="middle">' + nd.name + '</text>';
+    if (tag !== undefined && tag !== '') h += '<text class="gt" x="' + (nd.x + R - 2) + '" y="' + (nd.y - R + 2) + '" text-anchor="start">' + tag + '</text>';
+    h += '</g>';
+  }
+  this.svg.innerHTML = h;
+};
+function mkSpec(nodes, edges, directed, w, hgt){ return { nodes: nodes, edges: edges, directed: directed, w: w, h: hgt }; }
+function hubNodes(){ return POS.map(function(p, i){ return { x: p.x, y: p.y, l: p.l, t: 'ABCDEF'[i], name: CITY[i] }; }); }
+var SPEC_NET = mkSpec(hubNodes(), NET_EDGES.map(function(e){ return { a: e[0], b: e[1], w: e[2] }; }), false);
+var SPEC_NET_NOW = mkSpec(hubNodes(), NET_EDGES.map(function(e){ return { a: e[0], b: e[1] }; }), false);
+var SPEC_DIR = mkSpec(hubNodes(), DIR_EDGES.map(function(e){ return { a: e[0], b: e[1] }; }), true);
+var TASKS = ['Recepción', 'Escaneo y pesaje', 'Etiquetado', 'Despacho aduanero', 'Carga en camión', 'Entrega'];
+function taskNodes(){ return POS.map(function(p, i){ return { x: p.x, y: p.y, l: p.l, t: 'ABCDEF'[i], name: TASKS[i] }; }); }
+
+/* ---------- stepper genérico ---------- */
+function mkStepper(id, build, render, opts){
+  opts = opts || {};
+  var o = { steps: [], i: 0, gfx: null };
+  function show(){
+    var st = o.steps[o.i], out = render(st, o.i, o) || {};
+    if (o.gfx) o.gfx.draw(out.state);
+    $(id + 'Cap').innerHTML = st.t;
+    $(id + 'State').innerHTML = out.html || '';
+    $(id + 'Num').textContent = 'paso ' + o.i + ' de ' + (o.steps.length - 1);
+    $(id + 'Prev').disabled = o.i === 0; $(id + 'Next').disabled = o.i === o.steps.length - 1;
+  }
+  o.rebuild = function(){ var b = build(o); o.steps = b.steps; if (b.gfx) o.gfx = b.gfx; o.i = 0; show(); };
+  $(id + 'Prev').addEventListener('click', function(){ if (o.i > 0){ o.i--; show(); } });
+  $(id + 'Next').addEventListener('click', function(){ if (o.i < o.steps.length - 1){ o.i++; show(); } });
+  $(id + 'Reset').addEventListener('click', function(){ o.i = 0; show(); });
+  $(id + 'End').addEventListener('click', function(){ o.i = o.steps.length - 1; show(); });
+  (opts.watch || []).forEach(function(w){ $(w).addEventListener('change', o.rebuild); });
+  o.rebuild();
+  return o;
+}
+function chips(arr, cls){ return arr.length ? arr.map(function(x){ return '<span class="chp ' + (cls || '') + '">' + x + '</span>'; }).join('') : '<span class="dim">vacía</span>'; }
+function L(i){ return 'ABCDEF'[i]; }
+function ltr(arr){ return arr.map(L); }
+function fmtD(v){ return v >= INF ? '∞' : v; }
+function tbl(head, rows){ return '<div class="tbl-wrap" style="margin:8px 0 0"><table class="tbl" style="min-width:0">' + '<tr>' + head.map(function(x){ return '<th>' + x + '</th>'; }).join('') + '</tr>' + rows.map(function(r){ return '<tr>' + r.map(function(x){ return '<td class="mono">' + x + '</td>'; }).join('') + '</tr>'; }).join('') + '</table></div>'; }
+function edgeIdx(spec, a, b, directed){ for (var i = 0; i < spec.edges.length; i++){ var e = spec.edges[i]; if ((e.a === a && e.b === b) || (!directed && e.a === b && e.b === a)) return i; } return -1; }
+
+/* ================= 1. Representación ================= */
+(function(){
+  var gfx = new Gfx('repSvg', SPEC_NET);
+  var adj = adjList(6, NET_EDGES, false);
+  function csr(){ var rs = [0], nb = [], hs = []; for (var u = 0; u < 6; u++){ adj[u].forEach(function(e){ nb.push(e.v); hs.push(e.w); }); rs.push(nb.length); } return { rs: rs, nb: nb, hs: hs }; }
+  var C = csr();
+  function views(f, t, mode){
+    var h = '<p class="note-small" style="margin:12px 0 4px">MATRIZ DE ADYACENCIA (horas; · = sin ruta directa)</p><div class="tbl-wrap" style="margin:0"><table class="tbl" style="min-width:0"><tr><th></th>';
+    for (var j = 0; j < 6; j++) h += '<th>' + L(j) + '</th>';
+    h += '</tr>';
+    for (var i = 0; i < 6; i++){
+      h += '<tr><th>' + L(i) + '</th>';
+      for (j = 0; j < 6; j++){
+        var w = i === j ? '·' : '·'; adj[i].forEach(function(e){ if (e.v === j) w = e.w; });
+        var hit = mode && ((i === f && j === t) || (i === t && j === f));
+        h += '<td class="mono' + (hit ? ' hit' : '') + '">' + w + '</td>';
+      }
+      h += '</tr>';
+    }
+    h += '</table></div><p class="note-small" style="margin:12px 0 4px">LISTA DE ADYACENCIA (vecino:horas)</p><div class="mono" style="line-height:1.9">';
+    for (i = 0; i < 6; i++) h += '<div' + (mode && i === f ? ' class="hitrow"' : '') + '>' + L(i) + ' → ' + adj[i].map(function(e){ return L(e.v) + ':' + e.w; }).join('  ') + '</div>';
+    h += '</div><p class="note-small" style="margin:12px 0 4px">CSR: tres arreglos</p><div class="mono" style="line-height:1.9">rowStart = {' + C.rs.join(', ') + '}<br>neighbor = {' + C.nb.map(function(v, k){ var inr = mode && k >= C.rs[f] && k < C.rs[f + 1]; return inr ? '<span class="hitn">' + L(v) + '</span>' : L(v); }).join(', ') + '}<br>hours&nbsp;&nbsp;&nbsp;= {' + C.hs.join(', ') + '}</div>';
+    return h;
+  }
+  function draw(f, t, mode){
+    var st = { e: {}, n: {} };
+    if (mode){ st.n[f] = { c: 'cur' }; st.n[t] = { c: 'cur' }; var ix = edgeIdx(SPEC_NET, f, t, false); if (ix >= 0) st.e[ix] = { c: 'path' }; }
+    gfx.draw(st); $('repViews').innerHTML = views(f, t, mode);
+  }
+  function sel(){ return [parseInt($('repFrom').value, 10), parseInt($('repTo').value, 10)]; }
+  $('repDirect').addEventListener('click', function(){
+    var s = sel(), f = s[0], t = s[1], w = null; adj[f].forEach(function(e){ if (e.v === t) w = e.w; });
+    var steps = adj[f].length;
+    draw(f, t, true);
+    $('repOut').innerHTML = f === t ? 'Es el mismo hub: elegí dos distintos.' :
+      '<strong>¿Hay ruta directa ' + L(f) + '–' + L(t) + '?</strong> ' + (w !== null ? 'Sí, de ' + w + ' h.' : 'No.') +
+      ' Con la <span class="mono">matriz</span> es mirar una celda: O(1). Con la <span class="mono">lista</span> hay que recorrer los ' + steps + ' vecinos de ' + L(f) + ': O(grado) = ' + steps + ' comparaciones como máximo.';
+  });
+  $('repReach').addEventListener('click', function(){
+    var s = sel(), f = s[0], t = s[1], b = bfs(6, NET_EDGES, f), d = b.dist[t];
+    draw(f, t, false);
+    var st = { e: {}, n: {} }; var p = pathTo(b.par, t);
+    for (var i = 0; i + 1 < p.length; i++) st.e[edgeIdx(SPEC_NET, p[i], p[i + 1], false)] = { c: 'path' };
+    p.forEach(function(v){ st.n[v] = { c: 'done' }; }); gfx.draw(st);
+    $('repOut').innerHTML = f === t ? 'Es el mismo hub: elegí dos distintos.' : '<strong>¿Se puede llegar de ' + L(f) + ' a ' + L(t) + '?</strong> ' + (d >= 0 ? 'Sí: ' + ltr(p).join(' → ') + ' (' + d + ' tramo' + (d === 1 ? '' : 's') + '). Es una consulta distinta a la de adyacencia: pregunta por una <em>secuencia</em> de rutas, no por una sola.' : 'No: no existe ningún camino.');
+  });
+  $('repReset').addEventListener('click', function(){ draw(0, 5, false); $('repOut').innerHTML = 'Elegí un par de hubs y una consulta.'; });
+  draw(0, 5, false);
+})();
+
+/* ================= 2. BFS / DFS ================= */
+(function(){
+  var o = mkStepper('bd', function(){
+    var s = parseInt($('bdOrg').value, 10), alg = $('bdAlg').value, r = alg === 'bfs' ? bfs(6, NET_EDGES, s) : dfs(6, NET_EDGES, s);
+    return { steps: r.steps, gfx: new Gfx('bdSvg', SPEC_NET_NOW) };
+  }, function(st){
+    var alg = $('bdAlg').value, ns = {}, es = {}, i;
+    for (i = 0; i < 6; i++){
+      if (alg === 'bfs'){
+        ns[i] = { c: st.seen[i] ? (st.queue.indexOf(i) >= 0 ? 'q' : 'done') : '', tag: st.dist[i] >= 0 ? st.dist[i] : '' };
+        if (st.cur === i && st.order.indexOf(i) >= 0) ns[i].c = 'cur';
+      } else {
+        ns[i] = { c: st.seen[i] ? (st.stack.indexOf(i) >= 0 ? 'q' : 'done') : '', tag: st.tin[i] > 0 ? st.tin[i] + '/' + (st.tout[i] > 0 ? st.tout[i] : '·') : '' };
+        if (st.cur === i) ns[i].c = 'cur';
+      }
+      if (st.par[i] >= 0) es[edgeIdx(SPEC_NET_NOW, st.par[i], i, false)] = { c: 'tree' };
+    }
+    var html = alg === 'bfs' ?
+      '<p class="mono">cola (sale por la izquierda): ' + chips(ltr(st.queue), 'q') + '</p><p class="mono">orden en que salieron: ' + chips(ltr(st.order)) + '</p><p class="note-small">número sobre cada hub = distancia en tramos desde el origen</p>' :
+      '<p class="mono">pila de llamadas (el último es el hub actual): ' + chips(ltr(st.stack), 'q') + '</p><p class="mono">orden de entrada: ' + chips(ltr(st.order)) + '</p><p class="note-small">número sobre cada hub = tiempo de entrada / salida</p>';
+    return { state: { n: ns, e: es }, html: html };
+  }, { watch: ['bdAlg', 'bdOrg'] });
+})();
+
+/* ================= 3. Caminos mínimos ================= */
+(function(){
+  mkStepper('dj', function(){
+    var s = parseInt($('djOrg').value, 10);
+    return { steps: dijkstra(6, NET_EDGES, s).steps, gfx: new Gfx('djSvg', SPEC_NET) };
+  }, function(st, i, o){
+    var ns = {}, es = {}, k, last = i === o.steps.length - 1, dst = parseInt($('djDst').value, 10);
+    for (k = 0; k < 6; k++){ ns[k] = { c: st.fixed[k] ? 'done' : '', tag: st.dist[k] >= INF ? '∞' : st.dist[k] }; if (st.upd.indexOf(k) >= 0) ns[k].c = 'q'; }
+    if (st.cur >= 0) ns[st.cur].c = 'cur';
+    for (k = 0; k < 6; k++) if (st.par[k] >= 0) es[edgeIdx(SPEC_NET, st.par[k], k, false)] = { c: 'tree' };
+    var extra = '';
+    if (last && st.dist[dst] < INF){
+      var p = pathTo(st.par, dst); for (k = 0; k + 1 < p.length; k++) es[edgeIdx(SPEC_NET, p[k], p[k + 1], false)] = { c: 'path' };
+      extra = '<p><strong>Ruta más rápida hasta ' + L(dst) + ' (' + CITY[dst] + '):</strong> <span class="mono">' + ltr(p).join(' → ') + '</span> en ' + st.dist[dst] + ' h.</p>';
+    }
+    var rows = [[].concat(['dist']).concat(st.dist.map(fmtD)), ['padre'].concat(st.par.map(function(p2){ return p2 < 0 ? '—' : L(p2); })), ['fijado'].concat(st.fixed.map(function(f){ return f ? '✓' : ''; }))];
+    return { state: { n: ns, e: es }, html: tbl(['', 'A', 'B', 'C', 'D', 'E', 'F'], rows) + extra };
+  }, { watch: ['djOrg', 'djDst'] });
+
+  /* Bellman-Ford */
+  var BFN = [{ x: 80, y: 150, t: 'A', name: 'Córdoba', l: 'down' }, { x: 260, y: 62, t: 'B', name: 'Rosario', l: 'up' }, { x: 260, y: 238, t: 'C', name: 'Santa Fe', l: 'down' }];
+  mkStepper('bf', function(){
+    var ed = [[0, 1, 4], [0, 2, 2], [1, 2, -5]]; if ($('bfNeg').checked) ed.push([2, 0, -1]);
+    var spec = mkSpec(BFN, ed.map(function(e){ return { a: e[0], b: e[1], w: e[2] }; }), true);
+    return { steps: bellmanFord(3, ed, 0).steps, gfx: new Gfx('bfSvg', spec), spec: spec };
+  }, function(st, i, o){
+    var ns = {}, es = {}, spec = o.gfx.s, k;
+    for (k = 0; k < 3; k++){ ns[k] = { c: st.hot.indexOf(k) >= 0 ? 'cur' : (st.d[k] < INF ? 'done' : ''), tag: st.d[k] >= INF ? '∞' : st.d[k] }; }
+    for (k = 0; k < 3; k++) if (st.par[k] >= 0 && !st.neg) es[edgeIdx(spec, st.par[k], k, true)] = { c: 'tree' };
+    if (st.neg) for (k = 0; k < spec.edges.length; k++) es[k] = { c: 'rej' };
+    return { state: { n: ns, e: es }, html: tbl(['', 'A', 'B', 'C'], [['d'].concat(st.d.map(fmtD)), ['padre'].concat(st.par.map(function(p){ return p < 0 ? '—' : L(p); }))]) };
+  }, { watch: ['bfNeg'] });
+
+  /* Floyd-Warshall */
+  mkStepper('fw', function(){ return { steps: floyd(6, NET_EDGES).steps }; }, function(st){
+    var head = [''].concat(['A', 'B', 'C', 'D', 'E', 'F']), h = '<div class="tbl-wrap" style="margin:8px 0 0"><table class="tbl" style="min-width:0"><tr>' + head.map(function(x, j){ return '<th' + (st.k >= 0 && j - 1 === st.k ? ' class="kcol"' : '') + '>' + x + '</th>'; }).join('') + '</tr>';
+    for (var a = 0; a < 6; a++){
+      h += '<tr><th' + (a === st.k ? ' class="kcol"' : '') + '>' + L(a) + '</th>';
+      for (var b = 0; b < 6; b++){ var chg = st.ch.some(function(c){ return c[0] === a && c[1] === b; }); h += '<td class="mono' + (chg ? ' hit' : '') + '">' + fmtD(st.D[a][b]) + '</td>'; }
+      h += '</tr>';
+    }
+    return { html: h + '</table></div><p class="note-small">celda resaltada = mejoró en este paso · fila y columna del intermedio marcadas</p>' };
+  });
+})();
+
+/* ================= 4. MST ================= */
+(function(){
+  mkStepper('mst', function(){
+    var alg = $('mstAlg').value;
+    return { steps: alg === 'kruskal' ? kruskal(6, NET_EDGES).steps : prim(6, NET_EDGES, 0).steps, gfx: new Gfx('mstSvg', SPEC_NET) };
+  }, function(st){
+    var alg = $('mstAlg').value, es = {}, ns = {}, k;
+    function ix(e){ return edgeIdx(SPEC_NET, e[0], e[1], false); }
+    if (alg === 'kruskal'){
+      st.rej.forEach(function(e){ es[ix(e)] = { c: 'rej' }; }); st.taken.forEach(function(e){ es[ix(e)] = { c: 'tree' }; });
+      if (st.cur) es[ix(st.cur)] = { c: (es[ix(st.cur)] ? es[ix(st.cur)].c : '') + ' cand' };
+      return { state: { n: ns, e: es }, html: '<p class="mono">grupos: ' + chips([st.comps], '') + '</p><p class="mono">costo acumulado: <strong>' + st.total + ' h</strong></p>' };
+    }
+    st.cand.forEach(function(e){ es[ix(e)] = { c: 'cand' }; }); st.taken.forEach(function(e){ es[ix(e)] = { c: 'tree' }; });
+    for (k = 0; k < 6; k++) if (st.inT[k]) ns[k] = { c: 'done' };
+    return { state: { n: ns, e: es }, html: '<p class="mono">dentro del árbol: ' + chips([st.members], 'q') + '</p><p class="mono">costo acumulado: <strong>' + st.total + ' h</strong></p>' };
+  }, { watch: ['mstAlg'] });
+})();
+
+/* ================= 5. SCC ================= */
+(function(){
+  var COLS = ['c0', 'c1', 'c2'];
+  mkStepper('scc', function(){
+    var alg = $('sccAlg').value;
+    return { steps: alg === 'tarjan' ? tarjan(6, DIR_EDGES).steps : kosaraju(6, DIR_EDGES).steps, gfx: new Gfx('sccSvg', SPEC_DIR) };
+  }, function(st){
+    var alg = $('sccAlg').value, ns = {}, k, comps = alg === 'tarjan' ? st.done : st.comps;
+    for (k = 0; k < 6; k++) ns[k] = { c: '' };
+    comps.forEach(function(c, ci){ c.forEach(function(v){ ns[v] = { c: 'done ' + COLS[ci % 3] }; }); });
+    var html = '';
+    if (alg === 'tarjan'){
+      for (k = 0; k < 6; k++) if (st.disc[k] >= 0 && !ns[k].c) ns[k] = { c: 'q' };
+      for (k = 0; k < 6; k++) if (st.disc[k] >= 0) ns[k].tag = st.disc[k] + '/' + st.low[k];
+      if (st.cur >= 0 && !ns[st.cur].c.match(/done/)) ns[st.cur].c = 'cur';
+      html = '<p class="mono">pila: ' + chips(ltr(st.stack), 'q') + '</p><p class="mono">componentes cerradas: ' + chips(st.done.map(function(c){ return '{' + ltr(c).sort().join('') + '}'; }), 'ok') + '</p><p class="note-small">número sobre cada hub = disc / low</p>';
+    } else {
+      html = '<p class="mono">orden de finalización (1ª DFS): ' + chips(ltr(st.fin)) + '</p>' + (st.phase === 2 ? '<p class="mono">componentes: ' + chips(st.comps.map(function(c){ return '{' + ltr(c).sort().join('') + '}'; }), 'ok') + '</p>' : '<p class="note-small">todavía no se transpuso el grafo</p>');
+      if (st.phase === 1) st.fin.forEach(function(v, i){ ns[v].tag = i + 1; });
+    }
+    return { state: { n: ns, e: {} }, html: html };
+  }, { watch: ['sccAlg'] });
+})();
+
+/* ================= 6. Kahn ================= */
+(function(){
+  mkStepper('kh', function(){
+    var ed = DAG_EDGES.slice(); if ($('khCyc').checked) ed.push([5, 0]);
+    var spec = mkSpec(taskNodes(), ed.map(function(e){ return { a: e[0], b: e[1] }; }), true);
+    return { steps: kahn(6, ed).steps, gfx: new Gfx('khSvg', spec) };
+  }, function(st){
+    var ns = {}, k;
+    for (k = 0; k < 6; k++) ns[k] = { c: st.order.indexOf(k) >= 0 ? 'done' : (st.queue.indexOf(k) >= 0 ? 'q' : ''), tag: st.indeg[k] };
+    if (st.cur >= 0) ns[st.cur].c = 'cur';
+    var html = '<p class="mono">cola de tareas listas: ' + chips(ltr(st.queue), 'q') + '</p><p class="mono">orden obtenido: ' + chips(ltr(st.order), st.final && st.cyc ? 'bad' : 'ok') + '</p><p class="note-small">número sobre cada tarea = cuántas previas le faltan</p>';
+    return { state: { n: ns, e: {} }, html: html };
+  }, { watch: ['khCyc'] });
+})();
+
+/* ================= 7. Flujo y matching ================= */
+(function(){
+  var FN = [{ x: 70, y: 150, t: 'S', name: 'Origen', l: 'down' }, { x: 240, y: 62, t: 'A', name: 'Córdoba', l: 'up' }, { x: 240, y: 238, t: 'B', name: 'Rosario', l: 'down' }, { x: 410, y: 150, t: 'T', name: 'Destino', l: 'down' }];
+  var spec = mkSpec(FN, FLOW_EDGES.map(function(e){ return { a: e[0], b: e[1], w: e[2] }; }), true);
+  function resid(fl){
+    var cap = [], f = [], i, j; for (i = 0; i < 4; i++){ cap.push([0, 0, 0, 0]); f.push([0, 0, 0, 0]); }
+    FLOW_EDGES.forEach(function(e, ix){ cap[e[0]][e[1]] += e[2]; f[e[0]][e[1]] += fl[ix]; });
+    var rows = [];
+    for (i = 0; i < 4; i++) for (j = 0; j < 4; j++){ var r = cap[i][j] - f[i][j] + f[j][i]; if (i !== j && r > 0) rows.push([FL[i] + '→' + FL[j], r, (cap[i][j] === 0 ? 'inversa (cancela)' : (f[j][i] > 0 ? 'directa + inversa' : 'directa'))]); }
+    return rows;
+  }
+  mkStepper('fl', function(){
+    var mode = $('flMode').value;
+    var r = mode === 'ff' ? maxflow(4, FLOW_EDGES, 0, 3, [[0, 1, 2, 3], [0, 1, 3], [0, 2, 3], [0, 2, 1, 3]]) : maxflow(4, FLOW_EDGES, 0, 3);
+    return { steps: r.steps, gfx: new Gfx('flSvg', spec) };
+  }, function(st){
+    var es = {}, ns = {}, k;
+    FLOW_EDGES.forEach(function(e, ix){ es[ix] = { c: '', lab: st.flows[ix] + '/' + e[2] }; if (st.flows[ix] === e[2]) es[ix].c = 'tree'; });
+    for (k = 0; k + 1 < st.path.length; k++){ var ix = edgeIdx(spec, st.path[k], st.path[k + 1], true); if (ix >= 0) es[ix].c = 'path'; }
+    if (st.final){ st.cutEdges.forEach(function(e){ var ix2 = edgeIdx(spec, e[0], e[1], true); es[ix2].c = 'rej'; }); st.reach.forEach(function(r, v){ ns[v] = { c: r ? 'done' : '' }; }); }
+    var html = '<p class="mono">flujo total en T: <strong>' + st.total + '</strong> paquetes/h</p>' + tbl(['capacidad libre', 'residual', 'tipo'], resid(st.flows)) + '<p class="note-small">etiqueta de cada ruta = flujo / capacidad · verde = ruta saturada · rojo punteado = corte mínimo</p>';
+    return { state: { n: ns, e: es }, html: html };
+  }, { watch: ['flMode'] });
+
+  /* matching */
+  var ZONES = ['Norte', 'Centro', 'Sur'], DRIVERS = ['Ana', 'Bruno', 'Carla'], allow = [[1, 1, 0], [1, 0, 0], [0, 1, 1]];
+  function mgrid(){
+    var h = '<div class="tbl-wrap" style="margin:0"><table class="tbl" style="min-width:0"><tr><th>repartidor</th>' + ZONES.map(function(z){ return '<th>' + z + '</th>'; }).join('') + '</tr>';
+    for (var i = 0; i < 3; i++){ h += '<tr><td>' + DRIVERS[i] + '</td>'; for (var j = 0; j < 3; j++) h += '<td><input type="checkbox" class="pmchk" data-i="' + i + '" data-j="' + j + '"' + (allow[i][j] ? ' checked' : '') + ' aria-label="' + DRIVERS[i] + ' puede cubrir ' + ZONES[j] + '"></td>'; h += '</tr>'; }
+    $('mtGrid').innerHTML = h + '</table></div>';
+  }
+  function mcalc(){
+    var al = allow.map(function(r){ var l = []; r.forEach(function(x, j){ if (x) l.push(j); }); return l; }), m = matching(3, 3, al);
+    var by = {}; m.pairs.forEach(function(p){ by[p[0]] = p[1]; });
+    var rows = DRIVERS.map(function(d, i){ return [d, by[i] !== undefined ? ZONES[by[i]] : '— sin zona —']; });
+    var free = ZONES.filter(function(z, j){ return !m.pairs.some(function(p){ return p[1] === j; }); });
+    $('mtOut').innerHTML = '<p class="mono">asignaciones máximas: <strong>' + m.size + '</strong> de 3</p>' + tbl(['repartidor', 'zona asignada'], rows) + '<p class="note-small">' + (m.size === 3 ? 'Se cubren las tres zonas: es un matching perfecto.' : 'Sin cubrir: ' + (free.length ? free.join(', ') : 'ninguna zona') + '. ' + (m.size < 3 ? 'No hay forma de repartir distinto con estas restricciones (el flujo máximo no pasa de ' + m.size + ').' : '')) + '</p>';
+  }
+  $('mtGrid').addEventListener('change', function(e){ var t = e.target; if (t.getAttribute('data-i') !== null){ allow[t.getAttribute('data-i')][t.getAttribute('data-j')] = t.checked ? 1 : 0; mcalc(); } });
+  mgrid(); mcalc();
+})();
+
+/* ================= fallas ================= */
+CC.buildErrors('errGrid', [
+  { tag: 'garantía rota', title: 'Usar Dijkstra con una ruta de costo negativo',
+    bad: '// Córdoba→Rosario 4 h, Córdoba→Santa Fe 2 h, Rosario→Santa Fe -5 h (crédito por carga de retorno)\ndijkstra(net, 0, distance, parent);   // fija Santa Fe con 2 h...\n// ...pero Córdoba→Rosario→Santa Fe cuesta 4 + (-5) = -1 h',
+    cons: 'Dijkstra fija un hub cuando es el menor tentativo, y eso solo es cierto si ningún tramo posterior puede <em>bajar</em> el costo. Con un tramo negativo, una ruta que todavía no exploró puede mejorar un hub ya fijado, y el resultado queda mal sin avisar.',
+    fix: 'bellmanFord(edges, origin, distance);   // acepta costos negativos y detecta ciclos negativos\n// (si el grafo es un DAG: relajar en orden topológico, O(V+E))' },
+  { tag: 'orden de bucles', title: 'Floyd-Warshall con el intermedio k en el bucle de adentro',
+    bad: 'for (int i{ 0 }; i < HUBS; ++i)\n{\n    for (int j{ 0 }; j < HUBS; ++j)\n    {\n        for (int k{ 0 }; k < HUBS; ++k)   // ¡k afuera, no adentro!\n        {\n            ...\n        }\n    }\n}',
+    cons: 'La recurrencia dice "usando solo los primeros k hubs como intermedios". Si k no es el bucle exterior, cuando se usa <code>dist[i][k]</code> todavía no tiene todas sus mejoras: algunas rutas con varios intermedios quedan sin encontrar.',
+    fix: 'for (int k{ 0 }; k < HUBS; ++k)           // fase: ahora se permite k como intermedio\n{\n    for (int i{ 0 }; i < HUBS; ++i)\n    {\n        for (int j{ 0 }; j < HUBS; ++j)\n        {\n            if (dist[i][k] + dist[k][j] < dist[i][j])\n            {\n                dist[i][j] = dist[i][k] + dist[k][j];\n            }\n        }\n    }\n}' },
+  { tag: 'componentes mezcladas', title: 'Tarjan sin controlar si el vecino sigue en la pila',
+    bad: 'else   // el vecino ya fue descubierto\n{\n    low[hub] = min(low[hub], discovery[next]);   // sin preguntar onStack[next]\n}',
+    cons: 'Si el vecino pertenece a una componente que ya se cerró (como F→E en la red de un sentido), no hay camino de vuelta, pero esta línea igual baja <code>low[F]</code> y mezcla componentes distintas.',
+    fix: 'else if (onStack[next])   // solo cuenta si todavía está "abierto" en la pila\n{\n    low[hub] = min(low[hub], discovery[next]);\n}' },
+  { tag: 'ciclo ignorado', title: 'Kahn que entrega un orden sin contar cuántas tareas procesó',
+    bad: 'while (head < tail) { ... order[done++] = task; ... }\nreturn order;   // ¿y si el proceso tiene una dependencia circular?',
+    cons: 'Si "Entrega" fuera requisito de "Recepción", ninguna tarea tendría grado 0, y el orden saldría vacío o incompleto sin que nadie lo note. El proceso quedaría bloqueado en producción.',
+    fix: 'if (done < HUBS)\n{\n    // quedaron tareas esperándose entre sí: hay un ciclo, no existe orden válido\n    return -1;\n}' },
+  { tag: 'greedy sin cancelar', title: 'Flujo máximo sin red residual (solo aristas directas)',
+    bad: '// Ford-Fulkerson "a mano": elegir caminos S→T y gastar capacidad\nresidual[u][v] -= delta;   // pero nunca se suma residual[v][u]',
+    cons: 'Si el primer camino elegido es S→A→B→T, se gasta capacidad que luego bloquea otros caminos y el algoritmo termina en 4 en vez de 5. La arista inversa permite <em>cancelar</em> una decisión anterior: sin ella el resultado no es máximo.',
+    fix: 'residual[parent[node]][node] -= delta;   // se gasta capacidad\nresidual[node][parent[node]] += delta;   // y se habilita cancelarla' },
+  { tag: 'duplicados en la cola', title: 'BFS que marca el hub al desencolar en lugar de al encolar',
+    bad: 'const int current{ queue[head++] };\nvisited[current] = true;              // tarde: ya pudo entrar varias veces\nfor (...) if (linked && !visited[next]) { queue[tail++] = next; }',
+    cons: 'Un hub puede ser descubierto por varios vecinos antes de que lo desencolen: entra repetido a la cola, se procesa más de una vez y el arreglo de tamaño HUBS se desborda.',
+    fix: 'if (linked && distance[next] < 0)\n{\n    distance[next] = distance[current] + 1;   // se marca AL ENCOLAR\n    queue[tail++] = next;\n}' }
+]);
+
+/* ================= checkpoints ================= */
+CC.buildQuiz('quizList', [
+  { code: '// DHL: 1000 hubs y 3000 rutas bidireccionales',
+    q: '¿Cuántas celdas tiene la matriz de adyacencia y cuántas entradas la lista?', opts: ['3.000 y 3.000', '1.000.000 y unas 6.000', '1.000 y 3.000', '9.000.000 y 3.000'], correct: 1,
+    fb: 'La matriz guarda V² = 1.000.000 de celdas aunque casi todas estén vacías. La lista guarda 2E = 6.000 entradas (cada ruta aparece en los dos hubs). Por eso, en redes ralas, lista o CSR.' },
+  { code: '// A→F: A–B–D–F cuesta 6+5+4 = 15 h\n// A→F: A–C–E–F cuesta 2+7+1 = 10 h',
+    q: 'Las dos rutas tienen 3 tramos. ¿Qué algoritmo distingue la mejor?', opts: ['BFS: ambas valen lo mismo y no puede elegir', 'DFS', 'Dijkstra: suma horas, no cuenta tramos', 'Kruskal'], correct: 2,
+    fb: 'BFS mide tramos (ambas valen 3). Dijkstra suma costos y elige A–C–E–F con 10 h.' },
+  { code: '// Dijkstra desde Córdoba (A): dist inicial = {0, 6, 2, ∞, ∞, ∞}',
+    q: '¿Qué hub se fija en el segundo paso?', opts: ['B (Rosario)', 'C (Santa Fe)', 'D (Buenos Aires)', 'F (Mar del Plata)'], correct: 1,
+    fb: 'Después de A, el menor tentativo sin fijar es C con 2 h. Al fijarlo mejora B a 3 (2 + 1) y E a 9.' },
+  { code: '// Kruskal: BC(1), EF(1), AC(2), DE(2) ya elegidas\n// siguiente: DF(4)',
+    q: '¿Qué hace Kruskal con DF?', opts: ['La elige: es la más barata que queda', 'La descarta: D y F ya están en el mismo grupo y cerraría un ciclo', 'La elige si no hay otra ruta', 'La descarta porque 4 es mayor que 2'], correct: 1,
+    fb: 'Con DE y EF elegidas, D, E y F ya están conectados. Agregar DF cerraría un ciclo. La siguiente, BD (5), sí une los grupos {A,B,C} y {D,E,F}.' },
+  { code: '// MST de la red de DHL = 11 h\n// camino mínimo A→F = 10 h',
+    q: '¿Son contradictorios estos valores?', opts: ['Sí: uno de los dos algoritmos está mal', 'No: el MST minimiza el costo de TODAS las rutas elegidas; el camino mínimo, el de un solo viaje', 'Sí, el MST nunca puede ser mayor', 'No, pero solo por casualidad'], correct: 1,
+    fb: 'Son preguntas distintas. El MST conecta los seis hubs con el menor costo total de instalación (11). El camino A→F es un viaje y no necesita usar el MST (A–C–E–F usa CE, que no está en el árbol).' },
+  { code: '// red de un solo sentido: A→B, B→C, C→A, B→D, D→E, E→D, F→E',
+    q: '¿B y D están en la misma SCC?', opts: ['Sí, B llega a D', 'No: de B se llega a D, pero de D no se vuelve a B', 'Sí, porque están conectados', 'Depende del algoritmo'], correct: 1,
+    fb: 'Una SCC exige ir y volver por caminos dirigidos. B→D existe, pero D solo llega a E y de vuelta a D. Las SCC son {A,B,C}, {D,E} y {F}.' },
+  { code: '// dependencias: A→B, A→C, B→D, B→E, C→E, D→F, E→F',
+    q: '¿Cuántas tareas previas tiene "Carga en camión" (E)?', opts: ['0', '1', '2', '3'], correct: 2,
+    fb: 'E depende de B (escaneo) y de C (etiquetado): grado de entrada 2. Kahn la libera cuando se procesan las dos.' },
+  { code: '// Bellman-Ford sobre un grafo de 6 hubs',
+    q: '¿Cuántas pasadas completas hacen falta como máximo para fijar las distancias, y para qué sirve una pasada extra?', opts: ['6; para ordenar', '5 (V−1); para detectar ciclos negativos', '8; para reconstruir la ruta', '1; para verificar'], correct: 1,
+    fb: 'Un camino simple tiene como máximo V−1 aristas, así que V−1 pasadas alcanzan. Si en la pasada número V todavía hay mejoras, hay un ciclo negativo alcanzable.' },
+  { code: '// S→A=3, S→B=2: salen 5 desde el origen',
+    q: '¿Qué demuestra eso?', opts: ['Que llegan 5 paquetes/h a T', 'Que el flujo nunca puede superar 5 (es un corte), pero no que llegue 5', 'Que el flujo máximo es 3', 'Nada'], correct: 1,
+    fb: 'La capacidad del corte {S} | {A,B,T} es 5, así que ningún flujo la supera. Que llegue 5 hay que mostrarlo con un flujo concreto (existe: 5) y entonces el teorema max-flow min-cut lo declara óptimo.' },
+  { code: '// Floyd-Warshall: tres bucles anidados sobre V hubs',
+    q: '¿Cuál es el costo en tiempo y qué bucle va primero?', opts: ['O(V²), el de i', 'O(V³), el del intermedio k', 'O(V³), el de j', 'O(V log V), el de k'], correct: 1,
+    fb: 'Son tres bucles de V iteraciones: O(V³) tiempo y O(V²) memoria. El intermedio k va afuera: cada fase permite un conjunto creciente de hubs intermedios.' }
+]);
+
+  /* red inicial en la teoría */
+  (function(){ var g = new Gfx('netSvg', SPEC_NET); g.draw({}); })();
+})();
+
+</script>
+</body>
+</html>

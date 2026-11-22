@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>Casos de Prueba HubFlow</title>
+<style>
+  :root{--bg:#ffffff;--fg:#1a1a1a;--border:#d0d0d0;--head:#f0f0f0;--ok:#1a7f37;}
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){--bg:#1e1e1e;--fg:#e8e8e8;--border:#444;--head:#2a2a2a;--ok:#4ade80;}
+  }
+  :root[data-theme="dark"]{--bg:#1e1e1e;--fg:#e8e8e8;--border:#444;--head:#2a2a2a;--ok:#4ade80;}
+  body{background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;padding:24px;}
+  table{border-collapse:collapse;width:100%;font-size:14px;}
+  th,td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top;}
+  th{background:var(--head);}
+  .ok{color:var(--ok);font-weight:600;}
+  p.hint{opacity:.7;font-size:13px;margin-top:12px;}
+</style>
+<h2>Tabla de casos de prueba — HubFlow</h2>
+<table>
+<tr><th>Caso</th><th>Operación realizada</th><th>Resultado esperado</th><th>Resultado obtenido</th></tr>
+<tr><td>1 — Prioridades</td><td>Registrar envíos ESTANDAR, EXPRESS y PRIORITARIO y mostrar pendientes</td><td>La lista queda ordenada EXPRESS &gt; PRIORITARIO &gt; ESTANDAR</td><td class="ok">OK — orden correcto</td></tr>
+<tr><td>2 — Prioridad estable</td><td>Registrar 3 envíos con el mismo nivel de servicio y mostrar pendientes</td><td>Se conserva el orden de llegada entre elementos de igual prioridad</td><td class="ok">OK — orden de llegada conservado</td></tr>
+<tr><td>3 — Despacho</td><td>Despachar el primer envío pendiente</td><td>Cambia a EN_REPARTO, se crea el movimiento en el historial, se elimina el nodo de pendientes, el objeto Envío se conserva</td><td class="ok">OK — las 4 condiciones se cumplen</td></tr>
+<tr><td>4 — Reprogramación</td><td>Despachar un envío y luego reprogramarlo</td><td>Aumenta intentos, se registra el movimiento REPROGRAMADO con la observación, vuelve a pendientes respetando su prioridad</td><td class="ok">OK — las 4 condiciones se cumplen</td></tr>
+<tr><td>5 — Historial directo</td><td>Mostrar historial de un envío con varios movimientos</td><td>Recorrido del más antiguo al más reciente (RECIBIDO → CLASIFICADO → EN_REPARTO)</td><td class="ok">OK — orden cronológico correcto</td></tr>
+<tr><td>5 — Historial inverso</td><td>Mostrar historial de un envío con varios movimientos</td><td>Recorrido del más reciente al más antiguo, usando los punteros anterior</td><td class="ok">OK — orden inverso correcto</td></tr>
+<tr><td>6 — Recursividad</td><td>Resumen recursivo por zona con paquetes de distintas zonas y niveles</td><td>Cuenta solo los paquetes de la zona pedida, suma el peso correcto, cuenta los EXPRESS de esa zona</td><td class="ok">OK — cantidad, peso (6kg) y EXPRESS (1) correctos</td></tr>
+<tr><td>6 — Desafío opcional</td><td>Envío de mayor peso de una zona (recursivo)</td><td>Identifica correctamente el envío más pesado de la zona consultada</td><td class="ok">OK</td></tr>
+<tr><td>7 — Lista vacía</td><td>Mostrar pendientes / despachar con el centro recién creado</td><td>Se informa "no hay envíos pendientes" sin romper el programa</td><td class="ok">OK</td></tr>
+<tr><td>7 — Búsqueda inexistente</td><td>Buscar un código que no existe</td><td>Se informa "Envío no encontrado"</td><td class="ok">OK</td></tr>
+<tr><td>7 — Código duplicado</td><td>Registrar dos veces el mismo código</td><td>El segundo registro es rechazado con un mensaje de error</td><td class="ok">OK</td></tr>
+<tr><td>7 — Historial con un único nodo</td><td>Mostrar historial de un envío recién creado (sin otros movimientos)</td><td>Se muestra un solo movimiento (RECIBIDO) en ambos sentidos</td><td class="ok">OK</td></tr>
+<tr><td>7 — Eliminación del único elemento</td><td>Despachar cuando pendientes tiene un solo envío</td><td>La lista de pendientes vuelve a quedar vacía</td><td class="ok">OK</td></tr>
+<tr><td>7 — Inserción luego de vaciar la lista</td><td>Registrar un nuevo envío después de vaciar pendientes</td><td>El nuevo envío se inserta correctamente</td><td class="ok">OK</td></tr>
+</table>
+
+</body></html>

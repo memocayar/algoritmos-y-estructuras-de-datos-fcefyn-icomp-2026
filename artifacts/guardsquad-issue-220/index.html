@@ -1,0 +1,1046 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>AyED para GuardSquad — Teoría de base (Issue #220)</title>
+<style>
+  :root {
+    --bg: #F4F6F8;
+    --surface: #FFFFFF;
+    --surface-2: #ECEFF2;
+    --ink: #171B22;
+    --ink-soft: #4B5563;
+    --ink-faint: #838C99;
+    --line: #E1E5EA;
+    --accent: #0F7C89;
+    --accent-ink: #0B5E68;
+    --accent-soft: #E4F3F3;
+    --alert-low: #2F9E63;
+    --alert-mid: #C98A16;
+    --alert-high: #C1433F;
+    --code-bg: #0D1117;
+    --code-ink: #C9D1D9;
+    --code-line: #22293380;
+    --code-path: #7EE0C8;
+    --shadow: 0 1px 2px rgba(23,27,34,0.04), 0 8px 24px rgba(23,27,34,0.06);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10141A;
+      --surface: #171C24;
+      --surface-2: #1D232D;
+      --ink: #E8EAF0;
+      --ink-soft: #9AA3B2;
+      --ink-faint: #6B7484;
+      --line: #262D38;
+      --accent: #4FD1DE;
+      --accent-ink: #8CE6EF;
+      --accent-soft: rgba(79,209,222,0.12);
+      --alert-low: #58C888;
+      --alert-mid: #F0B93E;
+      --alert-high: #E5726F;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #10141A;
+    --surface: #171C24;
+    --surface-2: #1D232D;
+    --ink: #E8EAF0;
+    --ink-soft: #9AA3B2;
+    --ink-faint: #6B7484;
+    --line: #262D38;
+    --accent: #4FD1DE;
+    --accent-ink: #8CE6EF;
+    --accent-soft: rgba(79,209,222,0.12);
+    --alert-low: #58C888;
+    --alert-mid: #F0B93E;
+    --alert-high: #E5726F;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  a { color: var(--accent-ink); }
+
+  h1, h2, h3 { text-wrap: balance; font-weight: 700; }
+
+  code, .code-inline {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.05em 0.4em;
+    font-size: 0.88em;
+  }
+
+  /* ---------- Header ---------- */
+  header.top {
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .top-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 40px 28px 32px;
+  }
+  .eyebrow {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 14px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+    flex: none;
+  }
+  h1.title {
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.15;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .top-sub {
+    color: var(--ink-soft);
+    font-size: 16.5px;
+    max-width: 640px;
+    margin: 0 0 20px;
+  }
+  .top-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .pill {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+
+  /* ---------- Layout ---------- */
+  .page {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 36px 28px 80px;
+    display: grid;
+    grid-template-columns: 208px minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+  }
+
+  nav.rail {
+    position: sticky;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  nav.rail a {
+    text-decoration: none;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    border-left: 2px solid var(--line);
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  nav.rail a:hover {
+    color: var(--ink);
+    background: var(--surface-2);
+    border-left-color: var(--accent);
+  }
+  nav.rail .num {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    width: 16px;
+    flex: none;
+  }
+  nav.rail .syn a { color: var(--accent-ink); font-weight: 600; }
+
+  main { min-width: 0; }
+
+  section.concept {
+    padding: 30px 0 40px;
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: 20px;
+  }
+  section.concept:last-of-type { border-bottom: none; }
+
+  .concept-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .concept-num {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    border-radius: 5px;
+    padding: 2px 8px;
+    flex: none;
+  }
+  h2.concept-title {
+    font-size: 22px;
+    margin: 0;
+  }
+  .concept-tag {
+    font-size: 13px;
+    color: var(--ink-faint);
+    margin: 0 0 18px;
+  }
+
+  p { margin: 0 0 14px; max-width: 66ch; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; max-width: 64ch; }
+  li { margin-bottom: 6px; }
+
+  .lede {
+    font-size: 16.5px;
+  }
+
+  .analogy {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 4px 0 18px;
+    box-shadow: var(--shadow);
+  }
+  .analogy .label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 8px;
+  }
+  .analogy p:last-child { margin-bottom: 0; }
+
+  .code-panel {
+    background: var(--code-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 4px 0 20px;
+    box-shadow: var(--shadow);
+  }
+  .code-panel .path {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--code-path);
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--code-line);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .code-panel .path::before { content: "›"; color: #4B5563; }
+  .code-panel pre {
+    margin: 0;
+    padding: 14px 16px 16px;
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13.2px;
+    line-height: 1.6;
+    color: var(--code-ink);
+  }
+  .code-panel .c { color: #6B7280; }
+
+  .connect {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin: 4px 0 6px;
+  }
+  .connect .label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin: 0 0 8px;
+  }
+  .connect p, .connect ul { margin-bottom: 0; }
+  .connect p + p { margin-top: 8px; }
+
+  .warn {
+    border-left: 3px solid var(--alert-mid);
+    background: color-mix(in srgb, var(--alert-mid) 12%, transparent);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 18px;
+    margin: 0 0 18px;
+    font-size: 14.5px;
+  }
+  .warn strong { color: var(--alert-mid); }
+
+  /* alert-level chips reused literally where the content is about guard alert levels */
+  .chain {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 4px 0 20px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  .node {
+    border-radius: 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 92px;
+  }
+  .node .n { color: var(--ink-faint); font-size: 11px; }
+  .node .v { font-weight: 700; }
+  .node.l0 .v { color: var(--ink-faint); }
+  .node.l3 { border-color: var(--alert-high); }
+  .node.l3 .v { color: var(--alert-high); }
+  .node.l2 { border-color: var(--alert-mid); }
+  .node.l2 .v { color: var(--alert-mid); }
+  .node.l1 { border-color: var(--alert-low); }
+  .node.l1 .v { color: var(--alert-low); }
+  .arrow { color: var(--ink-faint); }
+
+  h3.sub {
+    font-size: 15px;
+    margin: 26px 0 10px;
+    color: var(--ink);
+  }
+  h3.sub .k { color: var(--ink-faint); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; margin-right: 8px; }
+
+  .arr-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 0 0 10px;
+    padding: 10px 0;
+  }
+  .arr-step .cells { display: flex; gap: 4px; flex: none; }
+  .arr-step .cell {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    background: var(--surface);
+    flex: none;
+  }
+  .arr-step .cell.filled {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
+  }
+  .arr-step .cell.new { border-style: dashed; }
+  .arr-step .info {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .arr-step .info b { color: var(--ink); }
+  .grow-block {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin: 6px 0 22px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .grow-block .grow-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .grow-block .grow-row:last-child { margin-bottom: 0; }
+  .grow-block .grow-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    width: 108px;
+    flex: none;
+  }
+  .grow-arrow-down {
+    text-align: center;
+    color: var(--ink-faint);
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+    margin: 4px 0;
+  }
+
+  .method-table td code { white-space: nowrap; }
+
+  table.map {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 6px 0 10px;
+    font-size: 14.5px;
+  }
+  table.map th, table.map td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.map th {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+  table.map td.concept-cell { white-space: nowrap; font-weight: 600; }
+  .table-wrap { overflow-x: auto; }
+
+  .checklist {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 24px;
+    box-shadow: var(--shadow);
+  }
+  .checklist ul { list-style: none; padding: 0; margin: 0; }
+  .checklist li {
+    display: flex;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+    max-width: none;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .box {
+    flex: none;
+    width: 17px; height: 17px;
+    margin-top: 2px;
+    border-radius: 4px;
+    border: 1.5px solid var(--ink-faint);
+  }
+
+  footer.foot {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 28px 60px;
+    color: var(--ink-faint);
+    font-size: 13px;
+  }
+
+  @media (max-width: 880px) {
+    .page { grid-template-columns: 1fr; }
+    nav.rail {
+      position: sticky;
+      top: 0;
+      flex-direction: row;
+      overflow-x: auto;
+      background: var(--bg);
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      z-index: 5;
+    }
+    nav.rail a { border-left: none; border-bottom: 2px solid var(--line); white-space: nowrap; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <p class="eyebrow">Bedrock · prep para Issue #220</p>
+    <h1 class="title">La teoría de AyED que hace falta para “Propagación de alerta entre guardias”</h1>
+    <p class="top-sub">
+      Guía de base para quienes recién arrancan Algoritmos y Estructuras de Datos. Cada sección toma
+      un concepto del curso y lo conecta directamente con una pieza concreta del issue —
+      <code>GuardSquadMember</code>, <code>propagarAlerta</code>, la tercera estrategia de guardia — para que
+      quede claro <em>para qué</em> sirve cada cosa, no solo qué es.
+    </p>
+    <div class="top-meta">
+      <span class="pill">github.com/GabrielEValenzuela/CyberCba2077/issues/220</span>
+      <span class="pill">Basado en el material de la cátedra</span>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="rail">
+    <a href="#punteros"><span class="num">01</span> Punteros y referencias</a>
+    <a href="#structs"><span class="num">02</span> Clases para agrupar datos</a>
+    <a href="#poo"><span class="num">03</span> Herencia y polimorfismo</a>
+    <a href="#recursion"><span class="num">04</span> Recursión</a>
+    <a href="#grafos"><span class="num">05</span> Grafos (el concepto)</a>
+    <a href="#arreglos"><span class="num">06</span> Arreglo dinámico propio</a>
+    <a href="#sintesis" class="syn"><span class="num">→</span> Todo junto en la issue</a>
+  </nav>
+
+  <main>
+
+    <section class="concept" id="punteros">
+      <div class="concept-head">
+        <span class="concept-num">01</span>
+        <h2 class="concept-title">Punteros y referencias</h2>
+      </div>
+      <p class="concept-tag">Ejemplos/00_Punteros_Introduccion.cpp · Ejemplos/01_Punteros_Swap.cpp · Material Practico → 01_punteros</p>
+
+      <p class="lede">
+        Una variable normal (<code>int x = 5;</code>) guarda un valor. Un <strong>puntero</strong> guarda una
+        <em>dirección de memoria</em>: la ubicación donde vive otra variable. <code>&x</code> te da esa dirección;
+        <code>*p</code> te da el valor que hay en esa dirección (lo que en clase se llama “desreferenciar”).
+      </p>
+
+      <div class="analogy">
+        <p class="label">Analogía</p>
+        <p>
+          Pensá una variable normal como una caja con un valor adentro. Un puntero es un papelito que en vez de
+          tener el valor, tiene <em>la dirección de la caja</em>. Si dos papelitos tienen la misma dirección, los
+          dos “apuntan” a la misma caja — cambiar el contenido desde uno se ve desde el otro.
+        </p>
+      </div>
+
+      <p>
+        En <code>01_Punteros_Swap.cpp</code> ya se ve la razón de ser de esto: <code>swap0(int a, int b)</code>
+        recibe copias, así que intercambiar <code>a</code> y <code>b</code> adentro de la función no cambia nada
+        afuera. <code>swap1(int *a, int *b)</code> recibe las direcciones reales, así que <code>*a = *b</code>
+        sí modifica las variables originales del <code>main</code>. Esa diferencia — “¿estoy tocando una copia o
+        el original?” — es la primera pregunta que te vas a hacer todo el cuatrimestre.
+      </p>
+
+      <div class="warn">
+        <strong>Por qué importa acá:</strong> el struct pattern del proyecto (<code>DynamicArray</code>) documenta
+        explícitamente que las referencias que devuelve se invalidan si el buffer interno se reubica en memoria.
+        Guardar un puntero “crudo” a un guardia dentro de una lista de guardias es exactamente el tipo de bug que
+        un puntero colgante (apuntando a memoria que ya no es válida) puede producir.
+      </div>
+
+      <div class="connect">
+        <p class="label">En el issue</p>
+        <p>
+          Cada <code>GuardSquadMember</code> necesita saber a quién avisar: sus “vecinos”. La tentación es guardar
+          un puntero directo a cada guardia vecino. El problema es que el <code>GuardSquad</code> va a guardar a
+          todos los guardias en una lista propia — y si esa lista crece y se reubica en memoria, cualquier puntero
+          que apuntaba “directo” a un guardia queda apuntando a memoria vieja. Por eso conviene que cada vecino se
+          guarde como <strong>índice</strong> (un número de posición, <code>int</code>) dentro de la lista del
+          escuadrón, no como puntero al objeto. Un índice no se “invalida” cuando la lista se reubica.
+        </p>
+      </div>
+    </section>
+
+    <section class="concept" id="structs">
+      <div class="concept-head">
+        <span class="concept-num">02</span>
+        <h2 class="concept-title">Clases para agrupar datos relacionados</h2>
+      </div>
+      <p class="concept-tag">Ejemplos/02_Estructuras_Fecha_Persona.c · Ejemplos/04_POO_Objeto_Tiempo.cpp</p>
+
+      <p class="lede">
+        Un guardia tiene varios datos que viajan siempre juntos: su nivel de alerta actual y la lista de a quién
+        puede avisar. En vez de tener variables sueltas, se agrupan en un <strong>tipo propio</strong> — una
+        <code>class</code> o <code>struct</code> — igual que <code>04_POO_Objeto_Tiempo.cpp</code> agrupa hora,
+        minuto y segundo en un solo tipo <code>Tiempo</code> en vez de tres variables sueltas por ahí.
+      </p>
+
+      <div class="code-panel">
+        <div class="path">Ejemplos/04_POO_Objeto_Tiempo.cpp</div>
+        <pre><span class="c">// la idea, no el código completo del ejemplo</span>
+class Tiempo {
+  public:
+    void estableceHora1(int);
+    int  obtieneHora1();
+  private:
+    int hora;
+    int minuto;
+    int segundo;
+};</pre>
+      </div>
+
+      <p>
+        Lo mismo aplica a <code>GuardSquadMember</code>: en vez de tener, en algún lado suelto, “el nivel de
+        alerta del guardia 3” y por separado “los vecinos del guardia 3”, un solo tipo agrupa ambos datos y viaja
+        junto por todo el programa.
+      </p>
+
+      <div class="connect">
+        <p class="label">En el issue</p>
+        <p>
+          El diagrama de clases del issue ya te da la forma exacta: <code>GuardSquadMember</code> con
+          <code>nivelDeAlerta</code> y <code>vecinos</code>, y <code>GuardSquad</code> con la lista completa de
+          miembros más el método <code>propagarAlerta(origen, nivel)</code>. Es el mismo patrón que
+          <code>Tiempo</code>, aplicado a un dato distinto.
+        </p>
+      </div>
+    </section>
+
+    <section class="concept" id="poo">
+      <div class="concept-head">
+        <span class="concept-num">03</span>
+        <h2 class="concept-title">Herencia y polimorfismo</h2>
+      </div>
+      <p class="concept-tag">Ejemplos/Clase 02 2024 Herencia.cpp · Material Practico → 02_poo</p>
+
+      <p class="lede">
+        El proyecto ya tiene dos “formas de ser guardia”: <code>StandardGuardStrategy</code> y
+        <code>AlertedGuardStrategy</code>. Ambas heredan de una misma interfaz,
+        <code>IGuardBehaviorStrategy</code>, que declara un método sin cuerpo
+        (<code>virtual int decideDamage(...) const = 0;</code> — el <code>= 0</code> lo hace
+        “puro”, es decir, obligatorio de implementar en cada clase hija). El resto del código llama siempre a
+        <code>decideDamage(...)</code> sin saber ni importarle si el guardia es estándar o alertado — cada
+        objeto “sabe” resolver la llamada a su manera. Eso es polimorfismo.
+      </p>
+
+      <div class="analogy">
+        <p class="label">Analogía</p>
+        <p>
+          Es como pedir “hacé ruido” a distintos animales. El que pide no necesita un <code>if</code> por cada
+          animal — cada uno ya sabe cómo responder a “hacé ruido” a su manera. La interfaz es la promesa de que
+          todos entienden ese pedido; cada clase hija decide cómo cumplirlo.
+        </p>
+      </div>
+
+      <div class="code-panel">
+        <div class="path">include/cybercba/combat/GuardBehaviorStrategy.hpp (ya existe en el repo)</div>
+        <pre>class IGuardBehaviorStrategy {
+  public:
+    virtual ~IGuardBehaviorStrategy() = default;
+    virtual int decideDamage(const CombatState&amp; state) const = 0;
+};
+
+class StandardGuardStrategy final : public IGuardBehaviorStrategy {
+  public:
+    int decideDamage(const CombatState&amp; state) const override;
+};</pre>
+      </div>
+
+      <div class="connect">
+        <p class="label">En el issue</p>
+        <p>
+          El issue pide una <strong>tercera</strong> estrategia (“EstrategiaEscalable”) que hereda de la misma
+          interfaz, igual que las otras dos. La diferencia real es que <code>Standard</code> y
+          <code>Alerted</code> no guardan ningún dato propio (son objetos “sin memoria”, reutilizables para
+          cualquier guardia), mientras que la nueva probablemente sí necesita guardar el nivel de alerta del
+          guardia que la está usando — porque el daño depende de <em>cuánto</em> alertado está, no de un simple
+          sí/no. Es una decisión de diseño real del equipo, no algo resuelto de antemano.
+        </p>
+      </div>
+    </section>
+
+    <section class="concept" id="recursion">
+      <div class="concept-head">
+        <span class="concept-num">04</span>
+        <h2 class="concept-title">Recursión</h2>
+      </div>
+      <p class="concept-tag">Ejemplos/07_Recursion_Introduccion.cpp · Ejemplos/08_Recursion_Ejercicios.cpp · Material Practico → 03_recursividad</p>
+
+      <p class="lede">
+        Una función recursiva es una función que se llama a sí misma con un problema más chico, hasta llegar a un
+        <strong>caso base</strong> tan simple que no necesita más llamadas. <code>07_Recursion_Introduccion.cpp</code>
+        ya tiene el ejemplo canónico: imprimir un arreglo llamándose a sí misma con un elemento menos cada vez.
+      </p>
+
+      <div class="code-panel">
+        <div class="path">Ejemplos/07_Recursion_Introduccion.cpp</div>
+        <pre>void impre(int v[], int n)
+{
+    <span class="c">// caso base: ya no queda nada más que imprimir</span>
+    if (n == 0) cout &lt;&lt; v[n] &lt;&lt; endl;
+    else {
+        <span class="c">// caso recursivo: resolvé el resto primero, con un problema más chico</span>
+        impre(v, n - 1);
+        cout &lt;&lt; v[n] &lt;&lt; endl;
+    }
+}</pre>
+      </div>
+
+      <p>
+        Cada llamada que todavía no llegó al caso base queda “pendiente” en la pila de llamadas del programa
+        (la <em>call stack</em>), esperando a que la llamada siguiente termine. Por eso una función recursiva sin
+        caso base — o con un caso base al que nunca se llega — cuelga el programa: la pila crece para siempre.
+      </p>
+
+      <div class="warn">
+        <strong>El punto crítico de esta issue:</strong> el propio issue advierte que los guardias pueden estar
+        conectados <em>en círculo</em>. Una recursión ingenua (“avisale a cada vecino, y ese avisale a los suyos”)
+        daría vueltas eternamente en un círculo si no hay algo que corte la cadena.
+      </div>
+
+      <div class="connect">
+        <p class="label">En el issue</p>
+        <p>
+          <code>propagarAlerta(origen, nivel)</code> es una función recursiva: un guardia recibe un nivel de
+          alerta, se lo pasa a cada vecino con un nivel un escalón más bajo, y esos vecinos hacen exactamente lo
+          mismo. El caso base <strong>no es</strong> “ya recorrí todos los guardias” — es la pregunta del propio
+          diagrama del issue: “¿este nivel es mejor que el que el guardia ya tenía?”. Si no lo es, esa rama de la
+          recursión termina ahí, sin seguir. Como el nivel baja un escalón en cada salto, hasta en un círculo
+          cerrado la cadena eventualmente deja de mejorar lo que cada guardia ya tiene, y la recursión termina
+          sola — sin necesitar una lista aparte de “guardias ya visitados”.
+        </p>
+      </div>
+    </section>
+
+    <section class="concept" id="grafos">
+      <div class="concept-head">
+        <span class="concept-num">05</span>
+        <h2 class="concept-title">Grafos, como concepto</h2>
+      </div>
+      <p class="concept-tag">Vocabulario nuevo — no hay ejemplo previo en la carpeta del curso</p>
+
+      <p class="lede">
+        Un <strong>grafo</strong> es, ni más ni menos, un conjunto de “nodos” conectados entre sí por “aristas”.
+        Un guardia es un nodo; que un guardia pueda avisarle a otro es una arista. La fila de guardias del issue
+        (“probado en una fila”) es el grafo más simple posible: cada nodo conectado solo con el siguiente. El
+        caso “conectados en círculo” es el mismo tipo de estructura, pero donde el último nodo vuelve a conectar
+        con el primero.
+      </p>
+
+      <div class="analogy">
+        <p class="label">Analogía</p>
+        <p>
+          Pensalo como un grupo de WhatsApp donde cada persona solo puede reenviar un mensaje a la gente que
+          tiene agendada (sus “vecinos”), no a todo el grupo de una. Si A tiene agendado a B, y B tiene agendado
+          a A, un mensaje puede rebotar A→B→A→B para siempre si nadie corta la cadena — exactamente el problema
+          del círculo.
+        </p>
+      </div>
+
+      <p>Cómo se ve el nivel de alerta “ondulando” hacia afuera desde el guardia que detectó al jugador, un escalón menos por cada salto:</p>
+
+      <div class="chain">
+        <div class="node l3"><span class="n">guardia A (origen)</span><span class="v">nivel 3</span></div>
+        <span class="arrow">→</span>
+        <div class="node l2"><span class="n">vecino directo</span><span class="v">nivel 2</span></div>
+        <span class="arrow">→</span>
+        <div class="node l1"><span class="n">vecino del vecino</span><span class="v">nivel 1</span></div>
+        <span class="arrow">→</span>
+        <div class="node l0"><span class="n">demasiado lejos</span><span class="v">nivel 0 (sin aviso)</span></div>
+      </div>
+
+      <div class="warn">
+        <strong>Ojo con la palabra “grafo” en este repo:</strong> existe una estructura <code>DirectedGraph</code>
+        en <code>include/cybercba/structures/</code>, pero el issue dice explícitamente que esa carpeta no se
+        toca (además, por diseño del curso, esas cuatro estructuras están sin implementar todavía — son un
+        ejercicio aparte). Acá se usa la <em>idea</em> de grafo — nodos con vecinos — no esa clase del repo.
+      </div>
+
+      <div class="connect">
+        <p class="label">En el issue</p>
+        <p>
+          <code>GuardSquad</code> es, conceptualmente, un grafo: la lista de <code>GuardSquadMember</code> son los
+          nodos, y la lista de <code>vecinos</code> de cada uno son sus aristas salientes. No hace falta ninguna
+          clase especial de “grafo” para representar esto — alcanza con que cada guardia sepa quiénes son sus
+          vecinos (ver sección 06) y con la función recursiva de la sección 04.
+        </p>
+      </div>
+    </section>
+
+    <section class="concept" id="arreglos">
+      <div class="concept-head">
+        <span class="concept-num">06</span>
+        <h2 class="concept-title">Un arreglo que crece solo (sin <code>std::vector</code>)</h2>
+      </div>
+      <p class="concept-tag">Ejemplos/10_Pilas_Arreglo.cpp · Ejemplos/11_Colas_Arreglo_Circular.cpp · include/cybercba/structures/DynamicArray.hpp (repo)</p>
+
+      <p class="lede">
+        El proyecto prohíbe <code>std::vector</code>, <code>std::array</code>, <code>std::map</code> y los
+        punteros inteligentes de la biblioteca estándar (<code>std::unique_ptr</code>, etc.) — es una decisión
+        del curso para que programemos las estructuras nosotros, no para complicarnos la vida porque sí. Por eso
+        el repo ya trae su propio arreglo dinámico, <code>DynamicArray&lt;T&gt;</code>, ya implementado y listo
+        para usar. Esta sección explica qué problema resuelve y cómo funciona por dentro, paso a paso.
+      </p>
+
+      <h3 class="sub"><span class="k">6.1</span>El problema: un arreglo común no puede crecer</h3>
+      <p>
+        Un arreglo de toda la vida — <code>int v[6]</code>, como en <code>10_Pilas_Arreglo.cpp</code> — reserva
+        un bloque de memoria de tamaño fijo <em>en el momento en que se declara</em>. Ese número no se negocia
+        después: si declaraste <code>v[6]</code> y ya metiste 6 elementos, no existe un “<code>v[6]</code> = 7”
+        que agrande el bloque. La memoria justo al lado de <code>v</code> casi seguro ya la está usando otra
+        variable — no hay dónde “estirarse”.
+      </p>
+      <p>
+        La solución que ya viste en el curso para pilas y colas con arreglo es fijar un <code>MAX</code> grande
+        de antemano y llevar un contador de cuántos lugares están realmente ocupados. Funciona, pero tiene un
+        costo: si elegís un <code>MAX</code> chico, te quedás sin lugar; si elegís uno grande “por las dudas”,
+        estás reservando memoria que capaz nunca usás. <code>DynamicArray</code> resuelve exactamente esto: no
+        hay que adivinar un tamaño de antemano, el arreglo pide más memoria solo, cuando la necesita.
+      </p>
+
+      <h3 class="sub"><span class="k">6.2</span>Dos números, no uno: tamaño vs. capacidad</h3>
+      <p>
+        Esta es la idea que más cuesta al principio, porque un arreglo común tiene un solo número (su tamaño) y
+        <code>DynamicArray</code> tiene dos, y son distintos a propósito:
+      </p>
+      <ul>
+        <li><code>m_size</code> — cuántos elementos hay <em>realmente guardados</em> ahora mismo. Es lo que
+          devuelve <code>size()</code>.</li>
+        <li><code>m_capacity</code> — cuántos elementos <em>entrarían</em> en el bloque de memoria actual antes
+          de necesitar uno más grande. Es lo que devuelve <code>capacity()</code>.</li>
+      </ul>
+      <p>
+        Siempre vale <code>m_size &lt;= m_capacity</code>. La diferencia entre los dos son “lugares ya
+        reservados pero todavía vacíos” — memoria de sobra guardada para que los próximos <code>pushBack</code>
+        no tengan que pedir más memoria enseguida.
+      </p>
+
+      <h3 class="sub"><span class="k">6.3</span>Cómo crece, paso a paso</h3>
+      <p>
+        Sigamos un <code>DynamicArray&lt;int&gt;</code> vacío a través de cinco llamadas a <code>pushBack</code>,
+        viendo exactamente qué decide el código en cada una (esto es literalmente lo que hace
+        <code>DynamicArray.hpp</code>, método <code>pushBack</code>):
+      </p>
+
+      <div class="arr-step">
+        <div class="info"><b>Recién creado</b> — <code>m_pBufferData = nullptr</code>, <code>size 0</code>, <code>capacity 0</code>. Todavía no se pidió memoria: el constructor no reserva nada hasta el primer <code>pushBack</code>.</div>
+      </div>
+
+      <div class="arr-step">
+        <div class="cells">
+          <div class="cell filled">10</div><div class="cell">·</div><div class="cell">·</div><div class="cell">·</div>
+        </div>
+        <div class="info"><b>pushBack(10)</b><br><code>isFull()</code> → <code>0 == 0</code> → sí, está lleno (¡un arreglo vacío está “lleno” de 0 lugares!)<br>→ como <code>capacity</code> era 0, la primera reserva es de <b>4</b> lugares (el mínimo, definido en el propio código)<br>→ se guarda 10 en la posición 0. <code>size 1, capacity 4</code></div>
+      </div>
+
+      <div class="arr-step">
+        <div class="cells">
+          <div class="cell filled">10</div><div class="cell filled">20</div><div class="cell">·</div><div class="cell">·</div>
+        </div>
+        <div class="info"><b>pushBack(20)</b> — <code>1 &lt; 4</code>, hay lugar: se guarda directo, sin pedir memoria nueva. <code>size 2, capacity 4</code></div>
+      </div>
+
+      <div class="arr-step">
+        <div class="cells">
+          <div class="cell filled">10</div><div class="cell filled">20</div><div class="cell filled">30</div><div class="cell">·</div>
+        </div>
+        <div class="info"><b>pushBack(30)</b> — mismo caso: hay lugar. <code>size 3, capacity 4</code></div>
+      </div>
+
+      <div class="arr-step">
+        <div class="cells">
+          <div class="cell filled">10</div><div class="cell filled">20</div><div class="cell filled">30</div><div class="cell filled">40</div>
+        </div>
+        <div class="info"><b>pushBack(40)</b> — todavía hay lugar (<code>3 &lt; 4</code>). Se guarda, pero ahora <code>size == capacity == 4</code>: el arreglo queda “lleno”, aunque nadie lo note todavía desde afuera.</div>
+      </div>
+
+      <div class="grow-block">
+        <div class="grow-row">
+          <span class="grow-label">pushBack(50)</span>
+          <div class="cells">
+            <div class="cell filled">10</div><div class="cell filled">20</div><div class="cell filled">30</div><div class="cell filled">40</div>
+          </div>
+          <span class="info"><code>isFull()</code> → <code>4 == 4</code> → sí</span>
+        </div>
+        <div class="grow-arrow-down">↓ se pide un bloque nuevo del doble de capacidad (4 → 8) y se copia todo lo anterior ↓</div>
+        <div class="grow-row">
+          <span class="grow-label">bloque nuevo</span>
+          <div class="cells">
+            <div class="cell filled new">10</div><div class="cell filled new">20</div><div class="cell filled new">30</div><div class="cell filled new">40</div><div class="cell filled new">50</div><div class="cell">·</div><div class="cell">·</div><div class="cell">·</div>
+          </div>
+          <span class="info"><code>size 5, capacity 8</code></span>
+        </div>
+        <div class="grow-row">
+          <span class="grow-label"></span>
+          <span class="info">El bloque viejo de 4 lugares se libera (<code>delete[]</code>) recién <em>después</em> de terminar de copiar todo al nuevo — así, si algo fallara a mitad de camino, nunca queda sin un bloque válido.</span>
+        </div>
+      </div>
+
+      <p>
+        Notá el orden exacto: primero se pregunta “¿está lleno?”, y solo si la respuesta es sí se crece
+        <em>antes</em> de guardar el nuevo elemento — nunca se guarda “de más” y se arregla después. Y notá
+        también que crecer no es “agrandar lo que ya había”: es pedir memoria nueva, copiar, y recién ahí soltar
+        la vieja. Por eso cualquier puntero o referencia (<code>&arr[2]</code>, por ejemplo) que apuntaba a un
+        elemento del bloque viejo queda apuntando a memoria que ya no existe apenas esto pasa — el propio
+        <code>DynamicArray.hpp</code> lo deja documentado como parte del contrato de la clase. Es la sección 01
+        (punteros colgantes), pero ahora viéndola ocurrir en código real.
+      </p>
+
+      <h3 class="sub"><span class="k">6.4</span>¿Por qué duplicar la capacidad, y no sumar de a uno?</h3>
+      <p>
+        Podría parecer más “prolijo” crecer de a un lugar por vez (<code>capacity + 1</code> en vez de
+        <code>capacity * 2</code>) — total, es la misma idea. El problema es el costo total a lo largo de muchos
+        <code>pushBack</code>:
+      </p>
+      <ul>
+        <li>
+          <b>Creciendo de a uno:</b> casi todos los <code>pushBack</code> encontrarían el arreglo lleno, así que
+          casi todos tendrían que copiar todo lo anterior. Para <code>n</code> elementos, eso es más o menos
+          <code>1 + 2 + 3 + ... + n</code> copias en total — una suma que crece como <code>n²</code>. Con 1000
+          elementos, eso son del orden de 500.000 copias solo por el crecimiento.
+        </li>
+        <li>
+          <b>Duplicando:</b> los tamaños de bloque van <code>4, 8, 16, 32, ...</code> — muy pocos crecimientos
+          en total (unos <code>log₂(n)</code>), y aunque cada uno copie más elementos de una vez, la <em>suma</em>
+          de todas las copias a lo largo de <code>n</code> pushes queda acotada por algo del orden de
+          <code>2n</code> — crece como <code>n</code>, no como <code>n²</code>. Con 1000 elementos, del orden de
+          2000 copias en total.
+        </li>
+      </ul>
+      <p>
+        Repartido entre los <code>n</code> pushes, eso significa que cada <code>pushBack</code> cuesta, en
+        promedio, un trabajo constante — aunque de tanto en tanto uno puntual sea más caro porque le tocó
+        disparar el crecimiento. A esta idea se la llama <strong>costo amortizado</strong>: no todos los pushes
+        cuestan lo mismo, pero el promedio sobre muchos sí es barato.
+      </p>
+
+      <h3 class="sub"><span class="k">6.5</span>Los métodos, uno por uno</h3>
+      <div class="table-wrap">
+        <table class="map method-table">
+          <thead>
+            <tr><th>Método</th><th>Qué hace</th><th>Costo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="concept-cell"><code>pushBack(v)</code></td><td>Agrega <code>v</code> al final; crece el bloque si hace falta (sección 6.3)</td><td>O(1) amortizado</td></tr>
+            <tr><td class="concept-cell"><code>popBack()</code></td><td>Quita el último elemento. Solo baja <code>m_size</code> — no libera memoria ni la achica</td><td>O(1)</td></tr>
+            <tr><td class="concept-cell"><code>operator[](i)</code></td><td>Devuelve el elemento en la posición <code>i</code>. No verifica límites — pedir un <code>i</code> fuera de rango es comportamiento indefinido, igual que con un arreglo común</td><td>O(1)</td></tr>
+            <tr><td class="concept-cell"><code>front() / back()</code></td><td>Accesos directos al primero / último elemento</td><td>O(1)</td></tr>
+            <tr><td class="concept-cell"><code>size() / capacity()</code></td><td>Los dos números de la sección 6.2</td><td>O(1)</td></tr>
+            <tr><td class="concept-cell"><code>isEmpty()</code></td><td><code>true</code> si <code>size() == 0</code></td><td>O(1)</td></tr>
+            <tr><td class="concept-cell"><code>clear()</code></td><td>Vacía el arreglo (<code>m_size = 0</code>) pero conserva la capacidad reservada, para no tener que volver a pedir memoria si se vuelve a llenar</td><td>O(1)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="sub"><span class="k">6.6</span>Ownership: por qué copiar y mover están escritos “a mano”</h3>
+      <p>
+        <code>DynamicArray</code> es <em>dueño</em> de su bloque de memoria: nadie más lo comparte, y por eso su
+        destructor hace <code>delete[] m_pBufferData</code> — nadie más lo va a liberar. Ese dato es justo el que
+        obliga a escribir el constructor de copia, el operador de copia, el constructor de movimiento y el
+        operador de movimiento a mano (lo que en clase se conoce como la “regla de los cinco”):
+      </p>
+      <ul>
+        <li>
+          <b>Copiar</b> (<code>DynamicArray b = a;</code>) tiene que reservar <em>un bloque nuevo</em> para
+          <code>b</code> y copiar los valores adentro. Si en cambio <code>b</code> se quedara apuntando al mismo
+          bloque que <code>a</code> (una “copia superficial”), el día que se destruyan los dos objetos, los dos
+          destructores harían <code>delete[]</code> sobre <em>la misma dirección de memoria</em> — un
+          “double free”, uno de los errores clásicos de memoria en C++.
+        </li>
+        <li>
+          <b>Mover</b> (cuando un <code>DynamicArray</code> se devuelve desde una función, por ejemplo) no
+          necesita copiar nada: simplemente le “roba” el puntero al bloque al objeto de origen y deja a ese
+          origen con <code>nullptr</code>. Es mucho más barato que copiar, y es seguro porque el origen queda en
+          un estado válido para destruirse sin liberar nada (<code>delete[] nullptr</code> no hace nada).
+        </li>
+      </ul>
+      <p>
+        Esto conecta directo con la sección 01: <code>m_pBufferData</code> es un puntero, y la regla de oro de
+        esta clase es que <strong>nunca dos objetos <code>DynamicArray</code> apunten al mismo bloque a la
+        vez</strong> — cada uno es dueño exclusivo del suyo.
+      </p>
+
+      <div class="connect">
+        <p class="label">En el issue</p>
+        <p>
+          <code>DynamicArray&lt;T&gt;</code> ya está implementado y disponible — el issue no prohíbe usarlo, solo
+          prohíbe <em>modificar</em> los archivos de <code>structures/</code>. Es la herramienta natural para dos
+          cosas del issue: la lista de <code>GuardSquadMember</code> que vive adentro de <code>GuardSquad</code>,
+          y la lista de <code>vecinos</code> (como índices, según la sección 01) que vive adentro de cada
+          <code>GuardSquadMember</code>. Un detalle a tener en mente: si <code>GuardSquad</code> guarda sus
+          miembros en un <code>DynamicArray&lt;GuardSquadMember&gt;</code>, cualquier <code>pushBack</code> que
+          dispare un crecimiento (sección 6.3) reubica <em>todos</em> los miembros en memoria — otra razón más
+          para que <code>propagarAlerta</code> trabaje con índices y no con referencias guardadas de antes.
+        </p>
+      </div>
+    </section>
+
+    <section class="concept" id="sintesis">
+      <div class="concept-head">
+        <span class="concept-num">→</span>
+        <h2 class="concept-title">Todo junto: qué concepto resuelve qué parte de la issue</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table class="map">
+          <thead>
+            <tr><th>Concepto</th><th>Pieza de la issue</th><th>Por qué hace falta</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="concept-cell">01 · Punteros</td>
+              <td>Cómo se guardan los <code>vecinos</code> de un guardia</td>
+              <td>Evitar punteros colgantes cuando la lista de guardias crece</td>
+            </tr>
+            <tr>
+              <td class="concept-cell">02 · Clases</td>
+              <td><code>GuardSquadMember</code></td>
+              <td>Agrupar nivel de alerta + vecinos en un solo tipo</td>
+            </tr>
+            <tr>
+              <td class="concept-cell">03 · Herencia / polimorfismo</td>
+              <td>Tercera <code>IGuardBehaviorStrategy</code></td>
+              <td>Sumar un comportamiento nuevo sin tocar el código que ya llama a <code>decideDamage</code></td>
+            </tr>
+            <tr>
+              <td class="concept-cell">04 · Recursión</td>
+              <td><code>propagarAlerta(origen, nivel)</code></td>
+              <td>La propagación es literalmente una función que se llama a sí misma en cada vecino</td>
+            </tr>
+            <tr>
+              <td class="concept-cell">05 · Grafos (idea)</td>
+              <td>Fila y círculo de guardias</td>
+              <td>Modelo mental para entender por qué el círculo es un caso especial a testear</td>
+            </tr>
+            <tr>
+              <td class="concept-cell">06 · Arreglo dinámico</td>
+              <td>Listas dentro de <code>GuardSquad</code> / <code>GuardSquadMember</code></td>
+              <td>Reemplazo obligatorio de <code>std::vector</code>, ya implementado en el repo</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="checklist" style="margin-top: 24px;">
+        <p class="label mono" style="font-family: ui-monospace, monospace; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 14px;">Antes de escribir código, el equipo debería poder responder</p>
+        <ul>
+          <li><span class="box"></span> ¿Por qué guardamos “vecinos” como índices y no como punteros directos?</li>
+          <li><span class="box"></span> ¿Cuál es el caso base de <code>propagarAlerta</code> — y por qué alcanza para cortar un círculo?</li>
+          <li><span class="box"></span> ¿La nueva estrategia de guardia necesita guardar su propio dato, a diferencia de las dos que ya existen?</li>
+          <li><span class="box"></span> ¿Qué pasa si probamos la propagación en una fila de 5 guardias, a mano, en un papel, antes de escribir el test?</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="foot">
+  Preparado para el equipo Bedrock a partir del material de la cátedra (ejemplos y material práctico) y el
+  código actual de <code>include/cybercba/combat/</code> en CyberCba2077.
+</footer>
+
+</body></html>

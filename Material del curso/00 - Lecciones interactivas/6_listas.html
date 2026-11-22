@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; LISTAS.exe — LAC</title>
+<style>
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:18px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(30px,5vw,50px); line-height:1.1; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .primitivas-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; margin-top:14px;}
+  .prim{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:9px 13px; font-family:var(--font-mono); font-size:12px; color:var(--cyan);}
+  .prim span{display:block; font-family:var(--font-body); font-size:11.5px; color:var(--text-faint); margin-top:2px;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .tp{color:var(--cyan);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+
+  /* ---------- linked list chain visual ---------- */
+  .chain-wrap{position:relative; margin-top:24px; min-height:150px;}
+  .head-ptr{
+    position:absolute; top:0; left:0; font-family:var(--font-mono); font-size:12px; color:var(--violet);
+    border:1px solid var(--violet); border-radius:7px; padding:6px 12px; background:var(--bg-raised);
+    opacity:0; transition:opacity .3s, left .4s ease;
+  }
+  .head-ptr.visible{opacity:1;}
+  .chain-row{display:flex; gap:34px; margin-top:46px; flex-wrap:wrap; min-height:70px;}
+  .node-box{
+    display:flex; border:1px solid var(--border-soft); border-radius:7px; overflow:hidden;
+    font-family:var(--font-mono); font-size:12.5px; opacity:0; transform:translateY(6px);
+    animation:rise .35s ease forwards; background:var(--bg-raised);
+  }
+  @keyframes rise{to{opacity:1; transform:translateY(0);}}
+  .node-box .cell{padding:10px 14px;}
+  .node-box .cell.data{color:var(--text); border-right:1px solid var(--border-soft);}
+  .node-box .cell.next{color:var(--cyan); min-width:44px; text-align:center;}
+  .node-box.highlight{border-color:var(--cyan); box-shadow:0 0 12px rgba(0,212,255,0.25);}
+  .null-box{font-family:var(--font-mono); font-size:12px; color:var(--text-faint); border:1px dashed var(--border-soft); border-radius:7px; padding:10px 14px; opacity:0; animation:rise .35s ease forwards; align-self:center;}
+  #chainSvg{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible;}
+  #chainSvg path{fill:none; stroke-width:1.8;}
+  #chainSvg path.fwd{stroke:var(--cyan); filter:drop-shadow(0 0 3px rgba(0,212,255,0.55));}
+  #chainSvg path.bwd{stroke:var(--violet); filter:drop-shadow(0 0 3px rgba(124,58,237,0.5));}
+  #chainSvg circle{fill:var(--cyan);}
+  #chainSvg circle.bwd-dot{fill:var(--violet);}
+
+  .lab-readout{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px;}
+  .ro{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 12px;}
+  .ro .k{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.06em;}
+  .ro .v{font-family:var(--font-mono); font-size:14px; color:var(--cyan); margin-top:3px;}
+
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:560px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // TDA · LISTAS ENLAZADAS</div>
+  <div class="nav-title">LISTAS.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a></li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a></li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a></li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a></li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a></li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a></li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a></li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>continúa la serie TAD → estructuras</div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">La lista, como <span class="accent">TAD</span> primero,<br>como punteros después.</h1>
+    <p class="cover-sub">Interfaz de la lista enlazada, el nodo que la arma por dentro, y la diferencia real entre poder mirar solo para adelante o para los dos lados.</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> Punteros, TAD y Big O</span>
+      <span><b>cubre:</b> lista simplemente enlazada · lista doblemente enlazada · iterador</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>El Vector de nodos empieza a quedarse corto</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat notas_reunion.txt</p>
+        <p><span class="ok">ema_v:</span> Venimos guardando los Nodos del diagrama en un Vector, pero cada vez que alguien borra uno del medio tengo que correr todo el resto un lugar. Con diagramas grandes se nota.</p>
+        <p><span class="accent">maga_t:</span> Ese es exactamente el problema que resuelve una lista enlazada. En vez de guardar los elementos pegados uno al lado del otro en memoria, cada nodo sabe dónde está el siguiente. Insertar o borrar deja de depender de cuántos elementos hay antes.</p>
+        <p><span class="ok">ema_v:</span> ¿Y la diferencia entre simplemente y doblemente enlazada?</p>
+        <p><span class="accent">maga_t:</span> Simplemente enlazada: cada nodo solo sabe quién es el siguiente, así que solo podés recorrer para adelante. Doblemente enlazada: cada nodo también sabe quién es el anterior — recorrés para los dos lados, pero pagás un puntero extra por nodo y más cosas para mantener consistentes.</p>
+        <p><span class="ok">ema_v:</span> ¿Empezamos por el código?</p>
+        <p><span class="accent">maga_t:</span> Empezamos por la interfaz. El código viene después — como siempre.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Diseñar la interfaz del TAD Lista antes de pensar en su implementación.</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Explicar cómo un nodo con un puntero "siguiente" arma una lista sin memoria contigua.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Insertar y extraer al comienzo y al final de una lista simplemente enlazada.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Entender qué agrega — y qué cuesta — el puntero al anterior en una lista doblemente enlazada.</p></div>
+      <div class="obj-card"><div class="k">05</div><p>Usar un iterador externo para recorrer una lista sin tocar su implementación interna.</p></div>
+      <div class="obj-card"><div class="k">06</div><p>Reconocer los errores de memoria más comunes al armar o destruir una lista enlazada.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3>El TAD Lista: interfaz primero</h3>
+    <p>Antes de escribir un solo puntero, esto es lo único que Bárbara necesita conocer para usar una lista:</p>
+    <div class="primitivas-grid">
+      <div class="prim">lista_crear()<span>crea una lista vacía</span></div>
+      <div class="prim">lista_destruir(l)<span>libera toda la lista</span></div>
+      <div class="prim">lista_es_vacia(l)<span>true si no tiene elementos</span></div>
+      <div class="prim">lista_insertar_comienzo(l, dato)<span>agrega al principio</span></div>
+      <div class="prim">lista_insertar_final(l, dato)<span>agrega al final</span></div>
+      <div class="prim">lista_extraer_primero(l)<span>saca y devuelve el primero</span></div>
+      <div class="prim">lista_extraer_ultimo(l)<span>saca y devuelve el último</span></div>
+      <div class="prim">lista_buscar(l, dato, cmp)<span>busca un elemento</span></div>
+      <div class="prim">lista_borrar(l, dato, cmp)<span>busca y elimina</span></div>
+      <div class="prim">lista_recorrer(l, visitar)<span>aplica una función a cada dato</span></div>
+    </div>
+    <p style="margin-top:14px;">Ninguna de estas primitivas dice cómo está armada la lista por dentro. Esa es la parte de Alan.</p>
+
+    <h3>El nodo: la pieza que arma todo</h3>
+    <p>Por dentro, una lista simplemente enlazada es una cadena de nodos, donde cada uno conoce al siguiente:</p>
+    <div class="code">
+      <span class="ln">struct nodo {</span>
+      <span class="ln">  struct nodo* next;   <span class="cm">// dirección del siguiente nodo</span></span>
+      <span class="ln">  void* data;          <span class="cm">// el dato que guarda este nodo</span></span>
+      <span class="ln">};</span>
+    </div>
+    <p>La lista en sí solo necesita guardar un puntero al primer nodo — la <strong>cabeza</strong>. A partir de ahí, cada nodo te lleva al siguiente hasta llegar a uno cuyo <code>next</code> es <code>NULL</code>: ese es el final.</p>
+
+    <h3>Insertar y extraer al comienzo</h3>
+    <p>Insertar al comienzo es la operación más barata de todas: creás el nodo nuevo, le apuntás el <code>next</code> a la vieja cabeza, y movés la cabeza al nodo nuevo. No importa si la lista tiene 3 elementos o 3 millones — siempre son 2 punteros para actualizar. Por eso es <code>O(1)</code>.</p>
+
+    <h3>Insertar y extraer al final</h3>
+    <p>Acá está el primer trade-off real: si la lista solo guarda un puntero a la cabeza, insertar al final significa recorrerla entera hasta encontrar el último nodo — <code>O(n)</code>. Si además guardás un puntero al último nodo, insertar al final vuelve a ser <code>O(1)</code> — pero ahora tenés que mantener ese puntero actualizado en cada operación que pueda cambiar cuál es el último.</p>
+
+    <h3>Doblemente enlazada: el precio y el premio</h3>
+    <p>Una lista doblemente enlazada agrega un segundo puntero a cada nodo:</p>
+    <div class="code">
+      <span class="ln">struct nodo {</span>
+      <span class="ln">  struct nodo* next;   <span class="cm">// el siguiente</span></span>
+      <span class="ln">  struct nodo* prev;   <span class="cm">// el anterior — lo nuevo</span></span>
+      <span class="ln">  void* data;</span>
+      <span class="ln">};</span>
+    </div>
+    <p>El premio: borrar o insertar un nodo del que ya tenés la dirección se vuelve trivial, sin tener que recorrer nada para encontrar al anterior:</p>
+    <div class="code">
+      <span class="ln"><span class="kw">void</span> remove(Nodo* aBorrar) {</span>
+      <span class="ln">  aBorrar-&gt;next-&gt;prev = aBorrar-&gt;prev;</span>
+      <span class="ln">  aBorrar-&gt;prev-&gt;next = aBorrar-&gt;next;</span>
+      <span class="ln">  delete aBorrar;</span>
+      <span class="ln">}</span>
+    </div>
+    <p>El precio: un puntero extra por nodo (más memoria), y la obligación de mantener <code>next</code> y <code>prev</code> siempre consistentes — si te olvidás de actualizar uno de los dos, la lista queda rota aunque "compile perfecto".</p>
+
+    <h3>Iteradores: recorrer sin conocer la implementación</h3>
+    <p>Igual que con cualquier TAD, Bárbara nunca debería tocar el campo <code>next</code> de un nodo directamente. Para eso existe el TAD iterador, con sus propias primitivas: <code>lista_iterador_crear</code>, <code>lista_iterador_actual</code>, <code>lista_iterador_siguiente</code>, <code>lista_iterador_termino</code>. Con eso alcanza para recorrer cualquier lista, sin importar cómo esté implementada por dentro:</p>
+    <div class="code">
+      <span class="ln">lista_iterador_t* it;</span>
+      <span class="ln"><span class="kw">for</span> (it = lista_iterador_crear(l);</span>
+      <span class="ln">     !lista_iterador_termino(it);</span>
+      <span class="ln">     lista_iterador_siguiente(it)) {</span>
+      <span class="ln">  <span class="kw">void</span>* dato = lista_iterador_actual(it);</span>
+      <span class="ln">  <span class="cm">// hacer algo con dato</span></span>
+      <span class="ln">}</span>
+      <span class="ln">lista_iterador_destruir(it);</span>
+    </div>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+
+    <h3>Construyendo una lista con insertar_comienzo</h3>
+    <p>Mirá cómo la cabeza se mueve y cómo cada nodo nuevo apunta al que antes era el primero.</p>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="llStepNum">0</span> / <span id="llStepTotal">3</span></span>
+        <div class="btn-row">
+          <button id="llPrev">◀ anterior</button>
+          <button id="llNext" class="primary">insertar_comienzo ▶</button>
+          <button id="llReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="chain-wrap">
+        <svg id="chainSvg"></svg>
+        <div class="head-ptr" id="headPtr">head</div>
+        <div class="chain-row" id="chainRow"></div>
+      </div>
+      <p class="step-caption" id="llCaption">Tocá <span class="mono">insertar_comienzo</span> para empezar con una lista vacía.</p>
+    </div>
+
+    <h3>Simplemente vs. doblemente enlazada</h3>
+    <p>Misma cadena de nodos. Activá los punteros <code>prev</code> y mirá qué gana (y qué le cuesta a cada nodo) la versión doble.</p>
+    <div class="panel">
+      <div class="btn-row">
+        <button id="dlOff" class="primary">Simplemente enlazada</button>
+        <button id="dlOn">Doblemente enlazada</button>
+      </div>
+      <div class="chain-wrap" style="margin-top:20px;">
+        <svg id="dlSvg"></svg>
+        <div class="chain-row" id="dlRow" style="margin-top:14px;"></div>
+      </div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">punteros por nodo</div><div class="v" id="dlPointers">1 (next)</div></div>
+        <div class="ro"><div class="k">recorrer hacia atrás</div><div class="v" id="dlBackward">no es posible</div></div>
+      </div>
+      <p class="step-caption" id="dlCaption"></p>
+    </div>
+
+    <h3>Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Los errores que más rompen listas enlazadas</h2>
+    <p class="lead">Casi todos compilan y hasta "andan" en la prueba fácil. Se rompen con la lista un poco más larga.</p>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> Entonces para borrar un Nodo del medio del diagrama ya no necesito correr nada — solo reacomodar un par de punteros.</p>
+        <p><span class="accent">maga_t:</span> Exacto. Y si mañana necesitás recorrer el diagrama para atrás además de para adelante, ya sabés qué te va a costar: un puntero más por nodo, y disciplina para mantenerlo consistente.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">DE ACÁ EN ADELANTE</span><p>Pilas y Colas — las próximas estructuras de la serie — son, en el fondo, la misma lista enlazada con la interfaz recortada a propósito: menos primitivas, menos formas de romperlas.</p></div>
+  </section>
+
+  <footer><p>Material de apoyo cátedra de Algoritmos y Estructuras de Datos, FCEFyN.</p></footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement;
+    var scrolled = doc.scrollTop;
+    var max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){
+      var rect = sections[i].getBoundingClientRect();
+      if (rect.top <= 120) activeId = sections[i].id;
+    }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  var navToggle = document.getElementById('navtoggle');
+  var sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  navLinks.forEach(function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  var ARROW_DEFS = '<defs>' +
+    '<marker id="fwdHead" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00D4FF"></path></marker>' +
+    '<marker id="bwdHead" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7C3AyED"></path></marker>' +
+    '</defs>';
+
+  /* ================= insertar_comienzo stepper ================= */
+  var chainRow = document.getElementById('chainRow');
+  var chainSvg = document.getElementById('chainSvg');
+  var headPtr = document.getElementById('headPtr');
+  var llCaption = document.getElementById('llCaption');
+  var llStepNumEl = document.getElementById('llStepNum');
+  var LL_TOTAL = 3;
+  var llStep = 0;
+  var llLabels = ['A', 'B', 'C']; // insertion order: A inserted first, C inserted last, ends up at head
+  var llCaptions = [
+    'Tocá <span class="mono">insertar_comienzo</span> para empezar con una lista vacía. <span class="mono">head</span> apunta a NULL.',
+    'Se crea el nodo <span class="mono">A</span>. Como la lista estaba vacía, <span class="mono">A.next = NULL</span> y <span class="mono">head</span> pasa a apuntarlo.',
+    'Se crea <span class="mono">B</span>. <span class="mono">B.next</span> apunta al viejo <span class="mono">head</span> (A), y recién ahí <span class="mono">head</span> se mueve a B. Ningún otro nodo se tocó.',
+    'Se crea <span class="mono">C</span> con el mismo patrón: <span class="mono">C.next → B</span>, <span class="mono">head → C</span>. Tres inserciones al comienzo, siempre el mismo costo: O(1).'
+  ];
+  function renderChain(){
+    llStepNumEl.textContent = llStep;
+    var visible = llLabels.slice(llLabels.length - llStep).reverse(); // order for display left-to-right: newest first? We want head(new)->...->old->NULL, displayed left to right
+    // Build left-to-right order matching head -> ... -> NULL
+    var order = [];
+    for (var k = llStep; k >= 1; k--) order.push(llLabels[k-1]);
+    var html = '';
+    order.forEach(function(letter, idx){
+      var isLast = (idx === order.length - 1);
+      html += '<div class="node-box' + (idx===0 ? ' highlight' : '') + '" id="node-' + letter + '">' +
+        '<div class="cell data">' + letter + '</div>' +
+        '<div class="cell next">' + (isLast ? 'NULL' : '•') + '</div></div>';
+    });
+    chainRow.innerHTML = html || '';
+    if (llStep === 0){
+      chainRow.innerHTML = '<div class="null-box">lista vacía</div>';
+      headPtr.classList.remove('visible');
+    } else {
+      headPtr.classList.add('visible');
+    }
+    llCaption.innerHTML = llCaptions[llStep];
+    document.getElementById('llPrev').disabled = (llStep === 0);
+    document.getElementById('llNext').disabled = (llStep === LL_TOTAL);
+    requestAnimationFrame(drawChainArrows);
+  }
+  function drawChainArrows(){
+    chainSvg.innerHTML = ARROW_DEFS;
+    if (llStep === 0) return;
+    var wrapRect = chainSvg.parentElement.getBoundingClientRect();
+    var boxes = Array.prototype.slice.call(chainRow.querySelectorAll('.node-box'));
+    var ns = 'http://www.w3.org/2000/svg';
+    // head arrow to first box
+    if (boxes[0]){
+      var hr = headPtr.getBoundingClientRect();
+      var br = boxes[0].getBoundingClientRect();
+      var x1 = hr.left + hr.width/2 - wrapRect.left, y1 = hr.bottom - wrapRect.top;
+      var x2 = br.left + br.width/2 - wrapRect.left, y2 = br.top - wrapRect.top;
+      var p = document.createElementNS(ns,'path');
+      p.setAttribute('class','fwd');
+      p.setAttribute('marker-end','url(#fwdHead)');
+      p.setAttribute('d', 'M'+x1+','+y1+' L'+x2+','+(y2-2));
+      chainSvg.appendChild(p);
+    }
+    // arrows between consecutive boxes
+    for (var i = 0; i < boxes.length - 1; i++){
+      var fr = boxes[i].getBoundingClientRect();
+      var tr = boxes[i+1].getBoundingClientRect();
+      var x1b = fr.right - wrapRect.left, y1b = fr.top + fr.height/2 - wrapRect.top;
+      var x2b = tr.left - wrapRect.left - 4, y2b = tr.top + tr.height/2 - wrapRect.top;
+      var p2 = document.createElementNS(ns,'path');
+      p2.setAttribute('class','fwd');
+      p2.setAttribute('marker-end','url(#fwdHead)');
+      p2.setAttribute('d', 'M'+x1b+','+y1b+' L'+x2b+','+y2b);
+      chainSvg.appendChild(p2);
+    }
+  }
+  document.getElementById('llNext').addEventListener('click', function(){ if (llStep < LL_TOTAL){ llStep++; renderChain(); } });
+  document.getElementById('llPrev').addEventListener('click', function(){ if (llStep > 0){ llStep--; renderChain(); } });
+  document.getElementById('llReset').addEventListener('click', function(){ llStep = 0; renderChain(); });
+  window.addEventListener('resize', function(){ requestAnimationFrame(drawChainArrows); });
+  renderChain();
+
+  /* ================= singly vs doubly toggle ================= */
+  var dlRow = document.getElementById('dlRow');
+  var dlSvg = document.getElementById('dlSvg');
+  var dlOff = document.getElementById('dlOff');
+  var dlOn = document.getElementById('dlOn');
+  var dlLetters = ['A','B','C'];
+  dlLetters.forEach(function(letter, idx){
+    var box = document.createElement('div');
+    box.className = 'node-box';
+    box.id = 'dlnode-' + letter;
+    box.innerHTML = '<div class="cell data">' + letter + '</div><div class="cell next">' + (idx===dlLetters.length-1 ? 'NULL' : '•') + '</div>';
+    dlRow.appendChild(box);
+  });
+  function drawDlArrows(isDouble){
+    dlSvg.innerHTML = ARROW_DEFS;
+    var wrapRect = dlSvg.parentElement.getBoundingClientRect();
+    var boxes = dlLetters.map(function(l){ return document.getElementById('dlnode-' + l); });
+    var ns = 'http://www.w3.org/2000/svg';
+    for (var i = 0; i < boxes.length - 1; i++){
+      var fr = boxes[i].getBoundingClientRect();
+      var tr = boxes[i+1].getBoundingClientRect();
+      var fx = fr.right - wrapRect.left, fy = fr.top + fr.height/2 - wrapRect.top - (isDouble?6:0);
+      var tx = tr.left - wrapRect.left - 4, ty = tr.top + tr.height/2 - wrapRect.top - (isDouble?6:0);
+      var fwd = document.createElementNS(ns,'path');
+      fwd.setAttribute('class','fwd');
+      fwd.setAttribute('marker-end','url(#fwdHead)');
+      fwd.setAttribute('d', 'M'+fx+','+fy+' L'+tx+','+ty);
+      dlSvg.appendChild(fwd);
+      if (isDouble){
+        var fy2 = fr.top + fr.height/2 - wrapRect.top + 8;
+        var ty2 = tr.top + tr.height/2 - wrapRect.top + 8;
+        var bwd = document.createElementNS(ns,'path');
+        bwd.setAttribute('class','bwd');
+        bwd.setAttribute('marker-end','url(#bwdHead)');
+        bwd.setAttribute('d', 'M'+tx+','+ty2+' L'+fx+','+fy2);
+        dlSvg.appendChild(bwd);
+      }
+    }
+  }
+  function setDl(isDouble){
+    dlOff.classList.toggle('primary', !isDouble);
+    dlOn.classList.toggle('primary', isDouble);
+    document.getElementById('dlPointers').textContent = isDouble ? '2 (next + prev)' : '1 (next)';
+    document.getElementById('dlBackward').textContent = isDouble ? 'O(1) por nodo' : 'no es posible';
+    document.getElementById('dlCaption').innerHTML = isDouble
+      ? 'Con <span class="mono">prev</span>, borrar un nodo del que ya tenés la dirección no requiere buscar a su anterior: <span class="mono">aBorrar-&gt;next-&gt;prev = aBorrar-&gt;prev; aBorrar-&gt;prev-&gt;next = aBorrar-&gt;next;</span> — dos líneas, sin recorrer nada.'
+      : 'Para borrar el nodo <span class="mono">B</span> acá necesitás haber guardado aparte un puntero a <span class="mono">A</span> mientras recorrías — <span class="mono">B</span> no tiene forma de decirte quién es su anterior.';
+    requestAnimationFrame(function(){ drawDlArrows(isDouble); });
+  }
+  dlOff.addEventListener('click', function(){ setDl(false); });
+  dlOn.addEventListener('click', function(){ setDl(true); });
+  window.addEventListener('resize', function(){ var isDouble = dlOn.classList.contains('primary'); drawDlArrows(isDouble); });
+  setDl(false);
+
+  /* ================= error gallery ================= */
+  var errors = [
+    { tag:'lista huérfana', title:'Olvidar mover head al insertar/borrar el primero',
+      bad:'struct nodo* nuevo = crear_nodo(dato);\nnuevo-&gt;next = lista-&gt;head;\n// falta: lista-&gt;head = nuevo;',
+      cons:'El nodo nuevo queda creado y enlazado hacia el resto de la lista, pero nada apunta a él desde la cabeza. Es un nodo fantasma: ocupa memoria, nunca se va a recorrer, y nunca se va a poder liberar.',
+      fix:'struct nodo* nuevo = crear_nodo(dato);\nnuevo-&gt;next = lista-&gt;head;\nlista-&gt;head = nuevo; // ahora sí' },
+    { tag:'fuga de memoria', title:'Destruir la lista sin liberar cada nodo',
+      bad:'void lista_destruir(lista_t* l) {\n  free(l); // solo libera el struct lista,\n}           // los nodos quedan reservados',
+      cons:'La lista en sí (el struct que guarda head) se libera, pero cada nodo individual sigue reservado en el heap — nadie más tiene un puntero a ellos, así que esa memoria queda perdida para siempre.',
+      fix:'void lista_destruir(lista_t* l) {\n  struct nodo* actual = l-&gt;head;\n  while (actual != NULL) {\n    struct nodo* siguiente = actual-&gt;next;\n    free(actual);\n    actual = siguiente;\n  }\n  free(l);\n}' },
+    { tag:'use-after-free', title:'Leer next después de hacer free',
+      bad:'while (actual != NULL) {\n  free(actual);\n  actual = actual-&gt;next; // ¡ya se liberó!\n}',
+      cons:'Una vez que hiciste free(actual), leer actual->next es comportamiento indefinido: esa memoria ya no es tuya, y el valor que encuentres ahí puede ser cualquier cosa.',
+      fix:'while (actual != NULL) {\n  struct nodo* siguiente = actual-&gt;next; // guardar ANTES\n  free(actual);\n  actual = siguiente;\n}' },
+    { tag:'lista cortada', title:'Pisar next antes de guardar el valor viejo',
+      bad:'// insertar "nuevo" después de "actual"\nactual-&gt;next = nuevo;\nnuevo-&gt;next = actual-&gt;next; // ¡ya apunta a nuevo!',
+      cons:'El orden está invertido: para cuando se ejecuta la segunda línea, actual->next ya es nuevo, así que nuevo termina apuntándose a sí mismo. El resto de la lista original queda inalcanzable.',
+      fix:'nuevo-&gt;next = actual-&gt;next; // guardar el resto primero\nactual-&gt;next = nuevo;       // recién ahora enlazar' },
+    { tag:'inconsistencia silenciosa', title:'Actualizar next y olvidarse de prev',
+      bad:'// insertar "nuevo" en una lista doble\nnuevo-&gt;next = actual-&gt;next;\nactual-&gt;next = nuevo;\n// falta actualizar los prev',
+      cons:'La lista "funciona" recorriéndola hacia adelante, pero prev quedó apuntando a lo viejo. Cualquier código que recorra para atrás (o que use prev para borrar) va a encontrar una estructura inconsistente, sin ningún error visible hasta ese momento.',
+      fix:'nuevo-&gt;next = actual-&gt;next;\nnuevo-&gt;prev = actual;\nif (actual-&gt;next != NULL)\n  actual-&gt;next-&gt;prev = nuevo;\nactual-&gt;next = nuevo;' }
+  ];
+  var errGrid = document.getElementById('errGrid');
+  errors.forEach(function(e, i){
+    var card = document.createElement('div');
+    card.className = 'err-card';
+    card.innerHTML =
+      '<div class="tag">' + e.tag + '</div>' +
+      '<h4>' + e.title + '</h4>' +
+      '<div class="code">' + e.bad + '</div>' +
+      '<div class="err-sec c2">CONSECUENCIA</div>' +
+      '<p class="why">' + e.cons + '</p>' +
+      '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+      '<div class="fix-box" id="fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code">' + e.fix + '</div></div>';
+    errGrid.appendChild(card);
+  });
+  errGrid.addEventListener('click', function(ev){
+    if (!ev.target.classList.contains('err-toggle')) return;
+    var i = ev.target.getAttribute('data-i');
+    var box = document.getElementById('fix-' + i);
+    var showing = box.classList.toggle('show');
+    ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+  });
+
+  /* ================= quizzes ================= */
+  var quizzes = [
+    { code:'// lista con head -> A -> B -> C -> NULL\nlista_insertar_comienzo(l, "Z");',
+      q:'¿Cuántos punteros hay que modificar para esta operación, sin importar cuántos nodos tenga la lista?',
+      opts:['1', '2', 'n (todos los nodos)', 'n/2'], correct:1,
+      fb:'Se apunta Z.next al viejo head (A), y se mueve head a Z. Siempre 2 punteros, sin importar si la lista tiene 3 o 3 millones de nodos: O(1).' },
+    { code:'// lista SOLO con puntero a head (sin puntero al último)\nlista_insertar_final(l, "Z");',
+      q:'¿Qué complejidad tiene insertar al final en este caso?',
+      opts:['O(1)', 'O(log n)', 'O(n)', 'O(n²)'], correct:2,
+      fb:'Sin un puntero al último nodo, hay que recorrer toda la lista desde head hasta encontrar el nodo cuyo next es NULL — eso es O(n).' },
+    { code:'struct nodo* actual = lista-&gt;head;\nwhile (actual != NULL) {\n  free(actual);\n  actual = actual-&gt;next;\n}',
+      q:'¿Qué problema tiene este código?',
+      opts:['Ninguno, libera la lista correctamente', 'Use-after-free: lee next después de haber liberado el nodo', 'Fuga de memoria: no libera nada', 'No compila'], correct:1,
+      fb:'free(actual) libera esa memoria; leer actual->next en la línea siguiente es acceder a memoria que ya no es tuya. Hay que guardar el puntero al siguiente ANTES de liberar.' },
+    { code:'// lista doblemente enlazada, ya tenés el puntero a "medio"\nremove(medio);\n\nvoid remove(Nodo* n) {\n  n-&gt;next-&gt;prev = n-&gt;prev;\n  n-&gt;prev-&gt;next = n-&gt;next;\n  delete n;\n}',
+      q:'¿Por qué esta versión de remove() no necesita recorrer la lista para encontrar al nodo anterior?',
+      opts:['Porque siempre se borra el primer nodo', 'Porque el nodo ya tiene su propio puntero prev al anterior', 'Porque la lista es circular', 'No es cierto, sí lo recorre'], correct:1,
+      fb:'Esa es la ventaja central de la lista doblemente enlazada: cada nodo ya sabe quién es su anterior, así que splice-ar un nodo afuera es O(1) sin necesidad de buscar nada — a diferencia de la simplemente enlazada.' }
+  ];
+  var quizList = document.getElementById('quizList');
+  quizzes.forEach(function(qz, qi){
+    var wrap = document.createElement('div');
+    wrap.className = 'quiz';
+    var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+    wrap.innerHTML =
+      '<div class="badge violet">CHECKPOINT ' + (qi+1) + '</div>' +
+      '<div class="code" style="margin-top:8px;">' + qz.code + '</div>' +
+      '<p style="color:var(--text); margin:6px 0 10px;">' + qz.q + '</p>' +
+      '<div class="opt-row">' + optsHTML + '</div>' +
+      '<div class="quiz-fb" id="fb-' + qi + '"></div>' +
+      '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button>' +
+        '<button class="conf-btn" data-c="dude">dudé</button>' +
+        '<button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+    quizList.appendChild(wrap);
+  });
+  quizList.addEventListener('click', function(ev){
+    var t = ev.target;
+    if (t.classList.contains('opt')){
+      var qi = t.getAttribute('data-qi');
+      var oi = parseInt(t.getAttribute('data-oi'),10);
+      var qz = quizzes[qi];
+      var row = t.parentElement;
+      Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+      if (oi === qz.correct){ t.classList.add('correct'); }
+      else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+      var fb = document.getElementById('fb-' + qi);
+      fb.textContent = qz.fb;
+      fb.classList.add('show');
+    }
+    if (t.classList.contains('conf-btn')){
+      var siblings = t.parentElement.querySelectorAll('.conf-btn');
+      Array.prototype.forEach.call(siblings, function(b){ b.classList.remove('picked'); });
+      t.classList.add('picked');
+    }
+  });
+})();
+</script>
+</body>
+</html>

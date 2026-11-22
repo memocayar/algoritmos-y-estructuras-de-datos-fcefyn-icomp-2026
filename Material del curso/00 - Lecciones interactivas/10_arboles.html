@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; ARBOLES.exe — LAC</title>
+<style>
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:19px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(30px,5vw,50px); line-height:1.1; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .tp{color:var(--cyan);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+
+  /* ---------- tree visual ---------- */
+  .tree-wrap{position:relative; margin-top:16px; overflow-x:auto;}
+  .tree-svg{display:block; min-width:500px;}
+  .tree-svg .edge{stroke:var(--border-soft); stroke-width:2; fill:none;}
+  .tree-svg .edge.new{stroke:var(--amber); stroke-dasharray:4 3;}
+  .tree-node circle{fill:var(--bg-raised); stroke:var(--border-soft); stroke-width:1.5; transition:fill .25s, stroke .25s;}
+  .tree-node text{fill:var(--text); font-family:var(--font-mono); font-size:13px; text-anchor:middle; dominant-baseline:central;}
+  .tree-node.visited circle{fill:rgba(0,212,255,0.14); stroke:var(--cyan);}
+  .tree-node.visited text{fill:var(--cyan);}
+  .tree-node.current circle{fill:rgba(245,158,11,0.18); stroke:var(--amber); stroke-width:2.5;}
+  .tree-node.current text{fill:var(--amber);}
+  .tree-node.newnode circle{fill:rgba(16,185,129,0.18); stroke:var(--green); stroke-width:2.5;}
+  .tree-node.newnode text{fill:var(--green);}
+  .tree-node.hidden{opacity:0;}
+  .edge.hidden{opacity:0;}
+
+  .lab-readout{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px;}
+  .ro{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 12px;}
+  .ro .k{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.06em;}
+  .ro .v{font-family:var(--font-mono); font-size:14px; color:var(--cyan); margin-top:3px;}
+  .ro .v.wide{font-size:13px; word-break:break-all;}
+
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:560px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // ÁRBOLES Y ABB</div>
+  <div class="nav-title">ARBOLES.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a></li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a></li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a></li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a></li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a></li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a></li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a></li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>requiere Listas, Pilas, Colas, Big O</div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">De estructuras lineales a<br><span class="accent">jerarquías</span>: los árboles.</h1>
+    <p class="cover-sub">Cada nodo puede tener varios hijos en vez de uno solo — y con la organización correcta, buscar deja de ser O(n) para pasar a ser O(log n).</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> Listas, Pilas, Colas, Big O, Recursividad</span>
+      <span><b>cubre:</b> árbol binario · recorridos · ABB · balance</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>DiagramaCba necesita grupos dentro de grupos</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat notas_reunion.txt</p>
+        <p><span class="accent">maga_t:</span> RRHH pidió poder agrupar Nodos, y que esos grupos puedan contener otros grupos adentro.</p>
+        <p><span class="ok">ema_v:</span> ¿Una lista no alcanza?</p>
+        <p><span class="accent">maga_t:</span> Una lista es lineal: cada elemento tiene un único "siguiente". Para representar "esto contiene a esto otro, que a su vez contiene más cosas", necesitás que cada elemento pueda tener varios hijos. Eso es un árbol.</p>
+        <p><span class="ok">ema_v:</span> ¿Y para buscar un Nodo por nombre rápido, sin recorrer todo?</p>
+        <p><span class="accent">maga_t:</span> Ahí entra un caso particular: el Árbol Binario de Búsqueda. Organiza los datos de una forma que te deja buscar, insertar y borrar en O(log n) — sin correr elementos como en un arreglo ordenado.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Definir un árbol: raíz, hijos, hojas, altura, nivel.</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Diferenciar árbol binario de árbol m-ario.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Trazar los recorridos preorder, inorder, postorder y por niveles.</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Usar la invariante del ABB para insertar, buscar y recorrer en orden.</p></div>
+      <div class="obj-card"><div class="k">05</div><p>Explicar por qué un ABB puede degradar a O(n), y cómo AVL y Red-Black resuelven eso con estrategias distintas.</p></div>
+      <div class="obj-card"><div class="k">06</div><p>Reconocer los errores más comunes al implementar árboles.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3>¿Qué es un árbol?</h3>
+    <p>Un árbol es una colección de nodos conectados de forma jerárquica: hay un nodo especial, la <strong>raíz</strong>, y cada nodo puede tener cero o más <strong>hijos</strong>. Un nodo sin hijos es una <strong>hoja</strong>. La <strong>altura</strong> es la cantidad de niveles que tiene el árbol, contando desde 0 en la raíz.</p>
+
+    <h3>Árbol binario vs. árbol m-ario</h3>
+    <p>En un <strong>árbol binario</strong>, cada nodo tiene como máximo dos hijos — convencionalmente llamados izquierdo y derecho. En un <strong>árbol m-ario</strong>, cada nodo puede tener hasta <code>m</code> hijos. Los grupos anidados de DiagramaCba son un árbol m-ario: un grupo puede contener cualquier cantidad de elementos.</p>
+
+    <h3>Recorridos: cuatro formas de visitar todo el árbol</h3>
+    <p>Para un árbol binario, los tres recorridos clásicos en profundidad (DFS) se definen recursivamente, y solo cambia CUÁNDO se visita la raíz respecto de sus subárboles:</p>
+    <div class="code">
+      <span class="ln">preorder(nodo):  visitar(nodo); preorder(izq); preorder(der);</span>
+      <span class="ln">inorder(nodo):   inorder(izq); visitar(nodo); inorder(der);</span>
+      <span class="ln">postorder(nodo): postorder(izq); postorder(der); visitar(nodo);</span>
+    </div>
+    <p>Hay un cuarto recorrido que no es DFS sino <strong>por niveles (BFS)</strong>: visita la raíz, después todos los nodos del nivel 1, después todos los del nivel 2, y así. Se implementa con una <strong>cola</strong> — el mismo TAD del módulo anterior — encolando los hijos de cada nodo a medida que se visita.</p>
+
+    <h3>Árbol Binario de Búsqueda (ABB)</h3>
+    <p>Un ABB es un árbol binario con una invariante extra: para todo nodo, <strong>todo lo que está en su subárbol izquierdo es menor</strong>, y <strong>todo lo que está en su subárbol derecho es mayor</strong>. Esa invariante es lo único que hace falta para buscar: en cada nodo, comparás la clave buscada contra la del nodo, y según sea menor o mayor, seguís por izquierda o por derecha — descartando todo un subárbol en cada paso.</p>
+    <div class="callout"><span class="k">PROPIEDAD CLAVE</span><p>El recorrido <strong>inorder</strong> de un ABB siempre devuelve las claves en orden creciente. Es consecuencia directa de la invariante: primero todo lo menor (subárbol izquierdo), después el nodo, después todo lo mayor (subárbol derecho).</p></div>
+
+    <h3>Complejidad del ABB: depende de la forma</h3>
+    <p>Si el árbol está razonablemente balanceado, cada comparación descarta aproximadamente la mitad de los nodos restantes — igual que la búsqueda binaria — dando <code>O(log n)</code> para buscar, insertar y borrar. Pero si los datos se insertan en un orden desafortunado (por ejemplo, ya ordenados), el ABB degenera en algo parecido a una lista enlazada, y la complejidad se degrada a <code>O(n)</code>.</p>
+
+    <h3>Balance: AVL</h3>
+    <p>Un árbol AVL es un ABB que, después de cada inserción o borrado, verifica que la diferencia de altura entre el subárbol izquierdo y el derecho de cada nodo nunca supere 1. Si se desbalancea, aplica una <strong>rotación</strong> — una reorganización local de unos pocos punteros — para restaurar el balance. Gracias a esto, un AVL garantiza <code>O(log n)</code> siempre, incluso en el peor caso de inserción.</p>
+
+    <h3>Otra forma de balancear: Red-Black</h3>
+    <p>Un árbol <strong>Red-Black</strong> es otro ABB auto-balanceado, pero en vez de controlar la altura exacta de cada subárbol, cada nodo guarda un color (<span style="color:var(--red);">rojo</span> o <span style="color:var(--text);">negro</span>) y el árbol mantiene un set de invariantes sobre esos colores — por ejemplo, que la raíz y las hojas nulas son negras, que un nodo rojo nunca tiene un hijo rojo, y que todo camino desde la raíz hasta una hoja tiene la misma cantidad de nodos negros. Esas reglas garantizan que ningún camino sea más del doble de largo que otro, lo cual alcanza para <code>O(log n)</code> — un balance algo más laxo que el de AVL, pero suficiente.</p>
+    <div class="callout"><span class="k">AVL vs. RED-BLACK</span><p>Un AVL queda <strong>más estrictamente balanceado</strong>, así que sus búsquedas son levemente más rápidas. Un Red-Black tolera más desbalance a cambio de necesitar <strong>menos rotaciones</strong> al insertar o borrar, porque restaurar sus invariantes de color suele ser más barato que restaurar una altura exacta. Por eso estructuras de uso general como <code>std::map</code>/<code>std::set</code> de C++ y <code>TreeMap</code> de Java usan Red-Black: priorizan escrituras baratas sobre el balance perfecto.</p></div>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+
+    <h3>Los cuatro recorridos, sobre el mismo árbol</h3>
+    <div class="panel">
+      <div class="btn-row">
+        <button id="trPre" class="primary">preorder</button>
+        <button id="trIn">inorder</button>
+        <button id="trPost">postorder</button>
+        <button id="trBfs">por niveles</button>
+      </div>
+      <div class="tree-wrap">
+        <svg class="tree-svg" id="trSvg" viewBox="0 0 500 200" width="500" height="200">
+          <line class="edge" x1="250" y1="30" x2="150" y2="90"></line>
+          <line class="edge" x1="250" y1="30" x2="350" y2="90"></line>
+          <line class="edge" x1="150" y1="90" x2="90" y2="150"></line>
+          <line class="edge" x1="150" y1="90" x2="210" y2="150"></line>
+          <line class="edge" x1="350" y1="90" x2="410" y2="150"></line>
+          <g class="tree-node" id="tn-8" transform="translate(250,30)"><circle r="18"></circle><text y="1">8</text></g>
+          <g class="tree-node" id="tn-3" transform="translate(150,90)"><circle r="18"></circle><text y="1">3</text></g>
+          <g class="tree-node" id="tn-10" transform="translate(350,90)"><circle r="18"></circle><text y="1">10</text></g>
+          <g class="tree-node" id="tn-1" transform="translate(90,150)"><circle r="18"></circle><text y="1">1</text></g>
+          <g class="tree-node" id="tn-6" transform="translate(210,150)"><circle r="18"></circle><text y="1">6</text></g>
+          <g class="tree-node" id="tn-14" transform="translate(410,150)"><circle r="18"></circle><text y="1">14</text></g>
+        </svg>
+      </div>
+      <div class="panel-head" style="margin-top:12px;">
+        <span class="badge violet">PASO <span id="trStepNum">0</span> / 6</span>
+        <div class="btn-row">
+          <button id="trPrev">◀ anterior</button>
+          <button id="trNext" class="primary">visitar siguiente ▶</button>
+          <button id="trReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">orden de visita</div><div class="v wide" id="trOrder">—</div></div>
+      </div>
+      <p class="step-caption" id="trCaption">Elegí un recorrido y tocá <span class="mono">visitar siguiente</span>.</p>
+    </div>
+
+    <h3>Insertar 5 en el ABB</h3>
+    <p>Mismo árbol. Vamos a insertar la clave <code>5</code> y ver cómo la invariante del ABB decide el camino.</p>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="insStepNum">0</span> / 3</span>
+        <div class="btn-row">
+          <button id="insPrev">◀ anterior</button>
+          <button id="insNext" class="primary">comparar ▶</button>
+          <button id="insReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="tree-wrap">
+        <svg class="tree-svg" id="insSvg" viewBox="0 0 500 230" width="500" height="230">
+          <line class="edge" x1="250" y1="30" x2="150" y2="90"></line>
+          <line class="edge" x1="250" y1="30" x2="350" y2="90"></line>
+          <line class="edge" x1="150" y1="90" x2="90" y2="150"></line>
+          <line class="edge" x1="150" y1="90" x2="210" y2="150"></line>
+          <line class="edge" x1="350" y1="90" x2="410" y2="150"></line>
+          <line class="edge new hidden" id="ins-edge" x1="210" y1="150" x2="190" y2="205"></line>
+          <g class="tree-node" id="in-8" transform="translate(250,30)"><circle r="18"></circle><text y="1">8</text></g>
+          <g class="tree-node" id="in-3" transform="translate(150,90)"><circle r="18"></circle><text y="1">3</text></g>
+          <g class="tree-node" id="in-10" transform="translate(350,90)"><circle r="18"></circle><text y="1">10</text></g>
+          <g class="tree-node" id="in-1" transform="translate(90,150)"><circle r="18"></circle><text y="1">1</text></g>
+          <g class="tree-node" id="in-6" transform="translate(210,150)"><circle r="18"></circle><text y="1">6</text></g>
+          <g class="tree-node" id="in-14" transform="translate(410,150)"><circle r="18"></circle><text y="1">14</text></g>
+          <g class="tree-node newnode hidden" id="in-5" transform="translate(190,205)"><circle r="18"></circle><text y="1">5</text></g>
+        </svg>
+      </div>
+      <p class="step-caption" id="insCaption">Tocá <span class="mono">comparar</span> para empezar a insertar el 5.</p>
+    </div>
+
+    <h3>Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla. Mismo árbol de los ejemplos anteriores.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Los errores que más aparecen con árboles</h2>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> Entonces los grupos anidados van a ser un árbol m-ario, y el índice de búsqueda por nombre, un ABB.</p>
+        <p><span class="accent">maga_t:</span> Exacto. Y si en algún momento notás que las búsquedas se ponen lentas, ya sabés qué mirar primero: si el árbol se desbalanceó.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">EN EL PROYECTO INTEGRADOR</span><p>Toda primitiva recursiva sobre árboles se documenta con su orden de complejidad en el Doxygen — "recorre todos los nodos" (O(n)) es una garantía muy distinta de "O(log n) si está balanceado", y el código que lo usa necesita saber cuál de las dos tiene.</p></div>
+  </section>
+
+  <footer><p>Material de apoyo AyED, cátedra de Algoritmos y Estructuras de Datos, FCEFyN · Ing. Valenzuela Gabriel.</p></footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement;
+    var scrolled = doc.scrollTop;
+    var max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){
+      var rect = sections[i].getBoundingClientRect();
+      if (rect.top <= 120) activeId = sections[i].id;
+    }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+  var navToggle = document.getElementById('navtoggle');
+  var sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  navLinks.forEach(function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  /* ================= traversal demo ================= */
+  var sequences = {
+    pre:  ['8','3','1','6','10','14'],
+    in:   ['1','3','6','8','10','14'],
+    post: ['1','6','3','14','10','8'],
+    bfs:  ['8','3','10','1','6','14']
+  };
+  var traversalNames = { pre:'preorder', in:'inorder', post:'postorder', bfs:'por niveles' };
+  var ruleCaptions = {
+    pre:  'Regla: visitar la raíz, después el subárbol izquierdo, después el derecho.',
+    in:   'Regla: visitar el subárbol izquierdo, después la raíz, después el derecho — por eso da las claves en orden creciente en un ABB.',
+    post: 'Regla: visitar el subárbol izquierdo, después el derecho, y recién al final la raíz.',
+    bfs:  'Regla: visitar nivel por nivel, de arriba hacia abajo, usando una cola para no perder el orden.'
+  };
+  var trButtons = { pre: document.getElementById('trPre'), in: document.getElementById('trIn'), post: document.getElementById('trPost'), bfs: document.getElementById('trBfs') };
+  var trStepNumEl = document.getElementById('trStepNum');
+  var trCaption = document.getElementById('trCaption');
+  var trOrder = document.getElementById('trOrder');
+  var trType = 'pre';
+  var trStep = 0;
+  var TR_TOTAL = 6;
+  function renderTraversal(){
+    trStepNumEl.textContent = trStep;
+    Object.keys(trButtons).forEach(function(k){ trButtons[k].classList.toggle('primary', k === trType); });
+    var seq = sequences[trType];
+    document.querySelectorAll('#trSvg .tree-node').forEach(function(n){ n.classList.remove('visited','current'); });
+    for (var i = 0; i < trStep; i++){
+      var el = document.getElementById('tn-' + seq[i]);
+      if (el) el.classList.add(i === trStep - 1 ? 'current' : 'visited');
+    }
+    trOrder.textContent = trStep === 0 ? '—' : seq.slice(0, trStep).join(' → ');
+    trCaption.innerHTML = trStep === 0
+      ? ('Elegí un recorrido y tocá <span class="mono">visitar siguiente</span>. ' + ruleCaptions[trType])
+      : (trStep === TR_TOTAL
+          ? ('Recorrido <strong>' + traversalNames[trType] + '</strong> completo: ' + seq.join(' → ') + '.')
+          : (ruleCaptions[trType] + ' Visitando ahora: <span class="mono">' + seq[trStep-1] + '</span>.'));
+    document.getElementById('trPrev').disabled = (trStep === 0);
+    document.getElementById('trNext').disabled = (trStep === TR_TOTAL);
+  }
+  function setTrType(type){ trType = type; trStep = 0; renderTraversal(); }
+  trButtons.pre.addEventListener('click', function(){ setTrType('pre'); });
+  trButtons.in.addEventListener('click', function(){ setTrType('in'); });
+  trButtons.post.addEventListener('click', function(){ setTrType('post'); });
+  trButtons.bfs.addEventListener('click', function(){ setTrType('bfs'); });
+  document.getElementById('trNext').addEventListener('click', function(){ if (trStep < TR_TOTAL){ trStep++; renderTraversal(); } });
+  document.getElementById('trPrev').addEventListener('click', function(){ if (trStep > 0){ trStep--; renderTraversal(); } });
+  document.getElementById('trReset').addEventListener('click', function(){ trStep = 0; renderTraversal(); });
+  renderTraversal();
+
+  /* ================= insertion demo ================= */
+  var insStepNumEl = document.getElementById('insStepNum');
+  var insCaption = document.getElementById('insCaption');
+  var INS_TOTAL = 3;
+  var insStep2 = 0;
+  var insCaptions2 = [
+    'Tocá <span class="mono">comparar</span> para empezar a insertar el 5.',
+    '5 vs 8 (raíz): 5 &lt; 8 → vamos al subárbol izquierdo.',
+    '5 vs 3: 5 &gt; 3 → vamos al subárbol derecho.',
+    '5 vs 6: 5 &lt; 6, y 6 no tiene hijo izquierdo → ahí se inserta el nuevo nodo.'
+  ];
+  var insPath = ['in-8', 'in-3', 'in-6'];
+  function renderIns2(){
+    insStepNumEl.textContent = insStep2;
+    document.querySelectorAll('#insSvg .tree-node').forEach(function(n){ n.classList.remove('visited','current'); });
+    for (var i = 0; i < insStep2; i++){
+      var el = document.getElementById(insPath[i]);
+      if (el) el.classList.add(i === insStep2 - 1 && insStep2 < INS_TOTAL ? 'current' : 'visited');
+    }
+    var newNode = document.getElementById('in-5');
+    var newEdge = document.getElementById('ins-edge');
+    if (insStep2 === INS_TOTAL){
+      newNode.classList.remove('hidden');
+      newEdge.classList.remove('hidden');
+      document.getElementById('in-6').classList.add('visited');
+    } else {
+      newNode.classList.add('hidden');
+      newEdge.classList.add('hidden');
+    }
+    insCaption.innerHTML = insCaptions2[insStep2];
+    document.getElementById('insPrev').disabled = (insStep2 === 0);
+    document.getElementById('insNext').disabled = (insStep2 === INS_TOTAL);
+  }
+  document.getElementById('insNext').addEventListener('click', function(){ if (insStep2 < INS_TOTAL){ insStep2++; renderIns2(); } });
+  document.getElementById('insPrev').addEventListener('click', function(){ if (insStep2 > 0){ insStep2--; renderIns2(); } });
+  document.getElementById('insReset').addEventListener('click', function(){ insStep2 = 0; renderIns2(); });
+  renderIns2();
+
+  /* ================= error gallery ================= */
+  var errors = [
+    { tag:'degenera a lista', title:'Insertar datos ya ordenados en un ABB sin balance',
+      bad:'for (int i = 1; i &lt;= n; i++)\n  abb_insertar(arbol, i);\n// inserta 1, 2, 3, 4, 5... en orden',
+      cons:'Cada nuevo valor es mayor a todos los anteriores, así que siempre se cuelga como hijo derecho del último. El árbol termina siendo, en los hechos, una lista enlazada — búsquedas O(n) en vez de O(log n), sin que el código "se vea" distinto de un ABB bien formado.',
+      fix:'// usar un AVL (o insertar en\n// un orden que balancee, como\n// el elemento del medio primero)\n// si el orden de entrada puede\n// venir ya ordenado' },
+    { tag:'confusión conceptual', title:'Asumir que inorder refleja el orden de inserción',
+      bad:'// "inserté 8, 3, 10, 1, 6, 14 en\n//  ese orden, así que el inorder\n//  tiene que salir en ese orden"',
+      cons:'El inorder de un ABB siempre sale en orden CRECIENTE de valor, sin importar el orden en que se insertaron los elementos. Para este árbol, el inorder es 1,3,6,8,10,14 — nada que ver con el orden de inserción.',
+      fix:'// si necesitás el orden de\n// inserción, hay que guardarlo\n// aparte (ej. un timestamp por\n// nodo) — el ABB no lo preserva' },
+    { tag:'invariante rota', title:'Inconsistencia entre < y <= al comparar',
+      bad:'// insertar: va a la izquierda si es MENOR\nif (nuevo &lt; actual-&gt;clave) ...\n\n// buscar: va a la izquierda si es MENOR O IGUAL\nif (buscado &lt;= actual-&gt;clave) ...',
+      cons:'Si insertar y buscar no usan exactamente el mismo criterio de comparación, un elemento insertado puede terminar en una rama donde buscar() nunca lo va a encontrar — el árbol "pierde" datos que en realidad siguen ahí.',
+      fix:'// usar SIEMPRE el mismo criterio\n// (por ejemplo, "menor estricto\n// va a la izquierda") en todas\n// las primitivas del TAD' },
+    { tag:'caso olvidado', title:'Borrar un nodo con dos hijos sin buscar su reemplazo',
+      bad:'void borrar(Nodo* n) {\n  free(n);\n  // ¿y los dos subárboles\n  // que colgaban de n?\n}',
+      cons:'Si el nodo borrado tenía dos hijos, simplemente liberarlo desconecta ambos subárboles del resto del árbol — se pierden todos esos datos, aunque técnicamente no haya memory leak.',
+      fix:'// buscar el sucesor inorder\n// (el mínimo del subárbol\n// derecho), copiar su valor\n// al nodo a borrar, y recién\n// ahí borrar el sucesor\n// (que tiene a lo sumo 1 hijo)' },
+    { tag:'fuga de memoria', title:'Destruir el árbol sin recorrerlo de abajo hacia arriba',
+      bad:'void arbol_destruir(Nodo* raiz) {\n  free(raiz);\n  // los hijos quedan reservados\n  // para siempre\n}',
+      cons:'Liberar solo la raíz no libera los subárboles. Cada nodo que cuelga de la raíz, y los que cuelgan de esos, quedan reservados en memoria sin que nada apunte a ellos.',
+      fix:'void arbol_destruir(Nodo* raiz) {\n  if (raiz == NULL) return;\n  arbol_destruir(raiz-&gt;izq);\n  arbol_destruir(raiz-&gt;der);\n  free(raiz); // postorder: primero\n}               // los hijos, después el nodo' }
+  ];
+  var errGrid = document.getElementById('errGrid');
+  errors.forEach(function(e, i){
+    var card = document.createElement('div');
+    card.className = 'err-card';
+    card.innerHTML =
+      '<div class="tag">' + e.tag + '</div>' +
+      '<h4>' + e.title + '</h4>' +
+      '<div class="code">' + e.bad + '</div>' +
+      '<div class="err-sec c2">CONSECUENCIA</div>' +
+      '<p class="why">' + e.cons + '</p>' +
+      '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+      '<div class="fix-box" id="fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code">' + e.fix + '</div></div>';
+    errGrid.appendChild(card);
+  });
+  errGrid.addEventListener('click', function(ev){
+    if (!ev.target.classList.contains('err-toggle')) return;
+    var i = ev.target.getAttribute('data-i');
+    var box = document.getElementById('fix-' + i);
+    var showing = box.classList.toggle('show');
+    ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+  });
+
+  /* ================= quizzes ================= */
+  var quizzes = [
+    { code:'// mismo árbol de los ejemplos:\n//         8\n//       /   \\\n//      3     10\n//     / \\      \\\n//    1   6      14',
+      q:'¿Cuál es el recorrido INORDER de este árbol?', opts:['8, 3, 1, 6, 10, 14', '1, 3, 6, 8, 10, 14', '1, 6, 3, 14, 10, 8', '14, 10, 8, 6, 3, 1'], correct:1,
+      fb:'Inorder (izq, raíz, der) en un ABB siempre da las claves en orden creciente: 1, 3, 6, 8, 10, 14.' },
+    { code:'// mismo árbol',
+      q:'¿Cuál es el recorrido POSTORDER?', opts:['8, 3, 1, 6, 10, 14', '1, 3, 6, 8, 10, 14', '1, 6, 3, 14, 10, 8', '8, 3, 10, 1, 6, 14'], correct:2,
+      fb:'Postorder visita ambos hijos antes que la raíz: para el subárbol de 3 da 1,6,3; para el de 10 da 14,10; y al final la raíz: 1, 6, 3, 14, 10, 8.' },
+    { code:'ABB abb = crear();\nfor (int i = 1; i &lt;= 1000; i++)\n  abb_insertar(abb, i); // ya ordenados',
+      q:'¿Qué complejidad tiene buscar un elemento después de estas 1000 inserciones?', opts:['O(log n), como siempre en un ABB', 'O(n) — el árbol degeneró en una lista', 'O(1)', 'O(n²)'], correct:1,
+      fb:'Insertar valores ya ordenados hace que cada uno cuelgue como hijo derecho del anterior, sin ninguna rama izquierda — el árbol es, en la práctica, una lista. Buscar pasa a ser O(n).' },
+    { code:'// recorrido por niveles (BFS)\n// de un árbol binario',
+      q:'¿Qué TAD se usa típicamente para implementar el recorrido por niveles?', opts:['Pila', 'Cola', 'Otro árbol', 'Ninguno, alcanza con recursión directa'], correct:1,
+      fb:'BFS encola los hijos de cada nodo a medida que lo visita, y desencola en orden — eso garantiza visitar nivel por nivel. Con una pila (LIFO) el orden de visita cambiaría por completo.' },
+    { code:'// AVL: ¿qué garantiza, que un\n// ABB común no garantiza?',
+      q:'¿Cuál es la ventaja central de un árbol AVL sobre un ABB común?', opts:['Usa menos memoria por nodo', 'Garantiza O(log n) en todos los casos, aplicando rotaciones para mantener el balance', 'No necesita recursión para buscar', 'Permite guardar datos duplicados'], correct:1,
+      fb:'Un ABB común puede degradar a O(n) con el orden de inserción equivocado. El AVL verifica el balance después de cada operación y aplica rotaciones cuando hace falta, garantizando O(log n) siempre.' },
+    { code:'// std::map y std::set en C++\n// se implementan, en la práctica,\n// con este tipo de árbol',
+      q:'¿Por qué muchas estructuras de propósito general (std::map, TreeMap) eligen Red-Black en vez de AVL?', opts:['Porque Red-Black no necesita mantener ningún balance', 'Porque tolera algo más de desbalance a cambio de necesitar menos rotaciones al insertar/borrar', 'Porque Red-Black no sirve para buscar, solo para insertar', 'Porque Red-Black no es un ABB'], correct:1,
+      fb:'Red-Black sigue siendo O(log n), pero su balance es más laxo que el de AVL (se apoya en invariantes de color, no en altura exacta), lo que suele significar menos rotaciones por inserción/borrado — una escritura más barata a cambio de búsquedas levemente menos ajustadas que un AVL.' }
+  ];
+  var quizList = document.getElementById('quizList');
+  quizzes.forEach(function(qz, qi){
+    var wrap = document.createElement('div');
+    wrap.className = 'quiz';
+    var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+    wrap.innerHTML =
+      '<div class="badge violet">CHECKPOINT ' + (qi+1) + '</div>' +
+      '<div class="code" style="margin-top:8px;">' + qz.code + '</div>' +
+      '<p style="color:var(--text); margin:6px 0 10px;">' + qz.q + '</p>' +
+      '<div class="opt-row">' + optsHTML + '</div>' +
+      '<div class="quiz-fb" id="fb-' + qi + '"></div>' +
+      '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button>' +
+        '<button class="conf-btn" data-c="dude">dudé</button>' +
+        '<button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+    quizList.appendChild(wrap);
+  });
+  quizList.addEventListener('click', function(ev){
+    var t = ev.target;
+    if (t.classList.contains('opt')){
+      var qi = t.getAttribute('data-qi');
+      var oi = parseInt(t.getAttribute('data-oi'),10);
+      var qz = quizzes[qi];
+      var row = t.parentElement;
+      Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+      if (oi === qz.correct){ t.classList.add('correct'); }
+      else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+      var fb = document.getElementById('fb-' + qi);
+      fb.textContent = qz.fb;
+      fb.classList.add('show');
+    }
+    if (t.classList.contains('conf-btn')){
+      var siblings = t.parentElement.querySelectorAll('.conf-btn');
+      Array.prototype.forEach.call(siblings, function(b){ b.classList.remove('picked'); });
+      t.classList.add('picked');
+    }
+  });
+})();
+</script>
+</body>
+</html>

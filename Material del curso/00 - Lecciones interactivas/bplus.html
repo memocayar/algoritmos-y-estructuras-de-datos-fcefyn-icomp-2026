@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&gt;&gt; BPLUS.exe — LAC</title>
+<style>
+
+  :root{
+    --bg:#0D0F1A; --bg-panel:#131829; --bg-panel-2:#1A2036; --bg-raised:#1F2640;
+    --border:rgba(0,212,255,0.16); --border-soft:rgba(228,232,241,0.08);
+    --cyan:#00D4FF; --violet:#7C3AyED; --green:#10B981; --red:#EF4444; --amber:#F59E0B;
+    --text:#E4E8F1; --text-dim:#8892B0; --text-faint:#5B6483;
+    --font-display:'Trebuchet MS', Trebuchet, sans-serif;
+    --font-body:Calibri, 'Segoe UI', sans-serif;
+    --font-mono:Consolas, 'SF Mono', 'Courier New', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(124,58,237,0.14), transparent 45%),
+      radial-gradient(ellipse at 85% 12%, rgba(0,212,255,0.10), transparent 40%),
+      var(--bg);
+    color:var(--text); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan);}
+  ::selection{background:var(--cyan); color:#01131a;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:2px; border-radius:4px;}
+  #scanbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--violet), var(--cyan)); z-index:200; box-shadow:0 0 8px rgba(0,212,255,0.6);}
+  nav#sidenav{position:fixed; top:0; left:0; bottom:0; width:236px; background:rgba(13,15,26,0.92); border-right:1px solid var(--border); padding:22px 14px 18px; overflow-y:auto; z-index:100; backdrop-filter:blur(6px);}
+  .nav-brand{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.08em; margin-bottom:2px;}
+  .nav-title{font-family:var(--font-display); font-size:19px; font-weight:bold; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,0.35); margin:0 0 22px;}
+  .nav-list{list-style:none; margin:0; padding:0;}
+  .nav-list li{margin-bottom:2px;}
+  .nav-link{display:block; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); text-decoration:none; padding:9px 10px; border-radius:6px; border-left:2px solid transparent; transition:background .15s, color .15s, border-color .15s;}
+  .nav-link:hover{background:var(--bg-panel); color:var(--text);}
+  .nav-link.active{color:var(--cyan); border-left-color:var(--cyan); background:rgba(0,212,255,0.06);}
+  .nav-foot{margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;}
+  #navtoggle{display:none; position:fixed; top:14px; right:14px; z-index:150; background:var(--bg-panel); color:var(--cyan); border:1px solid var(--border); border-radius:8px; font-family:var(--font-mono); font-size:13px; padding:9px 12px; cursor:pointer;}
+  main{margin-left:236px; padding:0 0 80px;}
+  section{padding:64px clamp(20px,5vw,64px) 8px; max-width:1040px; scroll-margin-top:20px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.14em; color:var(--violet); text-transform:uppercase; margin:0 0 8px;}
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0 0 14px; color:var(--text);}
+  h2{font-size:clamp(24px,3.4vw,32px); color:var(--cyan); text-shadow:0 0 18px rgba(0,212,255,0.18);}
+  h3{font-size:18px; color:var(--text); margin-top:30px;}
+  h3:first-child{margin-top:0;}
+  p{color:var(--text-dim); max-width:70ch;}
+  .lead{color:var(--text); font-size:16px; max-width:66ch;}
+  code, .mono{font-family:var(--font-mono);}
+  ul.plain{color:var(--text-dim); padding-left:20px;}
+  ul.plain li{margin-bottom:6px;}
+  #titulo{padding-top:64px; display:flex; flex-direction:column; justify-content:center; min-height:70vh;}
+  .cover-badge{display:inline-block; font-family:var(--font-mono); font-size:11px; color:var(--violet); border:1px solid var(--violet); border-radius:20px; padding:5px 12px; letter-spacing:.08em; margin-bottom:18px;}
+  .cover-title{font-family:var(--font-display); font-size:clamp(30px,5vw,50px); line-height:1.1; color:var(--text); margin:0 0 16px;}
+  .cover-title .accent{color:var(--cyan); text-shadow:0 0 22px rgba(0,212,255,0.3);}
+  .cover-sub{font-size:16.5px; color:var(--text-dim); max-width:56ch;}
+  .cover-meta{margin-top:28px; display:flex; gap:22px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .cover-meta b{color:var(--text-dim); font-weight:normal;}
+  .terminal{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 0 0 1px rgba(0,0,0,0.2), 0 20px 60px -20px rgba(0,212,255,0.12); overflow:hidden; margin-top:18px;}
+  .terminal-bar{display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-panel-2); border-bottom:1px solid var(--border-soft); font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:var(--red);} .dot.a{background:var(--amber);} .dot.g{background:var(--green);}
+  .terminal-body{padding:20px 22px 24px; font-family:var(--font-mono); font-size:13.5px; color:#B9E9FF;}
+  .terminal-body .dim{color:var(--text-faint);}
+  .terminal-body .accent{color:var(--cyan);}
+  .terminal-body .ok{color:var(--green);}
+  .terminal-body p{margin:0 0 6px; color:inherit; max-width:none;}
+  .cursor{display:inline-block; width:8px; height:15px; background:var(--cyan); vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .objectives{margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .obj-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--violet); border-radius:8px; padding:14px 16px;}
+  .obj-card .k{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.08em;}
+  .obj-card p{margin:4px 0 0; font-size:13.5px; color:var(--text);}
+  .callout{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--cyan); border-radius:8px; padding:14px 18px; margin:16px 0;}
+  .callout p{margin:0; color:var(--text); font-size:14px;}
+  .callout .k{font-family:var(--font-mono); font-size:10.5px; color:var(--cyan); letter-spacing:.08em; margin-bottom:5px; display:block;}
+  .panel{background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px clamp(16px,3vw,26px); margin-top:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:20px; border:1px solid currentColor;}
+  .badge.violet{color:var(--violet);}
+  button{font-family:var(--font-mono); font-size:12.5px; background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 14px; cursor:pointer; transition:border-color .15s, color .15s, background .15s, transform .1s;}
+  button:hover{border-color:var(--cyan); color:var(--cyan);}
+  button:active{transform:translateY(1px);}
+  button.primary{background:rgba(0,212,255,0.1); border-color:var(--cyan); color:var(--cyan);}
+  button:disabled{opacity:.35; cursor:not-allowed; box-shadow:none;}
+  button:disabled:hover{border-color:var(--border); color:var(--text);}
+  button.primary:disabled{background:var(--bg-raised); border-color:var(--border-soft); color:var(--text-faint);}
+  button.primary:disabled:hover{border-color:var(--border-soft); color:var(--text-faint);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .code{font-family:var(--font-mono); font-size:13px; line-height:1.7; background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:14px 16px; overflow-x:auto; color:#C9D6EE; white-space:pre;}
+  .code .cm{color:var(--text-faint);}
+  .code .kw{color:var(--violet);}
+  .code .tp{color:var(--cyan);}
+  .step-caption{margin-top:14px; font-size:13.5px; color:var(--text); min-height:22px;}
+  .step-caption .mono{color:var(--cyan);}
+
+  /* ---------- tree visual ---------- */
+  .tree-wrap{position:relative; margin-top:16px; overflow-x:auto;}
+  .tree-svg{display:block; min-width:500px;}
+  .tree-svg .edge{stroke:var(--border-soft); stroke-width:2; fill:none;}
+  .tree-svg .edge.new{stroke:var(--amber); stroke-dasharray:4 3;}
+  .tree-node circle{fill:var(--bg-raised); stroke:var(--border-soft); stroke-width:1.5; transition:fill .25s, stroke .25s;}
+  .tree-node text{fill:var(--text); font-family:var(--font-mono); font-size:13px; text-anchor:middle; dominant-baseline:central;}
+  .tree-node.visited circle{fill:rgba(0,212,255,0.14); stroke:var(--cyan);}
+  .tree-node.visited text{fill:var(--cyan);}
+  .tree-node.current circle{fill:rgba(245,158,11,0.18); stroke:var(--amber); stroke-width:2.5;}
+  .tree-node.current text{fill:var(--amber);}
+  .tree-node.newnode circle{fill:rgba(16,185,129,0.18); stroke:var(--green); stroke-width:2.5;}
+  .tree-node.newnode text{fill:var(--green);}
+  .tree-node.hidden{opacity:0;}
+  .edge.hidden{opacity:0;}
+
+  .lab-readout{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:16px;}
+  .ro{background:var(--bg-raised); border:1px solid var(--border-soft); border-radius:7px; padding:10px 12px;}
+  .ro .k{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.06em;}
+  .ro .v{font-family:var(--font-mono); font-size:14px; color:var(--cyan); margin-top:3px;}
+  .ro .v.wide{font-size:13px; word-break:break-all;}
+
+  .err-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:18px;}
+  .err-card{background:var(--bg-panel); border:1px solid var(--border-soft); border-left:3px solid var(--red); border-radius:8px; padding:16px 18px;}
+  .err-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:15.5px; color:var(--red);}
+  .err-card .tag{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .err-card .code{margin-top:10px; font-size:12px;}
+  .err-sec{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; margin-top:12px; margin-bottom:4px;}
+  .err-sec.c2{color:var(--amber);} .err-sec.c3{color:var(--green);}
+  .err-card .why{font-size:13px; color:var(--text-dim); margin:0;}
+  .fix-box{display:none; margin-top:6px;}
+  .fix-box.show{display:block;}
+  .err-card .fix-box .code{border-color:rgba(16,185,129,0.25);}
+
+  .quiz{border-left:3px solid var(--violet); padding-left:18px; margin-top:26px;}
+  .quiz:first-of-type{margin-top:14px;}
+  .quiz .code{margin:10px 0 14px;}
+  .opt-row{display:flex; flex-direction:column; gap:8px; max-width:560px;}
+  .opt{text-align:left; padding:10px 14px; font-size:13px;}
+  .opt.correct{border-color:var(--green); color:var(--green); background:rgba(16,185,129,0.08);}
+  .opt.incorrect{border-color:var(--red); color:var(--red); background:rgba(239,68,68,0.08);}
+  .opt:disabled{cursor:default;}
+  .quiz-fb{margin-top:10px; font-size:13.5px; color:var(--text); display:none; padding:10px 12px; background:var(--bg-raised); border-radius:7px; border:1px solid var(--border-soft);}
+  .quiz-fb.show{display:block;}
+  .conf-row{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .conf-row span{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
+  .conf-btn.picked{border-color:var(--amber); color:var(--amber);}
+  footer{padding:40px clamp(20px,5vw,64px) 60px; max-width:1040px; border-top:1px solid var(--border-soft); margin-top:40px;}
+  footer p{font-size:12.5px; color:var(--text-faint);}
+  @media (max-width:860px){
+    nav#sidenav{transform:translateX(-100%); transition:transform .25s ease; width:78vw; max-width:280px;}
+    nav#sidenav.open{transform:translateX(0);}
+    main{margin-left:0;}
+    #navtoggle{display:block;}
+  }
+
+
+  /* ---------- extras compartidos ---------- */
+  .nav-sub{display:block; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint); text-decoration:none; padding:5px 10px 5px 24px; border-radius:6px;}
+  .nav-sub:hover{color:var(--text); background:var(--bg-panel);}
+  .tbl-wrap{overflow-x:auto; margin:14px 0;}
+  table.tbl{border-collapse:collapse; width:100%; font-size:13.5px; min-width:480px;}
+  table.tbl th, table.tbl td{border:1px solid var(--border-soft); padding:8px 11px; text-align:left; color:var(--text); vertical-align:top;}
+  table.tbl th{background:var(--bg-panel-2); font-family:var(--font-mono); font-size:11.5px; color:var(--cyan); letter-spacing:.04em; font-weight:normal;}
+  table.tbl td.dim{color:var(--text-dim);}
+  select, input[type=text], input[type=number]{background:var(--bg-raised); color:var(--text); border:1px solid var(--border); border-radius:7px; padding:8px 10px; font-family:var(--font-mono); font-size:12.5px; max-width:100%;}
+  input[type=number]{width:84px;} input[type=text]{width:150px;}
+  select:focus, input:focus{outline:2px solid var(--cyan); outline-offset:1px;}
+  .ctrl-row{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;}
+  .field{display:flex; flex-direction:column; gap:4px;}
+  .field > label{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.06em;}
+  .log{background:#0A0C16; border:1px solid var(--border-soft); border-radius:8px; padding:10px 14px; font-family:var(--font-mono); font-size:12.5px; max-height:210px; overflow:auto; color:#B9E9FF; margin-top:14px; line-height:1.55;}
+  .log p{margin:0 0 5px; color:inherit; max-width:none;}
+  .log .ok{color:var(--green);} .log .bad{color:var(--red);} .log .warn{color:var(--amber);} .log .dim{color:var(--text-faint);}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:10px;}
+  .legend i{display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-2px; margin-right:6px; border:1.5px solid;}
+  .code .num{color:var(--amber);} .code .str{color:var(--green);}
+  .steps-list{margin:10px 0 0; padding-left:20px; color:var(--text); font-size:13.5px;}
+  .steps-list li{margin-bottom:5px;}
+  .note-small{font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  strong{color:var(--text);}
+
+
+  .bp-svg{display:block;}
+  .bp-svg .edge{stroke:rgba(228,232,241,0.30); stroke-width:1.6; fill:none;}
+  .bp-n rect{fill:var(--bg-raised); stroke-width:1.6; transition:fill .2s, stroke .2s;}
+  .bp-n.leaf rect{stroke:rgba(0,212,255,0.55);}
+  .bp-n.inner rect{stroke:rgba(124,58,237,0.95);}
+  .bp-n text{fill:var(--text); font-family:var(--font-mono); font-size:13px; text-anchor:middle; dominant-baseline:central;}
+  .bp-n text.empty{fill:var(--text-faint);}
+  .bp-n line{stroke:var(--border-soft);}
+  .bp-n.vis rect{fill:rgba(0,212,255,0.14); stroke:var(--cyan);} .bp-n.vis text{fill:var(--cyan);}
+  .bp-n.cur rect{fill:rgba(245,158,11,0.18); stroke:var(--amber); stroke-width:2.5;} .bp-n.cur text{fill:var(--amber);}
+  .bp-n.nw rect{fill:rgba(16,185,129,0.18); stroke:var(--green); stroke-width:2.5;} .bp-n.nw text{fill:var(--green);}
+  .bp-svg .nxt{stroke:var(--amber); stroke-dasharray:4 3; stroke-width:1.6; fill:none; opacity:.75;}
+  .bp-svg .nxt.on{stroke:var(--cyan); opacity:1;}
+  .tree-wrap{overflow-x:auto;}
+  .bp-svg{margin:0 auto;}
+
+</style>
+</head>
+<body>
+
+<div id="scanbar"></div>
+<button id="navtoggle" aria-label="Abrir navegación" aria-expanded="false">☰ MENÚ</button>
+
+<nav id="sidenav" aria-label="Navegación del dashboard">
+  <div class="nav-brand">LAC // ÁRBOL B+</div>
+  <div class="nav-title">BPLUS.exe</div>
+  <ul class="nav-list">
+    <li><a class="nav-link" href="#titulo">&gt; Título</a>
+    </li>
+    <li><a class="nav-link" href="#historia">&gt; Historia — gancho</a>
+    </li>
+    <li><a class="nav-link" href="#objetivos">&gt; Objetivos</a>
+    </li>
+    <li><a class="nav-link" href="#explicacion">&gt; Explicación detallada</a>
+      <a class="nav-sub" href="#e-disco">por qué un B+</a>
+      <a class="nav-sub" href="#e-reglas">las reglas</a>
+      <a class="nav-sub" href="#e-insertar">insertar</a>
+      <a class="nav-sub" href="#e-rango">rangos</a>
+      <a class="nav-sub" href="#e-borrar">borrar</a>
+      <a class="nav-sub" href="#e-codigo">el código</a>
+    </li>
+    <li><a class="nav-link" href="#ejemplos">&gt; Ejemplos</a>
+      <a class="nav-sub" href="#x-insertar">insertar paso a paso</a>
+      <a class="nav-sub" href="#x-rango">rango</a>
+      <a class="nav-sub" href="#x-borrar">borrar</a>
+      <a class="nav-sub" href="#x-lab">laboratorio</a>
+      <a class="nav-sub" href="#x-quiz">checkpoints</a>
+    </li>
+    <li><a class="nav-link" href="#fallas">&gt; Fallas</a>
+    </li>
+    <li><a class="nav-link" href="#conclusion">&gt; Conclusión</a>
+    </li>
+  </ul>
+  <div class="nav-foot">AyED · FCEFyN<br>build: CyberCba2077<br>requiere Árboles, ABB, AVL, Big O</div>
+</nav>
+
+<main>
+
+  <section id="titulo">
+    <div class="cover-badge">PROYECTO DiagramaCba</div>
+    <h1 class="cover-title">Índices que viven en disco:<br>el <span class="accent">árbol B+</span>.</h1>
+    <p class="cover-sub">Un árbol ancho y bajo, con todos los datos en hojas enlazadas: encuentra una clave en pocas lecturas de disco y recorre rangos sin volver a subir.</p>
+    <div class="cover-meta">
+      <span><b>cátedra:</b> AyED — FCEFyN</span>
+      <span><b>requiere:</b> Árboles, ABB, AVL, Big O, punteros</span>
+      <span><b>cubre:</b> B+ · búsqueda · alta · baja · rangos · contexto B y B*</span>
+    </div>
+  </section>
+
+  <section id="historia">
+    <p class="eyebrow">// historia — gancho</p>
+    <h2>El índice de DiagramaCba ya no entra en memoria</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: /proyectos/diagramacba</span></div>
+      <div class="terminal-body">
+        <p><span class="dim">$</span> cat notas_reunion.txt</p>
+        <p><span class="accent">maga_t:</span> El índice por nombre ya tiene 5 millones de diagramas y dejó de entrar en RAM.</p>
+        <p><span class="ok">ema_v:</span> Lo pasamos a disco tal cual: cada nodo del AVL sería una lectura.</p>
+        <p><span class="accent">maga_t:</span> Un AVL con 5 millones de claves tiene como mínimo 23 niveles: 23 lecturas por búsqueda. Y leer del disco tarda órdenes de magnitud más que comparar en memoria.</p>
+        <p><span class="ok">ema_v:</span> ¿Entonces?</p>
+        <p><span class="accent">maga_t:</span> Hay que achatar el árbol: nodos con cientos de hijos, para que cada lectura descarte casi todo lo demás. Con 100 hijos por nodo, 5 millones de claves entran en 4 niveles.</p>
+        <p><span class="ok">ema_v:</span> ¿Y listar los diagramas de la A a la C?</p>
+        <p><span class="accent">maga_t:</span> Para eso, el B+: los datos solo en las hojas, y las hojas enlazadas entre sí. Bajás una vez y seguís por los enlaces.</p>
+        <p class="dim">&gt; sesión de diagnóstico iniciada<span class="cursor"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="objetivos">
+    <p class="eyebrow">// objetivos</p>
+    <h2>Al terminar este módulo vas a poder...</h2>
+    <div class="objectives">
+      <div class="obj-card"><div class="k">01</div><p>Explicar por qué un índice en disco necesita un árbol ancho y bajo (un nodo = una página).</p></div>
+      <div class="obj-card"><div class="k">02</div><p>Enunciar las reglas del B+: datos solo en hojas, separadores, hojas enlazadas, misma profundidad.</p></div>
+      <div class="obj-card"><div class="k">03</div><p>Buscar e insertar a mano en un B+ de orden m, distinguiendo copiar (hoja) de subir (interno).</p></div>
+      <div class="obj-card"><div class="k">04</div><p>Resolver una consulta por rango bajando una sola vez y siguiendo los next.</p></div>
+      <div class="obj-card"><div class="k">05</div><p>Borrar una clave resolviendo el underflow con préstamo o fusión.</p></div>
+      <div class="obj-card"><div class="k">06</div><p>Reconocer los errores típicos al implementarlo: copia vs mover, next, doble delete.</p></div>
+    </div>
+  </section>
+
+  <section id="explicacion">
+    <p class="eyebrow">// explicación detallada</p>
+    <h2>La teoría, para alguien que arranca ahora</h2>
+
+    <h3 id="e-disco">¿Por qué no alcanza con un ABB o un AVL?</h3>
+    <p>En memoria, comparar una clave cuesta casi nada. En disco, lo caro es <strong>traer una página</strong> (un bloque de unos pocos KB): una vez que la tenés en memoria, mirar cientos de claves adentro es prácticamente gratis. Entonces conviene que cada nodo sea <strong>una página con muchas claves</strong>, para que cada lectura descarte casi todo el resto.</p>
+    <p>Un árbol con <code>m</code> hijos por nodo tiene altura de unos <code>⌈log<sub>m</sub>(n)⌉</code> niveles, y cada nivel es una lectura de disco:</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>hijos por nodo (m)</th><th>niveles para 5.000.000 de claves</th><th>comentario</th></tr>
+      <tr><td>2 (ABB / AVL)</td><td>≈ 23</td><td class="dim">el mejor caso de un árbol binario</td></tr>
+      <tr><td>16</td><td>≈ 6</td><td class="dim"></td></tr>
+      <tr><td>100</td><td>≈ 4</td><td class="dim">un nodo = una página de unos pocos KB</td></tr>
+      <tr><td>500</td><td>≈ 3</td><td class="dim">la raíz y el primer nivel suelen quedar en memoria</td></tr>
+    </table></div>
+
+    <h3 id="e-que-es">¿Qué es un B+?</h3>
+    <p>Es un árbol de búsqueda con muchos hijos por nodo, con dos ideas que lo distinguen del árbol B clásico: <strong>todas las claves reales viven en las hojas</strong>, y las hojas están <strong>enlazadas</strong> de menor a mayor. Los nodos internos no guardan datos: solo <strong>separadores</strong>, carteles que dicen "por acá bajá si buscás algo menor / mayor o igual".</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>palabra</th><th>qué es</th></tr>
+      <tr><td><code>clave</code></td><td class="dim">el dato que se guarda y se busca (por ejemplo, el nombre de un diagrama).</td></tr>
+      <tr><td><code>hoja</code></td><td class="dim">nodo del último nivel. Acá están TODAS las claves, ordenadas, y un puntero <code>next</code> a la hoja siguiente.</td></tr>
+      <tr><td><code>nodo interno</code></td><td class="dim">nodo que no guarda datos: solo separadores e hijos. También se lo llama "índice".</td></tr>
+      <tr><td><code>separador</code></td><td class="dim">clave de un nodo interno que reparte a los hijos: a la izquierda lo menor, a la derecha lo mayor o igual.</td></tr>
+      <tr><td><code>orden m</code></td><td class="dim">máximo de hijos de un nodo interno (en el código, <code>Order</code>). Con m = 3 los ejemplos entran en pantalla.</td></tr>
+    </table></div>
+    <div class="panel">
+      <div class="panel-head"><span class="badge violet">ANATOMÍA · m = 3 · claves 10, 20, ..., 70</span></div>
+      <div class="tree-wrap" id="anatomy"></div>
+      <div class="legend"><span><i style="border-color:#7C3AyED"></i>nodo índice (solo separadores)</span><span><i style="border-color:#00D4FF"></i>hoja (los datos)</span><span><i style="border-color:#F59E0B; border-style:dashed; border-radius:0; height:0; width:18px; vertical-align:3px"></i>next</span></div>
+      <p class="step-caption">Los separadores 30, 50 y 70 aparecen <strong>también</strong> en las hojas: en el B+ son copias. Las hojas forman una lista enlazada ordenada.</p>
+    </div>
+
+    <h3 id="e-reglas">Las reglas (con m = Order)</h3>
+    <ul class="plain">
+      <li>Todas las claves están en las hojas, ordenadas. Una hoja guarda entre <code>m/2</code> y <code>m − 1</code> claves (la raíz puede tener menos).</li>
+      <li>Un nodo interno tiene entre <code>(m+1)/2</code> y <code>m</code> hijos, y un separador menos que hijos (la raíz, desde 2 hijos).</li>
+      <li>Cada separador es una cota: lo de su izquierda es menor y lo de su derecha es mayor o igual.</li>
+      <li>Todas las hojas están a la misma profundidad: buscar cuesta siempre lo mismo.</li>
+      <li>Las hojas se enlazan con <code>next</code>, de menor a mayor.</li>
+      <li>Si una clave es <strong>igual</strong> a un separador, se baja por la <strong>derecha</strong>.</li>
+    </ul>
+    <p class="note-small">División entera: con m = 3 una hoja guarda 1 o 2 claves; con m = 4, entre 2 y 3. Otros autores (Berkeley) usan otro parámetro, <code>d</code>: fijate siempre si hablan de claves o de hijos.</p>
+
+    <h3 id="e-buscar">Buscar</h3>
+    <p>Se baja desde la raíz: en cada nodo interno se elige el hijo según los separadores, hasta llegar a una hoja, y ahí se busca la clave. <strong>Siempre se baja hasta la hoja</strong>, porque los datos solo están ahí (en el árbol B clásico podías cortar antes). Costo: una lectura por nivel.</p>
+
+    <h3 id="e-insertar">Insertar</h3>
+    <p>Se baja hasta la hoja que le toca y se inserta ordenada. Si la hoja llega a <code>m</code> claves, <strong>se parte</strong> en dos y le avisa al padre; si el padre llega a <code>m+1</code> hijos, también se parte; si se parte la raíz, nace una raíz nueva y el árbol crece un nivel.</p>
+    <div class="callout"><span class="k">LA REGLA QUE DISTINGUE AL B+</span><p>Al partir una <strong>hoja</strong>, la primera clave de la hoja derecha se <strong>COPIA</strong> al padre: el dato tiene que seguir en la hoja. Al partir un nodo <strong>interno</strong>, la clave del medio <strong>SUBE</strong> y deja de estar abajo, porque ahí solo era un cartel. <em>Copia en la hoja, subida en el interno.</em></p></div>
+
+    <h3 id="e-rango">Consultas por rango</h3>
+    <p>"Todos los diagramas entre la A y la C": se baja <strong>una sola vez</strong> hasta la hoja de la clave inicial y se avanza por <code>next</code> hasta pasar la clave final. En un árbol B clásico habría que subir y bajar por el árbol una y otra vez. Costo: <code>O(log<sub>F</sub> n + k)</code>, con <code>k</code> resultados.</p>
+
+    <h3 id="e-borrar">Borrar</h3>
+    <ol class="plain" style="padding-left:22px;">
+      <li>Se baja hasta la hoja y se quita la clave. Si ya estaba ausente, no pasa nada.</li>
+      <li>Si la hoja queda con menos del mínimo (<strong>underflow</strong>), lo arregla su padre mirando a los hermanos:
+        <ul class="plain"><li><strong>Préstamo</strong>: si un hermano tiene claves de sobra, se le pide una y se actualiza el separador del padre. No cambia la forma del árbol.</li>
+        <li><strong>Fusión</strong>: si ningún hermano puede prestar, se unen los dos nodos y el padre pierde un separador y un hijo (es lo inverso de partir).</li></ul></li>
+      <li>La fusión puede dejar al padre en underflow: se repite hacia arriba. Si la raíz queda con un solo hijo, ese hijo pasa a ser la raíz.</li>
+    </ol>
+    <div class="callout"><span class="k">UN DETALLE QUE SORPRENDE</span><p>Después de borrar, un separador puede quedar "viejo": ya no coincide con ninguna clave de las hojas. Es válido, porque el separador solo tiene que ser una cota (menor que lo de la derecha y mayor que lo de la izquierda). Por eso la regla es "separador = cota del hijo derecho", no "primera clave del hijo derecho".</p></div>
+
+    <h3 id="e-complejidad">Complejidad</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>operación</th><th>costo (en lecturas de página)</th><th>nota</th></tr>
+      <tr><td><code>contains</code></td><td><code>O(log<sub>F</sub> n)</code></td><td class="dim">F = cantidad de hijos por nodo (entre m/2 y m)</td></tr>
+      <tr><td><code>insert</code> / <code>erase</code></td><td><code>O(log<sub>F</sub> n)</code></td><td class="dim">los splits, préstamos y fusiones son poco frecuentes</td></tr>
+      <tr><td><code>range</code> con k resultados</td><td><code>O(log<sub>F</sub> n + k)</code></td><td class="dim">se baja una vez y se recorren las hojas</td></tr>
+      <tr><td><code>values</code> (todo en orden)</td><td><code>O(n)</code></td><td class="dim">un bucle por la lista de hojas, sin recursión</td></tr>
+    </table></div>
+
+    <h3 id="e-familia">La familia: B, B* y B+</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th></th><th>B</th><th>B*</th><th>B+</th></tr>
+      <tr><td>¿dónde están los datos?</td><td class="dim">en todos los nodos</td><td class="dim">en todos los nodos</td><td class="dim">solo en las hojas</td></tr>
+      <tr><td>nodo lleno que recibe una clave</td><td class="dim">se parte en dos</td><td class="dim">primero reparte con un hermano; si no, parte 2 → 3</td><td class="dim">se parte en dos</td></tr>
+      <tr><td>mínimo de ocupación</td><td class="dim">1/2</td><td class="dim">2/3</td><td class="dim">1/2</td></tr>
+      <tr><td>recorrer en orden</td><td class="dim">recursivo, subiendo y bajando</td><td class="dim">recursivo, subiendo y bajando</td><td class="dim">bucle por la lista de hojas</td></tr>
+      <tr><td>mejor para</td><td class="dim">búsquedas puntuales</td><td class="dim">aprovechar el espacio</td><td class="dim">búsquedas y rangos (casi todos los índices de bases de datos)</td></tr>
+    </table></div>
+
+    <h3 id="e-codigo">El código, pieza por pieza</h3>
+    <p>La clase completa (<code>bPlusTree.hpp</code>) tiene alta, baja, búsqueda y rangos, con la documentación de cada paso. Estas son las piezas que más enseñan.</p>
+    <p><strong>El nodo.</strong> Un mismo tipo sirve para hojas e internos. <code>children</code> son dueños de sus hijos; <code>pNext</code> no es dueño, solo "mira" a la hoja siguiente.</p>
+    <div class="code" data-cpp="1">/** @brief Nodo del árbol. Es un "contenedor de datos": por eso sus campos no llevan el prefijo m_. */
+struct Node
+{
+    explicit Node(const bool isLeaf) : leaf{ isLeaf }
+    {
+    }
+    bool                 leaf;
+    std::vector&lt;TData&gt;   keys;      ///&lt; Hoja: las claves reales. Interno: los separadores.
+    std::vector&lt;Node*&gt; children;  ///&lt; Solo internos. Dueños de los hijos.
+    Node*                pNext{ nullptr }; ///&lt; Solo hojas. NO es dueño: apunta a la hoja de la derecha.
+};</div>
+    <p><strong>Partir una hoja.</strong> La izquierda se queda con <code>(n+1)/2</code> claves. El separador es una <em>copia</em> de la primera clave de la derecha, y las hojas se reenlazan.</p>
+    <div class="code" data-cpp="1">/**
+ * @brief Parte una hoja desbordada. La izquierda se queda con (n+1)/2 claves.
+ * @details El separador es una COPIA de la primera clave de la hoja derecha: el dato sigue en la hoja.
+ *          Ej. m=3: [10,20,30] -&gt; [10,20] y [30]; el separador es 30.
+ */
+static void splitLeaf(Node&amp; leaf, Split&amp; split)
+{
+    const std::size_t leftCount{ (leaf.keys.size() + 1) / 2 };
+    auto*              pRight{ new Node(true) };
+
+    // assign copia el rango [a, b) dentro de pRight-&gt;keys; erase lo quita de la hoja original.
+    pRight-&gt;keys.assign(leaf.keys.begin() + leftCount, leaf.keys.end());
+    leaf.keys.erase(leaf.keys.begin() + leftCount, leaf.keys.end());
+
+    pRight-&gt;pNext = leaf.pNext; // la nueva hoja se engancha entre 'leaf' y su antigua siguiente
+    leaf.pNext     = pRight;
+
+    split.separator = pRight-&gt;keys.front();
+    split.pRight   = pRight;
+}</div>
+    <p><strong>Fusionar</strong> dos hijos. Es el inverso de partir; la hoja izquierda hereda el <code>pNext</code> de la derecha y el nodo vaciado se libera con <code>delete</code>.</p>
+    <div class="code" data-cpp="1">/**
+ * @brief Fusiona el hijo 'leftIndex + 1' dentro del hijo 'leftIndex' (inverso de partir).
+ * @details Hoja: se juntan las claves y la hoja izquierda hereda el pNext de la derecha (se saltea la que
+ *          desaparece). Interno: además BAJA el separador del padre, que queda en el medio.
+ *          Al final el padre pierde un separador y un hijo, y el nodo vaciado se libera con delete.
+ */
+void mergeWithRight(Node&amp; parent, const std::size_t leftIndex)
+{
+    Node&amp; left{ *parent.children[leftIndex] };
+    Node* const pRight{ parent.children[leftIndex + 1] };
+    Node&amp;       right{ *pRight };
+
+    if (left.leaf)
+    {
+        left.pNext = right.pNext;
+    }
+    else
+    {
+        left.keys.emplace_back(parent.keys[leftIndex]);
+        moveChildren(right.children, 0, left.children);
+    }
+    left.keys.insert(left.keys.end(), right.keys.begin(), right.keys.end());
+
+    parent.keys.erase(parent.keys.begin() + leftIndex);
+    parent.children.erase(parent.children.begin() + leftIndex + 1);
+    delete pRight; // el nodo derecho quedó fuera del padre y sin contenido: se libera
+}</div>
+    <p><strong>Rango.</strong> Una bajada con <code>findLeaf</code> y después un bucle por <code>pNext</code>.</p>
+    <div class="code" data-cpp="1">/**
+ * @brief Claves entre low y high (ambas inclusive), en orden ascendente.
+ * @details Se baja UNA sola vez hasta la hoja de 'low' y después se avanza por pNext. Esa es la
+ *          ventaja del B+: no hay que volver a subir al árbol para seguir en orden.
+ */
+std::vector&lt;TData&gt; range(const TData&amp; low, const TData&amp; high) const
+{
+    std::vector&lt;TData&gt; result;
+    if (!m_less(high, low)) // si el rango está invertido, no hay nada que buscar
+    {
+        bool passedHigh{ false };
+        for (const Node* pLeaf{ findLeaf(low) }; pLeaf != nullptr &amp;&amp; !passedHigh; pLeaf = pLeaf-&gt;pNext)
+        {
+            for (const auto&amp; key : pLeaf-&gt;keys)
+            {
+                passedHigh = passedHigh || m_less(high, key); // pasamos 'high': dejamos de agregar
+                if (!passedHigh &amp;&amp; !m_less(key, low))
+                {
+                    result.emplace_back(key);
+                }
+            }
+        }
+    }
+    return result;
+}</div>
+  </section>
+
+  <section id="ejemplos">
+    <p class="eyebrow">// ejemplos</p>
+    <h2>Ahora, en vivo</h2>
+
+    <h3 id="x-insertar">Insertar 10, 20, ..., 70 en un B+ de orden 3</h3>
+    <p>Un paso por clave. Fijate qué pasa cuando se parte una hoja y cuando se parte un nodo interno.</p>
+    
+    <div class="panel">
+      
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="insNum">0</span> / 7</span>
+        <div class="btn-row">
+          <button id="insPrev">◀ anterior</button>
+          <button id="insNext" class="primary">insertar siguiente ▶</button>
+          <button id="insReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="tree-wrap" id="insTree"></div>
+      <div class="legend"><span><i style="border-color:#7C3AyED"></i>nodo índice</span><span><i style="border-color:#00D4FF"></i>hoja</span><span><i style="border-color:#F59E0B"></i>nodo que se toca</span><span><i style="border-color:#10B981"></i>nodo nuevo</span><span><i style="border-color:#F59E0B; border-style:dashed; border-radius:0; height:0; width:18px; vertical-align:3px"></i>next</span></div>
+      <p class="step-caption" id="insCap"></p>
+    </div>
+
+    <h3 id="x-rango">Una consulta por rango</h3>
+    <p>Árbol de orden 3 con las claves 10, 20, ..., 90. Cambiá los límites y recorré el camino: una bajada y después, saltos por <code>next</code>.</p>
+    
+    <div class="panel">
+      <div class="ctrl-row"><div class="field"><label>DESDE</label><input type="number" id="rngLow" value="30" min="0" max="999"></div><div class="field"><label>HASTA</label><input type="number" id="rngHigh" value="70" min="0" max="999"></div><button id="rngGo">calcular camino</button></div>
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="rngNum">0</span> / –</span>
+        <div class="btn-row">
+          <button id="rngPrev">◀ anterior</button>
+          <button id="rngNext" class="primary">siguiente paso ▶</button>
+          <button id="rngReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="tree-wrap" id="rngTree"></div>
+      <div class="legend"><span><i style="border-color:#7C3AyED"></i>nodo índice</span><span><i style="border-color:#00D4FF"></i>hoja</span><span><i style="border-color:#F59E0B"></i>nodo que se toca</span><span><i style="border-color:#10B981"></i>nodo nuevo</span><span><i style="border-color:#F59E0B; border-style:dashed; border-radius:0; height:0; width:18px; vertical-align:3px"></i>next</span></div>
+      <p class="step-caption" id="rngCap"></p>
+    </div>
+
+    <h3 id="x-borrar">Borrar: préstamo, fusión y árbol que se achica</h3>
+    <p>Partimos del árbol de la primera demo (10..70) y borramos 70, 60 y 50. Predecí qué va a pasar antes de apretar el botón.</p>
+    
+    <div class="panel">
+      
+      <div class="panel-head">
+        <span class="badge violet">PASO <span id="eraNum">0</span> / 3</span>
+        <div class="btn-row">
+          <button id="eraPrev">◀ anterior</button>
+          <button id="eraNext" class="primary">borrar siguiente ▶</button>
+          <button id="eraReset">↺ reiniciar</button>
+        </div>
+      </div>
+      <div class="tree-wrap" id="eraTree"></div>
+      <div class="legend"><span><i style="border-color:#7C3AyED"></i>nodo índice</span><span><i style="border-color:#00D4FF"></i>hoja</span><span><i style="border-color:#F59E0B"></i>nodo que se toca</span><span><i style="border-color:#10B981"></i>nodo nuevo</span><span><i style="border-color:#F59E0B; border-style:dashed; border-radius:0; height:0; width:18px; vertical-align:3px"></i>next</span></div>
+      <p class="step-caption" id="eraCap"></p>
+    </div>
+
+    <h3 id="x-lab">Laboratorio: probalo vos</h3>
+    <div class="panel">
+      <div class="ctrl-row">
+        <div class="field"><label>ORDEN m</label><select id="labOrder"><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+        <div class="field"><label>CLAVE</label><input type="number" id="labKey" value="35" min="0" max="999"></div>
+        <button id="labIns" class="primary">insertar</button><button id="labFind">buscar</button><button id="labDel">borrar</button>
+      </div>
+      <div class="ctrl-row">
+        <div class="field"><label>RANGO DESDE</label><input type="number" id="labLow" value="20" min="0" max="999"></div>
+        <div class="field"><label>HASTA</label><input type="number" id="labHigh" value="60" min="0" max="999"></div>
+        <button id="labRange">consultar rango</button>
+        <button id="labSeq">cargar 1..20</button><button id="labRnd">12 al azar</button><button id="labReset">↺ vaciar</button>
+      </div>
+      <div class="tree-wrap" id="labTree"></div>
+      <div class="lab-readout">
+        <div class="ro"><div class="k">claves</div><div class="v" id="labN">0</div></div>
+        <div class="ro"><div class="k">niveles (lecturas)</div><div class="v" id="labH">1</div></div>
+        <div class="ro"><div class="k">nodos / hojas</div><div class="v" id="labNodes">1 / 1</div></div>
+        <div class="ro"><div class="k">en orden (values)</div><div class="v wide" id="labVals">—</div></div>
+      </div>
+      <div class="log" id="labLog"><p class="dim">Insertá claves y mirá cómo reacciona el árbol. Cada operación explica lo que hizo.</p></div>
+    </div>
+
+    <h3 id="x-quiz">Practicá: predecí antes de correr</h3>
+    <p class="lead">Elegí una respuesta antes de razonarla, y marcá qué tan seguro estabas: la diferencia entre "estaba seguro" y acertar es lo más útil que te vas a llevar.</p>
+    <div id="quizList"></div>
+  </section>
+
+  <section id="fallas">
+    <p class="eyebrow">// fallas</p>
+    <h2>Los errores que más aparecen con el B+</h2>
+    <div class="err-grid" id="errGrid"></div>
+  </section>
+
+  <section id="conclusion">
+    <p class="eyebrow">// conclusión</p>
+    <h2>Cierre</h2>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot a"></span><span class="dot g"></span><span style="margin-left:8px;">maga@lac-mainframe: sesión finalizada</span></div>
+      <div class="terminal-body">
+        <p><span class="ok">ema_v:</span> Entonces el índice por nombre pasa a ser un B+ en disco: pocas lecturas por búsqueda, y el listado por rango recorre las hojas.</p>
+        <p><span class="accent">maga_t:</span> Exacto. Y si algún día el listado por rango se pone lento, mirá primero si las hojas siguen bien enlazadas.</p>
+        <p class="dim">&gt; fin de la transmisión<span class="cursor"></span></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;"><span class="k">EN EL PROYECTO INTEGRADOR</span><p>Documentá en el Doxygen el costo de cada operación y quién es dueño de cada nodo: "<code>contains</code> es O(log<sub>F</sub> n)" y "<code>children</code> posee, <code>pNext</code> no" son garantías que el código que usa el índice necesita conocer.</p></div>
+  </section>
+
+  <footer><p>Material de apoyo cátedra de Algoritmos y Estructuras de Datos, FCEFyN · Ing. Valenzuela Gabriel.</p></footer>
+
+</main>
+
+<script>
+
+(function(){
+  'use strict';
+  /* ---- barra de progreso + navegación ---- */
+  var scanbar = document.getElementById('scanbar');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  function onScroll(){
+    var doc = document.documentElement, max = doc.scrollHeight - doc.clientHeight;
+    scanbar.style.width = (max > 0 ? (doc.scrollTop / max) * 100 : 0) + '%';
+    var activeId = sections[0] ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++){ if (sections[i].getBoundingClientRect().top <= 120) activeId = sections[i].id; }
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + activeId); });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+  var navToggle = document.getElementById('navtoggle'), sidenav = document.getElementById('sidenav');
+  navToggle.addEventListener('click', function(){
+    var open = sidenav.classList.toggle('open'); navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#sidenav a'), function(a){ a.addEventListener('click', function(){ sidenav.classList.remove('open'); }); });
+
+  /* ---- resaltado de código C++ (liviano, sin dependencias) ---- */
+  var KW = /\b(class|struct|template|typename|public|private|static|const|constexpr|final|noexcept|return|if|else|for|while|do|break|continue|new|delete|nullptr|true|false|using|auto|bool|void|enum|switch|case|default|operator|this|namespace|include|define|ifndef|endif|unsigned)\b/g;
+  var TP = /\b(int|char|size_t|std|uint32_t|uint8_t|uint64_t|long|short|string|vector|bitset|unordered_map|unordered_set|set|multiset|map|TData|Node|Split)\b/g;
+  function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function highlight(src){
+    var out = '', re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*")|([^\/"]+|\/)/g, m;
+    while ((m = re.exec(src)) !== null){
+      if (m[1]) out += '<span class="cm">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="str">' + esc(m[2]) + '</span>';
+      else {
+        var t = esc(m[3]);
+        t = t.replace(/\b(\d+(?:\.\d+)?[uUlL]*)\b/g, '<span class="num">$1</span>');
+        t = t.replace(KW, '<span class="kw">$1</span>').replace(TP, '<span class="tp">$1</span>');
+        out += t;
+      }
+    }
+    return out;
+  }
+  window.CC = { esc: esc, highlight: highlight };
+  window.CC.hlAll = function(root){
+    Array.prototype.forEach.call((root || document).querySelectorAll('.code[data-cpp]'), function(el){
+      if (el.getAttribute('data-done')) return;
+      el.innerHTML = highlight(el.textContent); el.setAttribute('data-done', '1');
+    });
+  };
+
+  /* ---- galería de errores ---- */
+  window.CC.buildErrors = function(gridId, errors){
+    var grid = document.getElementById(gridId);
+    errors.forEach(function(e, i){
+      var card = document.createElement('div'); card.className = 'err-card';
+      card.innerHTML =
+        '<div class="tag">' + e.tag + '</div><h4>' + e.title + '</h4>' +
+        '<div class="code" data-cpp="1">' + esc(e.bad) + '</div>' +
+        '<div class="err-sec c2">CONSECUENCIA</div><p class="why">' + e.cons + '</p>' +
+        '<button class="err-toggle" data-i="' + i + '" style="margin-top:12px;">ver corrección</button>' +
+        '<div class="fix-box" id="' + gridId + '-fix-' + i + '"><div class="err-sec c3">CORRECTO</div><div class="code" data-cpp="1">' + esc(e.fix) + '</div></div>';
+      grid.appendChild(card);
+    });
+    grid.addEventListener('click', function(ev){
+      if (!ev.target.classList.contains('err-toggle')) return;
+      var box = document.getElementById(gridId + '-fix-' + ev.target.getAttribute('data-i'));
+      var showing = box.classList.toggle('show');
+      ev.target.textContent = showing ? 'ocultar corrección' : 'ver corrección';
+    });
+    window.CC.hlAll(grid);
+  };
+
+  /* ---- checkpoints con nivel de seguridad ---- */
+  window.CC.buildQuiz = function(listId, quizzes){
+    var list = document.getElementById(listId);
+    quizzes.forEach(function(qz, qi){
+      var wrap = document.createElement('div'); wrap.className = 'quiz';
+      var optsHTML = qz.opts.map(function(o, oi){ return '<button class="opt" data-qi="' + qi + '" data-oi="' + oi + '">' + o + '</button>'; }).join('');
+      wrap.innerHTML =
+        '<div class="badge violet">CHECKPOINT ' + (qi + 1) + '</div>' +
+        (qz.code ? '<div class="code" data-cpp="1" style="margin-top:8px;">' + esc(qz.code) + '</div>' : '') +
+        '<p style="color:var(--text); margin:8px 0 10px;">' + qz.q + '</p>' +
+        '<div class="opt-row">' + optsHTML + '</div>' +
+        '<div class="quiz-fb" id="' + listId + '-fb-' + qi + '"></div>' +
+        '<div class="conf-row"><span>¿qué tan seguro estabas?</span>' +
+        '<button class="conf-btn" data-c="adivine">adiviné</button><button class="conf-btn" data-c="dude">dudé</button><button class="conf-btn" data-c="seguro">estaba seguro</button></div>';
+      list.appendChild(wrap);
+    });
+    list.addEventListener('click', function(ev){
+      var t = ev.target;
+      if (t.classList.contains('opt')){
+        var qi = t.getAttribute('data-qi'), oi = parseInt(t.getAttribute('data-oi'), 10), qz = quizzes[qi], row = t.parentElement;
+        Array.prototype.forEach.call(row.children, function(b){ b.disabled = true; });
+        if (oi === qz.correct) t.classList.add('correct');
+        else { t.classList.add('incorrect'); row.children[qz.correct].classList.add('correct'); }
+        var fb = document.getElementById(listId + '-fb-' + qi); fb.textContent = qz.fb; fb.classList.add('show');
+      }
+      if (t.classList.contains('conf-btn')){
+        Array.prototype.forEach.call(t.parentElement.querySelectorAll('.conf-btn'), function(b){ b.classList.remove('picked'); });
+        t.classList.add('picked');
+      }
+    });
+    window.CC.hlAll(list);
+  };
+
+  /* ---- bitácora de operaciones (log) ---- */
+  window.CC.logTo = function(el, lines){
+    el.innerHTML = lines.map(function(l){ return '<p class="' + (l.c || '') + '">' + l.t + '</p>'; }).join('');
+    el.scrollTop = 0;
+  };
+  document.addEventListener('DOMContentLoaded', function(){ window.CC.hlAll(); });
+})();
+
+</script>
+<script>
+
+(function(){
+  'use strict';
+/* ================= motor B+ (espejo de bPlusTree.hpp) ================= */
+function BPlus(m){ this.m = m; this.n = 0; this.seq = 0; this.root = this.mk(true); }
+BPlus.prototype.mk = function(leaf){ return { id: ++this.seq, leaf: leaf, keys: [], ch: [], next: null }; };
+BPlus.prototype.minLeaf = function(){ return Math.floor(this.m / 2); };
+BPlus.prototype.minCh = function(){ return Math.floor((this.m + 1) / 2); };
+BPlus.prototype.minKeys = function(n){ return n.leaf ? this.minLeaf() : this.minCh() - 1; };
+/* upper_bound: cuántos separadores son <= v (la igualdad baja por la DERECHA) */
+BPlus.prototype.childIndex = function(n, v){ var i = 0; while (i < n.keys.length && n.keys[i] <= v) i++; return i; };
+BPlus.prototype.findLeaf = function(v, path){
+  var c = this.root;
+  while (!c.leaf){ if (path) path.push(c); c = c.ch[this.childIndex(c, v)]; }
+  if (path) path.push(c);
+  return c;
+};
+BPlus.prototype.contains = function(v){ return this.findLeaf(v).keys.indexOf(v) >= 0; };
+BPlus.prototype.height = function(){ var h = 1, c = this.root; while (!c.leaf){ h++; c = c.ch[0]; } return h; };
+BPlus.prototype.nodeCount = function(){ var k = 0; (function w(n){ k++; n.ch.forEach(w); })(this.root); return k; };
+BPlus.prototype.leafCount = function(){ var k = 0; (function w(n){ if (n.leaf) k++; else n.ch.forEach(w); })(this.root); return k; };
+BPlus.prototype.values = function(){
+  var c = this.root, out = [];
+  while (!c.leaf) c = c.ch[0];
+  for (; c; c = c.next) out = out.concat(c.keys);
+  return out;
+};
+function fmt(keys){ return '[' + keys.join(', ') + ']'; }
+
+/* ---------------------------- ALTA ---------------------------- */
+BPlus.prototype.insert = function(v, ev){
+  ev = ev || [];
+  if (this.contains(v)){ ev.push({ t: 'La clave ' + v + ' ya existe: el árbol no admite repetidas.', hl: [] }); return false; }
+  var sp = this.insRec(this.root, v, ev);
+  if (sp){
+    var nr = this.mk(false); nr.keys = [sp.sep]; nr.ch = [this.root, sp.right]; this.root = nr;
+    ev.push({ t: 'Se partió la raíz: nace una raíz nueva con el separador ' + sp.sep + '. El árbol crece un nivel (por arriba).', hl: [nr.id], nw: [nr.id] });
+  }
+  this.n++;
+  return true;
+};
+BPlus.prototype.insRec = function(node, v, ev){
+  var i, sp;
+  if (node.leaf){
+    i = 0; while (i < node.keys.length && node.keys[i] < v) i++;
+    node.keys.splice(i, 0, v);
+    ev.push({ t: 'Se inserta ' + v + ' en la hoja, en orden: ' + fmt(node.keys) + '.', hl: [node.id] });
+    if (node.keys.length < this.m) return null;
+    var left = Math.floor((node.keys.length + 1) / 2);
+    var r = this.mk(true); r.keys = node.keys.splice(left); r.next = node.next; node.next = r;
+    ev.push({ t: 'La hoja llegó a ' + this.m + ' claves (overflow): se parte en ' + fmt(node.keys) + ' y ' + fmt(r.keys) + '. El ' + r.keys[0] + ' se COPIA al padre y también queda en la hoja derecha. Las hojas se reenlazan con next.', hl: [node.id], nw: [r.id] });
+    return { sep: r.keys[0], right: r };
+  }
+  i = this.childIndex(node, v);
+  sp = this.insRec(node.ch[i], v, ev);
+  if (!sp) return null;
+  node.keys.splice(i, 0, sp.sep); node.ch.splice(i + 1, 0, sp.right);
+  if (node.ch.length <= this.m){
+    ev.push({ t: 'El padre agrega el separador ' + sp.sep + ' y el hijo nuevo: ahora tiene ' + node.ch.length + ' hijos (el máximo es ' + this.m + '). Acá termina.', hl: [node.id] });
+    return null;
+  }
+  var mid = Math.floor(node.keys.length / 2), up = node.keys[mid];
+  var r2 = this.mk(false); r2.keys = node.keys.slice(mid + 1); r2.ch = node.ch.slice(mid + 1);
+  node.keys.length = mid; node.ch.length = mid + 1;
+  ev.push({ t: 'El nodo interno quedó con ' + (this.m + 1) + ' hijos (más que ' + this.m + '): se parte en ' + fmt(node.keys) + ' y ' + fmt(r2.keys) + '. La clave del medio (' + up + ') SUBE: en un interno solo era un cartel, así que deja de estar abajo.', hl: [node.id], nw: [r2.id] });
+  return { sep: up, right: r2 };
+};
+
+/* ---------------------------- BAJA ---------------------------- */
+BPlus.prototype.erase = function(v, ev){
+  ev = ev || [];
+  if (!this.eraRec(this.root, v, ev)){ ev.push({ t: 'La clave ' + v + ' no está en el árbol: no se hace nada.', hl: [] }); return false; }
+  if (!this.root.leaf && this.root.keys.length === 0){
+    this.root = this.root.ch[0];
+    ev.push({ t: 'La raíz quedó con un solo hijo: ese hijo pasa a ser la raíz. El árbol pierde un nivel.', hl: [this.root.id] });
+  }
+  this.n--;
+  return true;
+};
+BPlus.prototype.eraRec = function(node, v, ev){
+  if (node.leaf){
+    var j = node.keys.indexOf(v); if (j < 0) return false;
+    node.keys.splice(j, 1);
+    ev.push({ t: 'Se quita el ' + v + ' de la hoja: queda ' + fmt(node.keys) + '.', hl: [node.id] });
+    return true;
+  }
+  var i = this.childIndex(node, v), ok = this.eraRec(node.ch[i], v, ev);
+  if (ok && node.ch[i].keys.length < this.minKeys(node.ch[i])) this.fix(node, i, ev);
+  return ok;
+};
+BPlus.prototype.fix = function(p, i, ev){
+  var node = p.ch[i], hasL = i > 0, hasR = i + 1 < p.ch.length, min = this.minKeys(node), L = hasL ? p.ch[i - 1] : null, R = hasR ? p.ch[i + 1] : null;
+  ev.push({ t: 'Underflow: el nodo tiene menos de ' + min + ' clave' + (min === 1 ? '' : 's') + ' (el mínimo). Lo arregla el padre mirando a los hermanos.', hl: [node.id] });
+  if (hasL && L.keys.length > this.minKeys(L)){
+    if (node.leaf){ node.keys.unshift(L.keys.pop()); p.keys[i - 1] = node.keys[0]; }
+    else { node.keys.unshift(p.keys[i - 1]); p.keys[i - 1] = L.keys.pop(); node.ch.unshift(L.ch.pop()); }
+    ev.push({ t: 'PRÉSTAMO del hermano izquierdo (le sobraban claves). ' + (node.leaf ? 'La clave pasa de una hoja a la otra' : 'El separador del padre baja y la última clave del hermano sube') + '; el separador del padre queda en ' + p.keys[i - 1] + '. No cambia la forma del árbol.', hl: [node.id, L.id] });
+  } else if (hasR && R.keys.length > this.minKeys(R)){
+    if (node.leaf){ node.keys.push(R.keys.shift()); p.keys[i] = R.keys[0]; }
+    else { node.keys.push(p.keys[i]); p.keys[i] = R.keys.shift(); node.ch.push(R.ch.shift()); }
+    ev.push({ t: 'PRÉSTAMO del hermano derecho (le sobraban claves). ' + (node.leaf ? 'La clave pasa de una hoja a la otra' : 'El separador del padre baja y la primera clave del hermano sube') + '; el separador del padre queda en ' + p.keys[i] + '. No cambia la forma del árbol.', hl: [node.id, R.id] });
+  } else {
+    var li = hasL ? i - 1 : i, left = p.ch[li], right = p.ch[li + 1];
+    if (left.leaf){ left.next = right.next; } else { left.keys.push(p.keys[li]); left.ch = left.ch.concat(right.ch); }
+    left.keys = left.keys.concat(right.keys);
+    p.keys.splice(li, 1); p.ch.splice(li + 1, 1);
+    ev.push({ t: 'FUSIÓN: ningún hermano puede prestar. Se unen los dos nodos en ' + fmt(left.keys) + (left.leaf ? ' (la hoja izquierda hereda el next de la derecha)' : ' (el separador del padre baja al medio)') + ' y el padre pierde un separador y un hijo.', hl: [left.id] });
+  }
+};
+
+BPlus.prototype.print = function(){
+  var out = [], q = [this.root], lvl = 0;
+  while (q.length){
+    var cnt = q.length, line = 'Nivel ' + (lvl++) + ': ';
+    for (var i = 0; i < cnt; i++){
+      var n = q.shift();
+      line += (n.leaf ? 'Hoja[' : 'Indice[') + n.keys.join(', ') + '] ';
+      n.ch.forEach(function(c){ q.push(c); });
+    }
+    out.push(line);
+  }
+  return out.join('\n') + '\n';
+};
+
+/* recorrido paso a paso de range(low, high) */
+BPlus.prototype.rangeSteps = function(low, high){
+  var steps = [], path = [], got = [];
+  if (high < low){ steps.push({ t: 'high (' + high + ') es menor que low (' + low + '): el rango es vacío.', vis: [], got: [] }); return steps; }
+  var leaf = this.findLeaf(low, path), vis = [];
+  path.forEach(function(n, idx){
+    vis.push(n.id);
+    if (n.leaf) return;
+    var ci = this.childIndex(n, low);
+    steps.push({ t: 'Bajada ' + (idx + 1) + ': en el nodo interno ' + fmt(n.keys) + ' buscamos ' + low + ' → es ' + (ci === 0 ? 'menor que ' + n.keys[0] : (ci === n.keys.length ? 'mayor o igual que ' + n.keys[n.keys.length - 1] : 'mayor o igual que ' + n.keys[ci - 1] + ' y menor que ' + n.keys[ci])) + ', bajamos por el hijo ' + ci + '.', vis: vis.slice(), cur: n.id, got: [] });
+  }, this);
+  var stop = false;
+  for (var l = leaf; l && !stop; l = l.next){
+    vis.push(l.id);
+    var taken = [];
+    for (var k = 0; k < l.keys.length; k++){
+      if (l.keys[k] > high){ stop = true; break; }
+      if (l.keys[k] >= low){ got.push(l.keys[k]); taken.push(l.keys[k]); }
+    }
+    steps.push({ t: (l === leaf ? 'Llegamos a la hoja ' : 'Seguimos por next a la hoja ') + fmt(l.keys) + ': ' + (taken.length ? 'tomamos ' + taken.join(', ') : 'no hay claves en el rango') + (stop ? '. Apareció una clave mayor que ' + high + ': PARAMOS.' : '.'), vis: vis.slice(), cur: l.id, got: got.slice() });
+    if (!l.next && !stop){ steps.push({ t: 'No hay más hojas (next es nulo): fin del recorrido.', vis: vis.slice(), cur: l.id, got: got.slice() }); }
+  }
+  steps.push({ t: 'Resultado: ' + (got.length ? got.join(', ') : '(vacío)') + '. Se bajó UNA sola vez; el resto fueron saltos por next.', vis: vis.slice(), got: got.slice(), done: true });
+  return steps;
+};
+
+if (typeof module !== 'undefined') module.exports = { BPlus: BPlus };
+
+  /* ---------------- dibujo del árbol ---------------- */
+  var KW = 34, KH = 30, GAP = 30, LV = 86, PX = 22, PY = 22;
+  function nW(n){ return Math.max(1, n.keys.length) * KW + 10; }
+  function layout(tree){
+    var x = 0, maxD = 0, pos = {};
+    (function walk(n, d){
+      maxD = Math.max(maxD, d);
+      if (n.leaf){ var w = nW(n); pos[n.id] = { x: x + w / 2, d: d, w: w }; x += w + GAP; }
+      else {
+        n.ch.forEach(function(c){ walk(c, d + 1); });
+        var f = pos[n.ch[0].id], l = pos[n.ch[n.ch.length - 1].id];
+        pos[n.id] = { x: (f.x + l.x) / 2, d: d, w: nW(n) };
+      }
+    })(tree.root, 0);
+    return { pos: pos, width: x - GAP, depth: maxD };
+  }
+  function has(arr, id){ return !!arr && arr.indexOf(id) >= 0; }
+  function renderTree(host, tree, st){
+    st = st || {};
+    var L = layout(tree), W = Math.max(L.width + 2 * PX, 460), shift = (W - L.width) / 2, H = L.depth * LV + KH + 2 * PY;
+    var edges = '', nodes = '', links = '', leaves = [];
+    function y(d){ return PY + d * LV; }
+    (function walk(n){
+      var p = L.pos[n.id], px = p.x + shift - PX + PX;
+      if (n.leaf){ leaves.push(n); }
+      else n.ch.forEach(function(c, i){
+        var cp = L.pos[c.id];
+        edges += '<line class="edge" x1="' + (p.x + shift - p.w / 2 + 5 + i * KW) + '" y1="' + (y(p.d) + KH) + '" x2="' + (cp.x + shift) + '" y2="' + y(cp.d) + '"></line>';
+        walk(c);
+      });
+    })(tree.root);
+    (function walk2(n){
+      var p = L.pos[n.id], cls = 'bp-n ' + (n.leaf ? 'leaf' : 'inner') +
+        (has(st.nw, n.id) ? ' nw' : has(st.cur, n.id) ? ' cur' : has(st.vis, n.id) ? ' vis' : '');
+      var g = '<g class="' + cls + '" transform="translate(' + (p.x + shift - p.w / 2) + ',' + y(p.d) + ')"><rect width="' + p.w + '" height="' + KH + '" rx="6"></rect>';
+      if (n.keys.length === 0) g += '<text class="empty" x="' + (p.w / 2) + '" y="' + (KH / 2 + 1) + '">∅</text>';
+      n.keys.forEach(function(k, j){
+        if (j > 0) g += '<line x1="' + (5 + j * KW) + '" y1="5" x2="' + (5 + j * KW) + '" y2="' + (KH - 5) + '"></line>';
+        g += '<text x="' + (5 + j * KW + KW / 2) + '" y="' + (KH / 2 + 1) + '">' + k + '</text>';
+      });
+      nodes += g + '</g>';
+      n.ch.forEach(walk2);
+    })(tree.root);
+    for (var i = 0; i + 1 < leaves.length; i++){
+      var a = L.pos[leaves[i].id], b = L.pos[leaves[i + 1].id], on = has(st.vis, leaves[i].id) && has(st.vis, leaves[i + 1].id) && has(st.link, leaves[i].id);
+      links += '<path class="nxt' + (on ? ' on' : '') + '" marker-end="url(#arr' + host.id + (on ? 'on' : '') + ')" d="M' + (a.x + shift + a.w / 2) + ',' + (y(a.d) + KH / 2) + ' L' + (b.x + shift - b.w / 2 - 2) + ',' + (y(b.d) + KH / 2) + '"></path>';
+    }
+    var defs = '<defs><marker id="arr' + host.id + '" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#F59E0B"></path></marker>' +
+      '<marker id="arr' + host.id + 'on" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#00D4FF"></path></marker></defs>';
+    host.innerHTML = '<svg class="bp-svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="Árbol B+">' + defs + edges + links + nodes + '</svg>';
+  }
+  function build(m, keys){ var t = new BPlus(m); keys.forEach(function(k){ t.insert(k, []); }); return t; }
+  function idsOf(evs, f){ var r = []; evs.forEach(function(e){ (e[f] || []).forEach(function(i){ if (r.indexOf(i) < 0) r.push(i); }); }); return r; }
+  function capList(title, evs){
+    return '<strong>' + title + '</strong><ol class="steps-list">' + evs.map(function(e){ return '<li>' + e.t + '</li>'; }).join('') + '</ol>';
+  }
+  function bind(prefix, total, state){
+    var s = 0, num = document.getElementById(prefix + 'Num'), cap = document.getElementById(prefix + 'Cap'), host = document.getElementById(prefix + 'Tree');
+    var prev = document.getElementById(prefix + 'Prev'), next = document.getElementById(prefix + 'Next');
+    var api = { total: total, set: function(t){ api.total = t; s = 0; draw(); } };
+    function draw(){
+      var r = state(s);
+      num.textContent = s; renderTree(host, r.tree, r.st); cap.innerHTML = r.cap;
+      prev.disabled = (s === 0); next.disabled = (s >= api.total);
+    }
+    next.addEventListener('click', function(){ if (s < api.total){ s++; draw(); } });
+    prev.addEventListener('click', function(){ if (s > 0){ s--; draw(); } });
+    document.getElementById(prefix + 'Reset').addEventListener('click', function(){ s = 0; draw(); });
+    draw();
+    return api;
+  }
+
+  /* ---------------- anatomía ---------------- */
+  renderTree(document.getElementById('anatomy'), build(3, [10, 20, 30, 40, 50, 60, 70]), {});
+
+  /* ---------------- demo: insertar ---------------- */
+  var INS_KEYS = [10, 20, 30, 40, 50, 60, 70];
+  bind('ins', INS_KEYS.length, function(s){
+    var t = new BPlus(3), evs = [];
+    for (var i = 0; i < s; i++){ evs = []; t.insert(INS_KEYS[i], evs); }
+    if (s === 0) return { tree: t, st: {}, cap: 'Árbol vacío (m = 3): es una sola hoja sin claves. Tocá <span class="mono">insertar siguiente</span> para meter el 10.' };
+    return { tree: t, st: { cur: idsOf(evs, 'hl'), nw: idsOf(evs, 'nw') }, cap: capList('Insertar ' + INS_KEYS[s - 1], evs) };
+  });
+
+  /* ---------------- demo: rango ---------------- */
+  var RNG_KEYS = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+  var rngTree = build(3, RNG_KEYS), rngSteps = [];
+  function calcRange(){
+    var lo = parseInt(document.getElementById('rngLow').value, 10), hi = parseInt(document.getElementById('rngHigh').value, 10);
+    rngSteps = (isNaN(lo) || isNaN(hi)) ? [] : rngTree.rangeSteps(lo, hi);
+    return rngSteps.length;
+  }
+  var rngApi = bind('rng', calcRange(), function(s){
+    if (s === 0) return { tree: rngTree, st: {}, cap: 'Elegí los límites y tocá <span class="mono">siguiente paso</span>. Vas a ver una bajada y después saltos por next.' };
+    var r = rngSteps[s - 1];
+    return { tree: rngTree, st: { vis: r.vis, cur: r.cur ? [r.cur] : [], link: r.vis }, cap: r.t + (r.got && r.got.length && !r.done ? '<br><span class="mono">Acumulado: ' + r.got.join(', ') + '</span>' : '') };
+  });
+  document.getElementById('rngGo').addEventListener('click', function(){ rngApi.set(calcRange()); });
+
+  /* ---------------- demo: borrar ---------------- */
+  var ERA_KEYS = [70, 60, 50];
+  bind('era', ERA_KEYS.length, function(s){
+    var t = build(3, [10, 20, 30, 40, 50, 60, 70]), evs = [];
+    for (var i = 0; i < s; i++){ evs = []; t.erase(ERA_KEYS[i], evs); }
+    if (s === 0) return { tree: t, st: {}, cap: 'Árbol de la primera demo. Vamos a borrar 70, después 60 y después 50. ¿Qué te parece que va a pasar con el 70? Tocá <span class="mono">borrar siguiente</span>.' };
+    return { tree: t, st: { cur: idsOf(evs, 'hl'), nw: idsOf(evs, 'nw') }, cap: capList('Borrar ' + ERA_KEYS[s - 1], evs) };
+  });
+
+  /* ---------------- laboratorio ---------------- */
+  var lab = new BPlus(3), labTree = document.getElementById('labTree'), labLog = document.getElementById('labLog');
+  function labKey(){ var v = parseInt(document.getElementById('labKey').value, 10); return isNaN(v) ? null : v; }
+  function labDraw(st, lines){
+    renderTree(labTree, lab, st || {});
+    document.getElementById('labN').textContent = lab.n;
+    document.getElementById('labH').textContent = lab.height();
+    document.getElementById('labNodes').textContent = lab.nodeCount() + ' / ' + lab.leafCount();
+    document.getElementById('labVals').textContent = lab.n ? lab.values().join(' ') : '—';
+    if (lines) CC.logTo(labLog, lines);
+  }
+  function evLines(evs){ return evs.map(function(e, i){ return { t: (i + 1) + '. ' + e.t, c: /FUSIÓN|PRÉSTAMO|Underflow/.test(e.t) ? 'warn' : (/partió|nace/.test(e.t) ? 'ok' : '') }; }); }
+  document.getElementById('labOrder').addEventListener('change', function(){ lab = new BPlus(parseInt(this.value, 10)); labDraw({}, [{ t: 'Árbol nuevo de orden ' + lab.m + '.', c: 'dim' }]); });
+  document.getElementById('labIns').addEventListener('click', function(){
+    var k = labKey(); if (k === null) return;
+    var evs = []; lab.insert(k, evs); labDraw({ cur: idsOf(evs, 'hl'), nw: idsOf(evs, 'nw') }, evLines(evs));
+  });
+  document.getElementById('labDel').addEventListener('click', function(){
+    var k = labKey(); if (k === null) return;
+    var evs = []; lab.erase(k, evs); labDraw({ cur: idsOf(evs, 'hl'), nw: idsOf(evs, 'nw') }, evLines(evs));
+  });
+  document.getElementById('labFind').addEventListener('click', function(){
+    var k = labKey(); if (k === null) return;
+    var path = [], leaf = lab.findLeaf(k, path), found = leaf.keys.indexOf(k) >= 0;
+    var ids = path.map(function(n){ return n.id; });
+    labDraw({ vis: ids.slice(0, -1), cur: [leaf.id] }, [
+      { t: 'Se bajó por ' + path.length + ' nodo' + (path.length === 1 ? '' : 's') + ' (= ' + path.length + ' lecturas de página): ' + path.map(function(n){ return (n.leaf ? 'Hoja' : 'Índice') + '[' + n.keys.join(', ') + ']'; }).join(' → ') + '.' },
+      { t: found ? 'El ' + k + ' está en la hoja: encontrado.' : 'El ' + k + ' no está en la hoja donde le correspondería: no existe.', c: found ? 'ok' : 'bad' }
+    ]);
+  });
+  document.getElementById('labRange').addEventListener('click', function(){
+    var lo = parseInt(document.getElementById('labLow').value, 10), hi = parseInt(document.getElementById('labHigh').value, 10);
+    if (isNaN(lo) || isNaN(hi)) return;
+    var steps = lab.rangeSteps(lo, hi), last = steps[steps.length - 1];
+    var seen = []; steps.forEach(function(s){ (s.vis || []).forEach(function(i){ if (seen.indexOf(i) < 0) seen.push(i); }); });
+    labDraw({ vis: seen, link: seen }, steps.map(function(s, i){ return { t: (i + 1) + '. ' + s.t, c: s.done ? 'ok' : '' }; }));
+  });
+  document.getElementById('labSeq').addEventListener('click', function(){
+    lab = new BPlus(lab.m); for (var i = 1; i <= 20; i++) lab.insert(i, []);
+    labDraw({}, [{ t: 'Se insertaron 1..20 en orden ascendente (orden m = ' + lab.m + '). Fijate que las hojas quedan llenas a la izquierda.', c: 'ok' }]);
+  });
+  document.getElementById('labRnd').addEventListener('click', function(){
+    lab = new BPlus(lab.m); var c = 0; while (c < 12){ if (lab.insert(Math.floor(Math.random() * 99) + 1, [])) c++; }
+    labDraw({}, [{ t: 'Se insertaron 12 claves al azar entre 1 y 99.', c: 'ok' }]);
+  });
+  document.getElementById('labReset').addEventListener('click', function(){ lab = new BPlus(lab.m); labDraw({}, [{ t: 'Árbol vacío.', c: 'dim' }]); });
+  ['labKey', 'labLow', 'labHigh'].forEach(function(id){ document.getElementById(id).addEventListener('keydown', function(e){ if (e.key === 'Enter') document.getElementById('labIns').click(); }); });
+  [10, 20, 30, 40, 50].forEach(function(k){ lab.insert(k, []); });
+  labDraw({}, [{ t: 'Árbol de orden 3 con 10, 20, 30, 40, 50. Probá insertar el 35 y después el 45.', c: 'dim' }]);
+
+  var errors = [
+    { tag:'dato perdido', title:'Sacar de la hoja la clave que sube',
+      bad:'// al partir una HOJA:\nsplit.separator = pRight->keys.front();\npRight->keys.erase(pRight->keys.begin());  // ¡la saca!',
+      cons:'En una hoja la clave que va al padre se COPIA: el dato real tiene que seguir en las hojas. Si lo sacás, la clave desaparece del árbol y <code>contains</code> no la vuelve a encontrar (aunque el separador siga en el índice).',
+      fix:'// en la hoja se copia; solo en un nodo\n// interno la clave del medio sube\nsplit.separator = pRight->keys.front();' },
+    { tag:'lista rota', title:'Partir la hoja y olvidarse de enlazar pNext',
+      bad:'leaf.keys.erase(leaf.keys.begin() + leftCount, leaf.keys.end());\nsplit.separator = pRight->keys.front();\n// falta enlazar la hoja nueva',
+      cons:'La hoja nueva existe en el árbol pero ninguna hoja apunta a ella: <code>range</code> y <code>values</code> se cortan o se saltean claves, y el error aparece lejos de donde se cometió.',
+      fix:'pRight->pNext = leaf.pNext;  // hereda la siguiente\nleaf.pNext    = pRight;      // la hoja vieja apunta a la nueva' },
+    { tag:'doble delete', title:'Destruir el árbol siguiendo pNext',
+      bad:'static void destroy(Node* pNode)\n{\n    for (Node* pChild : pNode->children) { destroy(pChild); }\n    destroy(pNode->pNext);   // ¡no es dueño!\n    delete pNode;\n}',
+      cons:'<code>pNext</code> solo mira a la hoja siguiente, que ya tiene dueño: su padre. Si además la liberás por <code>pNext</code>, esa hoja se borra dos veces (doble delete) o se usa después de liberada.',
+      fix:'static void destroy(Node* pNode) noexcept\n{\n    if (pNode != nullptr)\n    {\n        for (Node* pChild : pNode->children) { destroy(pChild); }\n        delete pNode;   // nunca se sigue pNext\n    }\n}' },
+    { tag:'separador desactualizado', title:'Pedir prestado y no actualizar el separador',
+      bad:'// borrowFromRight, caso hoja\nnode.keys.emplace_back(right.keys.front());\nright.keys.erase(right.keys.begin());\n// falta: separator = right.keys.front();',
+      cons:'La clave prestada ahora está en la hoja de la izquierda, pero el separador del padre sigue diciendo que está a la derecha. Las búsquedas bajan por el hijo equivocado y <code>contains</code> da falso para una clave que sí está.',
+      fix:'node.keys.emplace_back(right.keys.front());\nright.keys.erase(right.keys.begin());\nseparator = right.keys.front();   // el padre se entera' },
+    { tag:'igualdad al lado equivocado', title:'Usar lower_bound para elegir el hijo',
+      bad:'// childIndex\nauto position = std::lower_bound(node.keys.begin(),\n                                 node.keys.end(), value, m_less);',
+      cons:'Una clave igual a un separador debe bajar por la DERECHA (el separador es la cota del hijo derecho). <code>lower_bound</code> devuelve la posición de esa clave y manda la búsqueda a la izquierda: las claves iguales a un separador no se encuentran.',
+      fix:'// upper_bound: primer separador MAYOR que value\nauto position = std::upper_bound(node.keys.begin(),\n                                 node.keys.end(), value, m_less);' },
+    { tag:'mala elección de estructura', title:'Un B+ para unos pocos miles de claves en RAM',
+      bad:'BPlusTree<int, 5> indice;\n// 2000 elementos, todo en memoria,\n// sin consultas por rango',
+      cons:'El B+ está pensado para datos que no entran en memoria. Para pocos datos en RAM agrega complejidad y no mejora nada medible: con un <code>std::map</code> o un AVL alcanza.',
+      fix:'std::map<int, Diagrama> indice;\n// el B+ vale la pena cuando el costo\n// dominante es leer páginas de disco' }
+  ];
+  CC.buildErrors('errGrid', errors);
+
+  CC.buildQuiz('quizList', [
+    { code:'// B+ de orden m = 3, vacío.\n// Se insertan: 10, 20, 30',
+      q:'¿Cómo queda el árbol?', opts:['Raíz [20]; hojas [10] y [20, 30]', 'Raíz [30]; hojas [10, 20] y [30]', 'Una sola hoja [10, 20, 30]', 'Raíz [10, 20, 30] sin hojas'], correct:1,
+      fb:'Con m = 3 una hoja admite 2 claves. Al llegar la 3.ª, se parte: la izquierda queda con (3+1)/2 = 2 claves ([10, 20]) y la derecha con [30]. El 30 se COPIA a la raíz y sigue en la hoja.' },
+    { code:'// m = 3. Un nodo interno queda con\n// separadores [30, 50, 70] y 4 hijos.',
+      q:'Se parte el nodo. ¿Qué clave sube?', opts:['30', '50', '70', 'sube una copia de cada una'], correct:1,
+      fb:'middle = keys.size() / 2 = 1, o sea el 50. En un nodo interno la clave del medio SUBE y deja de estar abajo: la izquierda queda con [30] y la derecha con [70].' },
+    { code:'// raíz [50]; hijos [30] y [70]\n// buscamos el 50',
+      q:'En la raíz, la clave buscada es IGUAL al separador 50. ¿Por dónde se baja?', opts:['Por la izquierda', 'Por la derecha', 'Se corta: ya se encontró', 'Por cualquiera de las dos'], correct:1,
+      fb:'La igualdad baja por la derecha (upper_bound): el separador es la cota inferior del hijo derecho. Y no se corta, porque en el B+ los datos están en las hojas: hay que llegar hasta ahí.' },
+    { code:'// range(30, 60)',
+      q:'¿Cuántas veces se baja desde la raíz hasta una hoja?', opts:['Una por cada clave del rango', 'Una sola vez', 'Dos: una por cada límite', 'Ninguna, se recorre todo desde la primera hoja'], correct:1,
+      fb:'Se baja una vez hasta la hoja de la clave inicial (findLeaf(30)); después se avanza por pNext hasta pasar el 60. Esa es la ventaja del B+ para rangos.' },
+    { code:'// se borra la clave que dio origen a\n// un separador del nodo interno',
+      q:'¿Qué pasa con ese separador?', opts:['Hay que borrarlo siempre', 'Puede quedar: es válido mientras siga siendo una cota', 'El árbol queda inválido', 'Se reemplaza por la clave anterior en todos los casos'], correct:1,
+      fb:'El separador solo tiene que cumplir "menor que lo de su derecha y mayor que lo de su izquierda". Puede sobrevivir a la clave que lo originó. Solo cambia cuando un préstamo o una fusión lo recalculan.' },
+    { code:'static void destroy(Node* pNode)\n{\n    for (Node* pChild : pNode->children) { destroy(pChild); }\n    delete pNode;\n}',
+      q:'¿Por qué este destroy recorre children y nunca pNext?', opts:['Porque pNext siempre es nulo', 'Porque pNext no es dueño: la hoja siguiente ya la libera su padre', 'Porque seguir pNext sería más lento', 'Porque las hojas no se liberan'], correct:1,
+      fb:'children son los dueños; pNext es solo un enlace de lectura. Si lo siguieras, liberarías hojas que ya liberó su padre: doble delete.' },
+    { code:'// índice con m = 100 hijos por nodo,\n// 5.000.000 de claves',
+      q:'Aproximadamente, ¿cuántos niveles tiene el árbol?', opts:['23', '12', '4', '1'], correct:2,
+      fb:'Los niveles son del orden de log base 100 de 5.000.000 ≈ 3,35, o sea 4. Cuatro lecturas de disco por búsqueda, contra 23 de un árbol binario.' }
+  ]);
+
+})();
+
+</script>
+</body>
+</html>
